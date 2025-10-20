@@ -1,0 +1,173 @@
+---
+alwaysApply: false
+---
+
+# Project: AI Social Media Generator Frontend
+
+## Tech Stack
+
+- Next.js 15.5+ (App Router)
+- React 19
+- TypeScript 5+
+- Tailwind CSS v4
+- shadcn/ui components
+- class-variance-authority (cva)
+- React Hook Form + Zod
+- Lucide React icons
+
+## Core Principles
+
+### Code Style & Comments
+
+- Comment "why" not "what" - code should be self-descriptive
+- Avoid unnecessary comments that explain obvious code
+- Use comments to explain business logic, non-obvious decisions, or workarounds
+- Keep code clean, readable, and maintainable
+
+### TypeScript
+
+- Use strict TypeScript with proper typing
+- Prefer interfaces for props with `extends React.ComponentProps`
+- Use type inference where possible
+- Export types/interfaces that may be reused
+- Use Zod schemas for form validation and runtime type checking
+
+### React Patterns
+
+- Use functional components with hooks
+- Use `React.forwardRef` for components that need ref forwarding
+- Always set `displayName` on forwardRef components
+- Prefer named exports for components
+- Use proper React 19 patterns (avoid deprecated features)
+
+### Component Structure
+
+- Place reusable UI components in `src/components/ui/`
+- Place custom/branded components in `src/components/`
+- Use page components in `src/app/` following Next.js App Router conventions
+- Organize by feature when project grows
+
+### Styling Guidelines
+
+- Use Tailwind CSS utility classes
+- For now over designl only for the light mode
+- Follow mobile-first responsive design
+- Use the custom gradient theme colors:
+  - `--gradient-orange`: #ff6b35
+  - `--gradient-pink`: #ff1493
+  - `--gradient-purple`: #9b59b6
+- Apply gradient via `from-[var(--gradient-orange)] via-[var(--gradient-pink)] to-[var(--gradient-purple)]`
+- Use `gradient-text` class for text with gradient
+- Use `cn()` utility from `@/lib/utils` for conditional classes
+- Prefer Tailwind utilities over custom CSS
+
+### Component Variants (CVA)
+
+- Use `class-variance-authority` for component variants
+- Define variants with `cva()` and export variant types
+- Use `VariantProps<typeof variantName>` for typing
+- Provide sensible `defaultVariants`
+- Common variant types: `variant`, `size`, `state`
+
+### Custom Component Patterns
+
+- **GradientButton**: Use for primary CTAs with gradient styling
+  - Variants: `primary`, `secondary`, `ghost`
+  - Sizes: `default`, `sm`, `lg`, `icon`
+- **GradientCard**: Use for content cards with gradient accents
+  - Variants: `default`, `highlighted`, `selected`
+  - Includes subcomponents: `GradientCardHeader`, `GradientCardTitle`, `GradientCardDescription`
+
+### Forms
+
+- Use React Hook Form for form state management
+- Use Zod for schema validation with `@hookform/resolvers/zod`
+- Integrate with shadcn/ui form components
+- Provide clear validation error messages
+
+### File Naming
+
+- Components: PascalCase (e.g., `GradientButton.tsx`)
+- Utilities: camelCase (e.g., `utils.ts`)
+- Pages: lowercase with hyphens (e.g., `business-profile/page.tsx`)
+- Types/Interfaces: PascalCase with descriptive names
+
+### Imports
+
+- Use `@/` path alias for imports from `src/`
+- Group imports: external packages → internal components → types → styles
+- Use named imports where possible
+
+### Next.js Specific
+
+- Use App Router conventions (app directory)
+- Use Server Components by default, mark Client Components with `"use client"`
+- Leverage Next.js 15 features (Turbopack, React 19 support)
+- Use `next/link` for navigation
+- Optimize images with `next/image` when appropriate
+
+### Accessibility
+
+- Use semantic HTML elements
+- Ensure keyboard navigation works
+- Provide proper ARIA labels where needed
+- Maintain color contrast ratios
+- Test focus states on interactive elements
+
+### Performance
+
+- Keep components small and focused
+- Use React.memo() judiciously for expensive components
+- Optimize re-renders with proper dependency arrays
+- Lazy load heavy components when appropriate
+
+### State Management
+
+- Use React hooks (useState, useReducer) for local state
+- Consider Context API for shared state across multiple components
+- Keep state as close to where it's used as possible
+
+### Error Handling
+
+- Provide user-friendly error messages
+- Handle loading and error states in UI
+- Use try-catch for async operations
+- Validate user inputs before submission
+
+### Testing Considerations
+
+- Write testable, pure functions when possible
+- Keep business logic separate from UI components
+- Use descriptive test-friendly data attributes if needed
+
+## Project-Specific Patterns
+
+### Brand Theme
+
+- Maintain consistent gradient usage (orange → pink → purple)
+- Use soft pastel backgrounds: `from-orange-50 via-pink-50 to-purple-50`
+- Apply gradient accent line at top of pages
+- Ensure gradient animations are smooth with transition classes
+
+### Social Media Context
+
+- Focus on content generation features
+- Prioritize user input forms for business profiles and content details
+- Display generated content in visually appealing cards
+- Support multiple social media platforms (Twitter, Facebook, Instagram, LinkedIn)
+
+### User Experience
+
+- Provide immediate visual feedback on interactions
+- Use loading states for AI generation
+- Show progress indicators for multi-step processes
+- Implement smooth transitions and animations with Tailwind
+
+## Code Quality
+
+- Follow DRY (Don't Repeat Yourself) principles
+- Extract repeated logic into utility functions or custom hooks
+- Keep functions small and focused on single responsibility
+- Use meaningful variable and function names
+- Prefer composition over inheritance
+- Write self-documenting code that minimizes need for comments
