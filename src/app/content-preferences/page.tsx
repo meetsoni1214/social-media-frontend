@@ -11,7 +11,6 @@ import {
 } from "@/lib/validations";
 import { useOnboarding } from "@/contexts/OnboardingContext";
 import { mockApi } from "@/lib/mockApi";
-import { ProgressSteps } from "@/components/ProgressSteps";
 import {
   GradientCard,
   GradientCardHeader,
@@ -141,8 +140,6 @@ export default function ContentPreferencesPage() {
             Define your content style and objectives
           </p>
         </div>
-
-        <ProgressSteps currentStep={2} steps={STEPS} />
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <GradientCard>

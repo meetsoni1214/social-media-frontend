@@ -12,7 +12,6 @@ import {
 } from "@/lib/validations";
 import { useOnboarding } from "@/contexts/OnboardingContext";
 import { mockApi } from "@/lib/mockApi";
-import { ProgressSteps } from "@/components/ProgressSteps";
 import { GradientCard, GradientCardTitle } from "@/components/GradientCard";
 import { GradientButton } from "@/components/GradientButton";
 import { Input } from "@/components/ui/input";
@@ -119,8 +118,6 @@ export default function BusinessProfilePage() {
             Help us understand your brand to create personalized content
           </p>
         </div>
-
-        <ProgressSteps currentStep={1} steps={STEPS} />
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <GradientCard>
