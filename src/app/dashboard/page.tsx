@@ -3,7 +3,16 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useOnboarding } from "@/contexts/OnboardingContext";
-import { Sparkles, Building2, Palette, Target } from "lucide-react";
+import {
+  Sparkles,
+  Building2,
+  Palette,
+  Target,
+  Calendar,
+  Megaphone,
+  BookOpen,
+  Quote,
+} from "lucide-react";
 import {
   GradientCard,
   GradientCardHeader,
@@ -11,6 +20,7 @@ import {
   GradientCardDescription,
 } from "@/components/GradientCard";
 import { GradientButton } from "@/components/GradientButton";
+import { QuickActionCard } from "@/components/QuickActionCard";
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -128,33 +138,33 @@ export default function DashboardPage() {
             </GradientCardHeader>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-              <button className="p-4 text-left rounded-lg border-2 border-gray-200 hover:border-[var(--gradient-pink)] transition-all">
-                <h4 className="font-medium mb-1">Festival Post</h4>
-                <p className="text-sm text-gray-600">
-                  Create posts for upcoming holidays
-                </p>
-              </button>
+              <QuickActionCard
+                icon={Calendar}
+                title="Festival Post"
+                description="Create posts for upcoming holidays"
+                onClick={() => router.push("/dashboard/festival-post")}
+              />
 
-              <button className="p-4 text-left rounded-lg border-2 border-gray-200 hover:border-[var(--gradient-pink)] transition-all">
-                <h4 className="font-medium mb-1">Product Promotion</h4>
-                <p className="text-sm text-gray-600">
-                  Promote your products or services
-                </p>
-              </button>
+              <QuickActionCard
+                icon={Megaphone}
+                title="Product Promotion"
+                description="Promote your products or services"
+                onClick={() => router.push("/dashboard/product-promotion")}
+              />
 
-              <button className="p-4 text-left rounded-lg border-2 border-gray-200 hover:border-[var(--gradient-pink)] transition-all">
-                <h4 className="font-medium mb-1">Educational Content</h4>
-                <p className="text-sm text-gray-600">
-                  Share tips and knowledge with your audience
-                </p>
-              </button>
+              <QuickActionCard
+                icon={BookOpen}
+                title="Educational Content"
+                description="Share tips and knowledge with your audience"
+                onClick={() => router.push("/dashboard/educational-content")}
+              />
 
-              <button className="p-4 text-left rounded-lg border-2 border-gray-200 hover:border-[var(--gradient-pink)] transition-all">
-                <h4 className="font-medium mb-1">Quote Post</h4>
-                <p className="text-sm text-gray-600">
-                  Share motivational quotes
-                </p>
-              </button>
+              <QuickActionCard
+                icon={Quote}
+                title="Quote Post"
+                description="Share motivational quotes"
+                onClick={() => router.push("/dashboard/quote-post")}
+              />
             </div>
           </GradientCard>
         </div>
