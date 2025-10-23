@@ -53,19 +53,6 @@ const GOAL_OPTIONS = [
   },
 ];
 
-const STEPS = [
-  {
-    number: 1,
-    title: "Business Profile",
-    description: "Tell us about your business",
-  },
-  {
-    number: 2,
-    title: "Content Preferences",
-    description: "Set your content style",
-  },
-];
-
 export default function ContentPreferencesPage() {
   const router = useRouter();
   const {

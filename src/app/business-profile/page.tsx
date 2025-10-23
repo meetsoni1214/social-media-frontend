@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Upload } from "lucide-react";
+import { Upload, Sparkles } from "lucide-react";
+import Image from "next/image";
+import ColorThief from "colorthief";
 import {
   businessProfileSchema,
   type BusinessProfileFormData,
@@ -18,6 +19,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 
 const BUSINESS_CATEGORIES = [
   "Restaurant & Food",
@@ -37,26 +39,15 @@ const BUSINESS_CATEGORIES = [
   "Other",
 ];
 
-const STEPS = [
-  {
-    number: 1,
-    title: "Business Profile",
-    description: "Tell us about your business",
-  },
-  {
-    number: 2,
-    title: "Content Preferences",
-    description: "Set your content style",
-  },
-];
-
 export default function BusinessProfilePage() {
   const router = useRouter();
   const { updateBusinessProfile, businessProfile } = useOnboarding();
   const [isLoading, setIsLoading] = useState(false);
+  const [isDetectingColors, setIsDetectingColors] = useState(false);
   const [logoPreview, setLogoPreview] = useState<string | null>(
     businessProfile?.logo || null
   );
+  const logoImageRef = useRef<HTMLImageElement>(null);
 
   const {
     register,
@@ -78,6 +69,50 @@ export default function BusinessProfilePage() {
       accentColor: "#c471ed",
     },
   });
+
+  const rgbToHex = (r: number, g: number, b: number): string => {
+    return (
+      "#" +
+      [r, g, b]
+        .map((x) => {
+          const hex = x.toString(16);
+          return hex.length === 1 ? "0" + hex : hex;
+        })
+        .join("")
+    );
+  };
+
+  const detectColorsFromLogo = async () => {
+    if (!logoImageRef.current) return;
+
+    setIsDetectingColors(true);
+    try {
+      const colorThief = new ColorThief();
+      const img = logoImageRef.current;
+
+      if (img.complete) {
+        const palette = colorThief.getPalette(img, 3) as [
+          number,
+          number,
+          number
+        ][];
+
+        if (palette && palette.length >= 3) {
+          const [r1, g1, b1] = palette[0];
+          const [r2, g2, b2] = palette[1];
+          const [r3, g3, b3] = palette[2];
+
+          setValue("primaryColor", rgbToHex(r1, g1, b1));
+          setValue("secondaryColor", rgbToHex(r2, g2, b2));
+          setValue("accentColor", rgbToHex(r3, g3, b3));
+        }
+      }
+    } catch (error) {
+      console.error("Error detecting colors:", error);
+    } finally {
+      setIsDetectingColors(false);
+    }
+  };
 
   const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -205,33 +240,53 @@ export default function BusinessProfilePage() {
 
               <div>
                 <Label htmlFor="logo">Logo</Label>
-                <div className="mt-2 mb-2 flex items-center gap-4">
+                <div className="mt-2 mb-4 flex items-center gap-4">
                   {logoPreview && (
                     <div className="w-20 h-20 rounded-lg border-2 border-gray-200 overflow-hidden bg-white flex items-center justify-center">
                       <Image
+                        ref={logoImageRef}
                         src={logoPreview}
                         alt="Logo preview"
                         width={80}
                         height={80}
-                        className="object-contain"
+                        className="w-full h-full object-contain"
                       />
                     </div>
                   )}
-                  <label className="cursor-pointer">
-                    <div className="flex items-center gap-2 px-4 py-2 border-2 border-gray-300 rounded-md hover:border-[var(--gradient-pink)] transition-colors">
-                      <Upload className="w-4 h-4" />
-                      <span className="text-sm">
-                        {logoPreview ? "Change Logo" : "Upload Logo"}
-                      </span>
-                    </div>
-                    <input
-                      id="logo"
-                      type="file"
-                      accept="image/*"
-                      onChange={handleLogoUpload}
-                      className="hidden"
-                    />
-                  </label>
+                  <div className="flex flex-col gap-2">
+                    <label className="cursor-pointer">
+                      <div className="flex items-center gap-2 px-4 py-2 border-2 border-gray-300 rounded-md hover:border-[var(--gradient-pink)] transition-colors">
+                        <Upload className="w-4 h-4" />
+                        <span className="text-sm">
+                          {logoPreview ? "Change Logo" : "Upload Logo"}
+                        </span>
+                      </div>
+                      <input
+                        id="logo"
+                        type="file"
+                        accept="image/*"
+                        onChange={handleLogoUpload}
+                        className="hidden"
+                      />
+                    </label>
+                    {logoPreview && (
+                      <Button
+                        type="button"
+                        onClick={detectColorsFromLogo}
+                        disabled={isDetectingColors}
+                        variant="outline"
+                        size="default"
+                        className="border-purple-300 bg-purple-50 hover:bg-purple-100"
+                      >
+                        <Sparkles className="w-4 h-4 text-purple-600" />
+                        <span className="text-purple-700">
+                          {isDetectingColors
+                            ? "Detecting..."
+                            : "Detect Colors from Logo"}
+                        </span>
+                      </Button>
+                    )}
+                  </div>
                 </div>
 
                 <div>
