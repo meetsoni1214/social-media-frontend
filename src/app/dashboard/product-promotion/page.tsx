@@ -1,50 +1,54 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { useOnboarding } from "@/contexts/OnboardingContext";
-import { ArrowLeft, TrendingUp, Sparkles, Loader2 } from "lucide-react";
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { useOnboarding } from '@/contexts/OnboardingContext';
+import {
+  ArrowLeft,
+  TrendingUp,
+  Sparkles,
+  Loader2,
+  AlertCircle,
+  RefreshCw,
+} from 'lucide-react';
 import {
   GradientCard,
   GradientCardHeader,
   GradientCardTitle,
-} from "@/components/GradientCard";
-import { GradientButton } from "@/components/GradientButton";
-import { mockApi, type PostIdea } from "@/lib/mockApi";
+} from '@/components/GradientCard';
+import { GradientButton } from '@/components/GradientButton';
+import { useProductPromotionIdeas } from '@/hooks/usePostIdeas';
 
 export default function ProductPromotionPage() {
   const router = useRouter();
   const { businessProfile, contentPreferences, isBusinessProfileComplete } =
     useOnboarding();
-  const [postIdeas, setPostIdeas] = useState<PostIdea[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+
+  const {
+    data: response,
+    isLoading,
+    error,
+    refetch,
+  } = useProductPromotionIdeas({
+    businessProfile: businessProfile!,
+    contentPreferences: contentPreferences!,
+  });
 
   useEffect(() => {
     if (!isBusinessProfileComplete) {
-      router.push("/business-profile");
-      return;
+      router.push('/business-profile');
     }
-
-    const loadPostIdeas = async () => {
-      if (!businessProfile || !contentPreferences) return;
-
-      const response = await mockApi.generateProductPromotionIdeas(
-        businessProfile,
-        contentPreferences
-      );
-
-      if (response.success && response.data) {
-        setPostIdeas(response.data);
-      }
-      setIsLoading(false);
-    };
-
-    loadPostIdeas();
-  }, [isBusinessProfileComplete, businessProfile, contentPreferences, router]);
+  }, [isBusinessProfileComplete, router]);
 
   if (!businessProfile || !contentPreferences) {
     return null;
   }
+
+  const postIdeas = response?.data || [];
+  const errorMessage =
+    error instanceof Error
+      ? error.message
+      : 'An unexpected error occurred. Please try again.';
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-pink-50 to-purple-50">
@@ -54,7 +58,7 @@ export default function ProductPromotionPage() {
         <div className="mb-8">
           <GradientButton
             variant="ghost"
-            onClick={() => router.push("/dashboard")}
+            onClick={() => router.push('/dashboard')}
           >
             <ArrowLeft className="w-4 h-4" />
             Back to Dashboard
@@ -69,7 +73,7 @@ export default function ProductPromotionPage() {
             </h1>
           </div>
           <p className="text-lg text-gray-600 mb-4">
-            AI-generated promotion ideas tailored for{" "}
+            AI-generated promotion ideas tailored for{' '}
             {businessProfile.businessName}
           </p>
           <div className="inline-flex items-center gap-2 text-sm text-gray-600">
@@ -77,7 +81,7 @@ export default function ProductPromotionPage() {
               {businessProfile.category}
             </span>
             <span className="px-3 py-1 rounded-full bg-white border border-gray-200">
-              {contentPreferences.goals.join(", ")}
+              {contentPreferences.goals.join(', ')}
             </span>
           </div>
         </div>
@@ -88,6 +92,22 @@ export default function ProductPromotionPage() {
             <p className="text-gray-600">
               Generating personalized promotion ideas...
             </p>
+          </div>
+        ) : error ? (
+          <div className="flex flex-col items-center justify-center py-8">
+            <GradientCard variant="highlighted">
+              <div className="flex flex-col items-center text-center p-6">
+                <AlertCircle className="w-12 h-12 text-red-500 mb-4" />
+                <h3 className="text-xl font-semibold text-gray-800 mb-2">
+                  Something went wrong
+                </h3>
+                <p className="text-gray-600 mb-6">{errorMessage}</p>
+                <GradientButton onClick={() => refetch()}>
+                  <RefreshCw className="w-4 h-4" />
+                  Try Again
+                </GradientButton>
+              </div>
+            </GradientCard>
           </div>
         ) : (
           <div className="space-y-4 animate-slide-up">
