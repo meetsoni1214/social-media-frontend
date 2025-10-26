@@ -136,7 +136,13 @@ export default function EducationalContentPage() {
                   </div>
 
                   <div className="flex gap-3">
-                    <GradientButton size="sm" className="flex-1">
+                    <GradientButton
+                      size="sm"
+                      className="flex-1"
+                      onClick={() =>
+                        router.push(`/dashboard/educational-content/${idea.id}`)
+                      }
+                    >
                       <Sparkles className="w-4 h-4" />
                       Use This Idea
                     </GradientButton>
