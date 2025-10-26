@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { useOnboarding } from "@/contexts/OnboardingContext";
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { useOnboarding } from '@/contexts/OnboardingContext';
 import {
   Sparkles,
   Building2,
@@ -12,15 +12,15 @@ import {
   Megaphone,
   BookOpen,
   Quote,
-} from "lucide-react";
+} from 'lucide-react';
 import {
   GradientCard,
   GradientCardHeader,
   GradientCardTitle,
   GradientCardDescription,
-} from "@/components/GradientCard";
-import { GradientButton } from "@/components/GradientButton";
-import { QuickActionCard } from "@/components/QuickActionCard";
+} from '@/components/GradientCard';
+import { GradientButton } from '@/components/GradientButton';
+import { QuickActionCard } from '@/components/QuickActionCard';
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -29,7 +29,7 @@ export default function DashboardPage() {
 
   useEffect(() => {
     if (!isBusinessProfileComplete) {
-      router.push("/business-profile");
+      router.push('/business-profile');
     }
   }, [isBusinessProfileComplete, router]);
 
@@ -121,7 +121,7 @@ export default function DashboardPage() {
               <div>
                 <h3 className="font-semibold mb-2">Primary Goals</h3>
                 <p className="text-sm text-gray-600">
-                  {contentPreferences.goals.map((goal) => goal).join(", ")}
+                  {contentPreferences.goals.map(goal => goal).join(', ')}
                 </p>
               </div>
             </div>
@@ -142,28 +142,28 @@ export default function DashboardPage() {
                 icon={Calendar}
                 title="Festival Post"
                 description="Create posts for upcoming holidays"
-                onClick={() => router.push("/dashboard/festival-post")}
+                onClick={() => router.push('/dashboard/festival-post')}
               />
 
               <QuickActionCard
                 icon={Megaphone}
                 title="Product Promotion"
                 description="Promote your products or services"
-                onClick={() => router.push("/dashboard/product-promotion")}
+                onClick={() => router.push('/dashboard/product-promotion')}
               />
 
               <QuickActionCard
                 icon={BookOpen}
                 title="Educational Content"
                 description="Share tips and knowledge with your audience"
-                onClick={() => router.push("/dashboard/educational-content")}
+                onClick={() => router.push('/dashboard/educational-content')}
               />
 
               <QuickActionCard
                 icon={Quote}
                 title="Quote Post"
                 description="Share motivational quotes"
-                onClick={() => router.push("/dashboard/quote-post")}
+                onClick={() => router.push('/dashboard/quote-post')}
               />
             </div>
           </GradientCard>
@@ -172,7 +172,7 @@ export default function DashboardPage() {
         <div className="mt-8 text-center">
           <GradientButton
             variant="ghost"
-            onClick={() => router.push("/business-profile")}
+            onClick={() => router.push('/business-profile')}
           >
             Edit Profile Settings
           </GradientButton>

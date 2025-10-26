@@ -1,7 +1,7 @@
-import * as React from "react";
-import { Circle } from "lucide-react";
+import * as React from 'react';
+import { Circle } from 'lucide-react';
 
-import { cn } from "@/lib/utils";
+import { cn } from '@/lib/utils';
 
 interface RadioGroupProps extends React.HTMLAttributes<HTMLDivElement> {
   value?: string;
@@ -11,8 +11,8 @@ interface RadioGroupProps extends React.HTMLAttributes<HTMLDivElement> {
 const RadioGroup = React.forwardRef<HTMLDivElement, RadioGroupProps>(
   ({ className, value, onValueChange, children, ...props }, ref) => {
     return (
-      <div ref={ref} className={cn("grid gap-2", className)} {...props}>
-        {React.Children.map(children, (child) => {
+      <div ref={ref} className={cn('grid gap-2', className)} {...props}>
+        {React.Children.map(children, child => {
           if (React.isValidElement<RadioGroupItemProps>(child)) {
             return React.cloneElement(child, {
               checked: child.props.value === value,
@@ -25,7 +25,7 @@ const RadioGroup = React.forwardRef<HTMLDivElement, RadioGroupProps>(
     );
   }
 );
-RadioGroup.displayName = "RadioGroup";
+RadioGroup.displayName = 'RadioGroup';
 
 interface RadioGroupItemProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -42,7 +42,7 @@ const RadioGroupItem = React.forwardRef<HTMLButtonElement, RadioGroupItemProps>(
         role="radio"
         aria-checked={checked}
         className={cn(
-          "aspect-square h-4 w-4 rounded-full border border-primary text-primary shadow focus:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50",
+          'aspect-square h-4 w-4 rounded-full border border-primary text-primary shadow focus:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50',
           className
         )}
         {...props}
@@ -54,6 +54,6 @@ const RadioGroupItem = React.forwardRef<HTMLButtonElement, RadioGroupItemProps>(
     );
   }
 );
-RadioGroupItem.displayName = "RadioGroupItem";
+RadioGroupItem.displayName = 'RadioGroupItem';
 
 export { RadioGroup, RadioGroupItem };

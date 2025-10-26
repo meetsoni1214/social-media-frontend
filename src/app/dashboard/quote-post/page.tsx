@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { useOnboarding } from "@/contexts/OnboardingContext";
-import { ArrowLeft, Quote as QuoteIcon, Sparkles, Loader2 } from "lucide-react";
-import { GradientCard } from "@/components/GradientCard";
-import { GradientButton } from "@/components/GradientButton";
-import { mockApi, type Quote } from "@/lib/mockApi";
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { useOnboarding } from '@/contexts/OnboardingContext';
+import { ArrowLeft, Quote as QuoteIcon, Sparkles, Loader2 } from 'lucide-react';
+import { GradientCard } from '@/components/GradientCard';
+import { GradientButton } from '@/components/GradientButton';
+import { mockApi, type Quote } from '@/lib/mockApi';
 
 export default function QuotePostPage() {
   const router = useRouter();
@@ -16,7 +16,7 @@ export default function QuotePostPage() {
 
   useEffect(() => {
     if (!isBusinessProfileComplete) {
-      router.push("/business-profile");
+      router.push('/business-profile');
       return;
     }
 
@@ -43,7 +43,7 @@ export default function QuotePostPage() {
         <div className="mb-8">
           <GradientButton
             variant="ghost"
-            onClick={() => router.push("/dashboard")}
+            onClick={() => router.push('/dashboard')}
           >
             <ArrowLeft className="w-4 h-4" />
             Back to Dashboard
@@ -66,7 +66,7 @@ export default function QuotePostPage() {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-slide-up">
-            {quotes.map((quote) => (
+            {quotes.map(quote => (
               <GradientCard key={quote.id} variant="highlighted">
                 <div className="flex flex-col h-full">
                   <div className="flex-1">
@@ -85,7 +85,7 @@ export default function QuotePostPage() {
 
                     <div className="p-3 rounded-lg bg-gradient-to-r from-orange-50 to-pink-50 border border-pink-100">
                       <p className="text-sm text-gray-700">
-                        <span className="font-semibold">Suggested use:</span>{" "}
+                        <span className="font-semibold">Suggested use:</span>{' '}
                         {quote.context}
                       </p>
                     </div>

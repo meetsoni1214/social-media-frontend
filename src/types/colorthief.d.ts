@@ -1,4 +1,4 @@
-declare module "colorthief" {
+declare module 'colorthief' {
   export default class ColorThief {
     getColor(
       img: HTMLImageElement | string,

@@ -1,7 +1,7 @@
-import Link from "next/link";
-import { Sparkles, Zap, Target, TrendingUp } from "lucide-react";
-import { GradientButton } from "@/components/GradientButton";
-import { GradientCard } from "@/components/GradientCard";
+import Link from 'next/link';
+import { Sparkles, Zap, Target, TrendingUp } from 'lucide-react';
+import { GradientButton } from '@/components/GradientButton';
+import { GradientCard } from '@/components/GradientCard';
 
 export default function Home() {
   return (

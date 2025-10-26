@@ -1,6 +1,6 @@
-import * as React from "react";
-import { LucideIcon } from "lucide-react";
-import { cn } from "@/lib/utils";
+import * as React from 'react';
+import { LucideIcon } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 export interface QuickActionCardProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -17,12 +17,12 @@ const QuickActionCard = React.forwardRef<
     <button
       ref={ref}
       className={cn(
-        "p-4 text-left rounded-lg border-2 border-gray-200",
-        "hover:border-[var(--gradient-pink)] hover:shadow-md",
-        "transition-all duration-200",
-        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--gradient-pink)] focus-visible:ring-offset-2",
-        "disabled:pointer-events-none disabled:opacity-50",
-        "group",
+        'p-4 text-left rounded-lg border-2 border-gray-200',
+        'hover:border-[var(--gradient-pink)] hover:shadow-md',
+        'transition-all duration-200',
+        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--gradient-pink)] focus-visible:ring-offset-2',
+        'disabled:pointer-events-none disabled:opacity-50',
+        'group',
         className
       )}
       {...props}
@@ -40,6 +40,6 @@ const QuickActionCard = React.forwardRef<
   );
 });
 
-QuickActionCard.displayName = "QuickActionCard";
+QuickActionCard.displayName = 'QuickActionCard';
 
 export { QuickActionCard };

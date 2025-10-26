@@ -1,16 +1,16 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { useOnboarding } from "@/contexts/OnboardingContext";
-import { ArrowLeft, Sparkles, Calendar, Loader2 } from "lucide-react";
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { useOnboarding } from '@/contexts/OnboardingContext';
+import { ArrowLeft, Sparkles, Calendar, Loader2 } from 'lucide-react';
 import {
   GradientCard,
   GradientCardHeader,
   GradientCardTitle,
-} from "@/components/GradientCard";
-import { GradientButton } from "@/components/GradientButton";
-import { mockApi, type Festival, type PostIdea } from "@/lib/mockApi";
+} from '@/components/GradientCard';
+import { GradientButton } from '@/components/GradientButton';
+import { mockApi, type Festival, type PostIdea } from '@/lib/mockApi';
 
 export default function FestivalPostPage() {
   const router = useRouter();
@@ -25,7 +25,7 @@ export default function FestivalPostPage() {
 
   useEffect(() => {
     if (!isBusinessProfileComplete) {
-      router.push("/business-profile");
+      router.push('/business-profile');
       return;
     }
 
@@ -63,7 +63,7 @@ export default function FestivalPostPage() {
       setSelectedFestival(null);
       setPostIdeas([]);
     } else {
-      router.push("/dashboard");
+      router.push('/dashboard');
     }
   };
 
@@ -79,7 +79,7 @@ export default function FestivalPostPage() {
         <div className="mb-8">
           <GradientButton variant="ghost" onClick={handleBack}>
             <ArrowLeft className="w-4 h-4" />
-            {selectedFestival ? "Back to Festivals" : "Back to Dashboard"}
+            {selectedFestival ? 'Back to Festivals' : 'Back to Dashboard'}
           </GradientButton>
         </div>
 
@@ -103,7 +103,7 @@ export default function FestivalPostPage() {
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {festivals.map((festival) => (
+                {festivals.map(festival => (
                   <button
                     key={festival.id}
                     onClick={() => handleFestivalSelect(festival)}

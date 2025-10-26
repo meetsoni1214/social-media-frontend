@@ -1,42 +1,42 @@
-"use client";
+'use client';
 
-import { useState, useRef } from "react";
-import { useRouter } from "next/navigation";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Upload, Sparkles } from "lucide-react";
-import Image from "next/image";
-import ColorThief from "colorthief";
+import { useState, useRef } from 'react';
+import { useRouter } from 'next/navigation';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Upload, Sparkles } from 'lucide-react';
+import Image from 'next/image';
+import ColorThief from 'colorthief';
 import {
   businessProfileSchema,
   type BusinessProfileFormData,
-} from "@/lib/validations";
-import { useOnboarding } from "@/contexts/OnboardingContext";
-import { mockApi } from "@/lib/mockApi";
-import { GradientCard, GradientCardTitle } from "@/components/GradientCard";
-import { GradientButton } from "@/components/GradientButton";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Select } from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
+} from '@/lib/validations';
+import { useOnboarding } from '@/contexts/OnboardingContext';
+import { mockApi } from '@/lib/mockApi';
+import { GradientCard, GradientCardTitle } from '@/components/GradientCard';
+import { GradientButton } from '@/components/GradientButton';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Select } from '@/components/ui/select';
+import { Button } from '@/components/ui/button';
 
 const BUSINESS_CATEGORIES = [
-  "Restaurant & Food",
-  "Retail & E-commerce",
-  "Health & Wellness",
-  "Education & Training",
-  "Technology & Software",
-  "Professional Services",
-  "Real Estate",
-  "Beauty & Fashion",
-  "Arts & Entertainment",
-  "Automotive",
-  "Sports & Fitness",
-  "Travel & Hospitality",
-  "Home Services",
-  "Non-Profit",
-  "Other",
+  'Restaurant & Food',
+  'Retail & E-commerce',
+  'Health & Wellness',
+  'Education & Training',
+  'Technology & Software',
+  'Professional Services',
+  'Real Estate',
+  'Beauty & Fashion',
+  'Arts & Entertainment',
+  'Automotive',
+  'Sports & Fitness',
+  'Travel & Hospitality',
+  'Home Services',
+  'Non-Profit',
+  'Other',
 ];
 
 export default function BusinessProfilePage() {
@@ -58,27 +58,27 @@ export default function BusinessProfilePage() {
   } = useForm<BusinessProfileFormData>({
     resolver: zodResolver(businessProfileSchema),
     defaultValues: businessProfile || {
-      businessName: "",
-      category: "",
-      description: "",
-      targetAudience: "",
-      websiteUrl: "",
-      logo: "",
-      primaryColor: "#ff9a56",
-      secondaryColor: "#ff6b9d",
-      accentColor: "#c471ed",
+      businessName: '',
+      category: '',
+      description: '',
+      targetAudience: '',
+      websiteUrl: '',
+      logo: '',
+      primaryColor: '#ff9a56',
+      secondaryColor: '#ff6b9d',
+      accentColor: '#c471ed',
     },
   });
 
   const rgbToHex = (r: number, g: number, b: number): string => {
     return (
-      "#" +
+      '#' +
       [r, g, b]
-        .map((x) => {
+        .map(x => {
           const hex = x.toString(16);
-          return hex.length === 1 ? "0" + hex : hex;
+          return hex.length === 1 ? '0' + hex : hex;
         })
-        .join("")
+        .join('')
     );
   };
 
@@ -94,7 +94,7 @@ export default function BusinessProfilePage() {
         const palette = colorThief.getPalette(img, 3) as [
           number,
           number,
-          number
+          number,
         ][];
 
         if (palette && palette.length >= 3) {
@@ -102,13 +102,13 @@ export default function BusinessProfilePage() {
           const [r2, g2, b2] = palette[1];
           const [r3, g3, b3] = palette[2];
 
-          setValue("primaryColor", rgbToHex(r1, g1, b1));
-          setValue("secondaryColor", rgbToHex(r2, g2, b2));
-          setValue("accentColor", rgbToHex(r3, g3, b3));
+          setValue('primaryColor', rgbToHex(r1, g1, b1));
+          setValue('secondaryColor', rgbToHex(r2, g2, b2));
+          setValue('accentColor', rgbToHex(r3, g3, b3));
         }
       }
     } catch (error) {
-      console.error("Error detecting colors:", error);
+      console.error('Error detecting colors:', error);
     } finally {
       setIsDetectingColors(false);
     }
@@ -121,7 +121,7 @@ export default function BusinessProfilePage() {
       reader.onloadend = () => {
         const base64String = reader.result as string;
         setLogoPreview(base64String);
-        setValue("logo", base64String);
+        setValue('logo', base64String);
       };
       reader.readAsDataURL(file);
     }
@@ -132,9 +132,9 @@ export default function BusinessProfilePage() {
     try {
       await mockApi.saveBusinessProfile(data);
       updateBusinessProfile(data);
-      router.push("/content-preferences");
+      router.push('/content-preferences');
     } catch (error) {
-      console.error("Error saving business profile:", error);
+      console.error('Error saving business profile:', error);
     } finally {
       setIsLoading(false);
     }
@@ -164,7 +164,7 @@ export default function BusinessProfilePage() {
                 <Label htmlFor="businessName">Business Name *</Label>
                 <Input
                   id="businessName"
-                  {...register("businessName")}
+                  {...register('businessName')}
                   placeholder="e.g., Acme Coffee Shop"
                 />
                 {errors.businessName && (
@@ -176,9 +176,9 @@ export default function BusinessProfilePage() {
 
               <div>
                 <Label htmlFor="category">Industry/Category *</Label>
-                <Select id="category" {...register("category")}>
+                <Select id="category" {...register('category')}>
                   <option value="">Select a category</option>
-                  {BUSINESS_CATEGORIES.map((cat) => (
+                  {BUSINESS_CATEGORIES.map(cat => (
                     <option key={cat} value={cat}>
                       {cat}
                     </option>
@@ -195,7 +195,7 @@ export default function BusinessProfilePage() {
                 <Label htmlFor="description">Business Description *</Label>
                 <Textarea
                   id="description"
-                  {...register("description")}
+                  {...register('description')}
                   placeholder="Describe what your business does, what makes it unique..."
                   rows={4}
                   className="resize-none"
@@ -211,7 +211,7 @@ export default function BusinessProfilePage() {
                 <Label htmlFor="targetAudience">Target Audience</Label>
                 <Textarea
                   id="targetAudience"
-                  {...register("targetAudience")}
+                  {...register('targetAudience')}
                   placeholder="Who are your ideal customers? e.g., Young professionals aged 25-35..."
                   rows={3}
                   className="resize-none"
@@ -228,7 +228,7 @@ export default function BusinessProfilePage() {
                 <Input
                   id="websiteUrl"
                   type="url"
-                  {...register("websiteUrl")}
+                  {...register('websiteUrl')}
                   placeholder="https://www.example.com"
                 />
                 {errors.websiteUrl && (
@@ -258,7 +258,7 @@ export default function BusinessProfilePage() {
                       <div className="flex items-center gap-2 px-4 py-2 border-2 border-gray-300 rounded-md hover:border-[var(--gradient-pink)] transition-colors">
                         <Upload className="w-4 h-4" />
                         <span className="text-sm">
-                          {logoPreview ? "Change Logo" : "Upload Logo"}
+                          {logoPreview ? 'Change Logo' : 'Upload Logo'}
                         </span>
                       </div>
                       <input
@@ -281,8 +281,8 @@ export default function BusinessProfilePage() {
                         <Sparkles className="w-4 h-4 text-purple-600" />
                         <span className="text-purple-700">
                           {isDetectingColors
-                            ? "Detecting..."
-                            : "Detect Colors from Logo"}
+                            ? 'Detecting...'
+                            : 'Detect Colors from Logo'}
                         </span>
                       </Button>
                     )}
@@ -299,13 +299,13 @@ export default function BusinessProfilePage() {
                         <input
                           id="primaryColor"
                           type="color"
-                          {...register("primaryColor")}
+                          {...register('primaryColor')}
                           className="w-12 h-12 rounded border-2 border-gray-300 cursor-pointer"
                         />
                         <Input
-                          value={watch("primaryColor")}
-                          onChange={(e) =>
-                            setValue("primaryColor", e.target.value)
+                          value={watch('primaryColor')}
+                          onChange={e =>
+                            setValue('primaryColor', e.target.value)
                           }
                           className="flex-1"
                         />
@@ -320,13 +320,13 @@ export default function BusinessProfilePage() {
                         <input
                           id="secondaryColor"
                           type="color"
-                          {...register("secondaryColor")}
+                          {...register('secondaryColor')}
                           className="w-12 h-12 rounded border-2 border-gray-300 cursor-pointer"
                         />
                         <Input
-                          value={watch("secondaryColor")}
-                          onChange={(e) =>
-                            setValue("secondaryColor", e.target.value)
+                          value={watch('secondaryColor')}
+                          onChange={e =>
+                            setValue('secondaryColor', e.target.value)
                           }
                           className="flex-1"
                         />
@@ -341,13 +341,13 @@ export default function BusinessProfilePage() {
                         <input
                           id="accentColor"
                           type="color"
-                          {...register("accentColor")}
+                          {...register('accentColor')}
                           className="w-12 h-12 rounded border-2 border-gray-300 cursor-pointer"
                         />
                         <Input
-                          value={watch("accentColor")}
-                          onChange={(e) =>
-                            setValue("accentColor", e.target.value)
+                          value={watch('accentColor')}
+                          onChange={e =>
+                            setValue('accentColor', e.target.value)
                           }
                           className="flex-1"
                         />
@@ -361,7 +361,7 @@ export default function BusinessProfilePage() {
 
           <div className="flex justify-end">
             <GradientButton type="submit" size="lg" disabled={isLoading}>
-              {isLoading ? "Saving..." : "Next Step"}
+              {isLoading ? 'Saving...' : 'Next Step'}
             </GradientButton>
           </div>
         </form>
