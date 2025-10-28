@@ -1,19 +1,18 @@
 'use client';
 
-import { useEffect, useState, use } from 'react';
+import { useEffect, use } from 'react';
 import { useRouter } from 'next/navigation';
 import { useOnboarding } from '@/contexts/OnboardingContext';
-import { ArrowLeft, Download, Loader2, CheckCircle } from 'lucide-react';
-import {
-  FacebookIcon,
-  InstagramIcon,
-  WhatsAppIcon,
-} from '@/components/icons/SocialIcons';
-import { GradientCard } from '@/components/GradientCard';
+import { ArrowLeft, Loader2 } from 'lucide-react';
 import { GradientButton } from '@/components/GradientButton';
-import { GradientIconButton } from '@/components/GradientIconButton';
 import { useEducationalContentIdeas } from '@/hooks/usePostIdeas';
-import Image from 'next/image';
+import { usePosts } from '@/hooks/usePost';
+import { useImageDownload } from '@/hooks/useImageDownload';
+import { useSocialShare } from '@/hooks/useSocialShare';
+import { PostImageDisplay } from '@/components/PostImageDisplay';
+import { PostCaption } from '@/components/PostCaption';
+import { ShareActions } from '@/components/ShareActions';
+import { UI_CONSTANTS, MESSAGES, FILE_CONSTANTS } from './constants';
 
 export default function GeneratedPostPage({
   params,
@@ -24,8 +23,13 @@ export default function GeneratedPostPage({
   const router = useRouter();
   const { businessProfile, contentPreferences, isBusinessProfileComplete } =
     useOnboarding();
-  const [isDownloading, setIsDownloading] = useState(false);
-  const [downloadSuccess, setDownloadSuccess] = useState(false);
+
+  const imageDownload = useImageDownload({
+    filename: FILE_CONSTANTS.DEFAULT_FILENAME,
+    successDuration: UI_CONSTANTS.SUCCESS_NOTIFICATION_DURATION,
+  });
+
+  const socialShare = useSocialShare();
 
   const { data: response, isLoading } = useEducationalContentIdeas({
     businessProfile: businessProfile!,
@@ -47,56 +51,51 @@ export default function GeneratedPostPage({
     }
   }, [idea, isLoading, postIdeas.length, router]);
 
+  const {
+    data: postResponse,
+    isLoading: isPostLoading,
+    error,
+    refetch,
+  } = usePosts({
+    businessProfile: businessProfile!,
+    contentPreferences: contentPreferences!,
+    postIdea: idea!,
+  });
+
   const handleDownload = async () => {
-    setIsDownloading(true);
-    setDownloadSuccess(false);
-
-    try {
-      const response = await fetch('/placeholder.png');
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      const filename = idea?.title
-        ? `${idea.title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_post.png`
-        : 'educational_post.png';
-      link.download = filename;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      window.URL.revokeObjectURL(url);
-
-      setDownloadSuccess(true);
-      setTimeout(() => setDownloadSuccess(false), 3000);
-    } catch (error) {
-      console.error('Download failed:', error);
-    } finally {
-      setIsDownloading(false);
+    if (!postResponse?.data?.base64_image) {
+      return;
     }
+
+    const filename = idea?.title
+      ? `${idea.title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_post.png`
+      : FILE_CONSTANTS.DEFAULT_FILENAME;
+
+    await imageDownload.downloadImage(postResponse.data.base64_image, filename);
   };
 
   const handleWhatsAppShare = () => {
-    const caption = idea?.title || 'Check out this post!';
-    const text = encodeURIComponent(caption);
-    window.open(`https://wa.me/?text=${text}`, '_blank');
+    socialShare.shareToWhatsApp({
+      text: idea?.title || MESSAGES.SOCIAL.WHATSAPP_DEFAULT,
+    });
   };
 
   const handleFacebookShare = () => {
-    const url = encodeURIComponent(window.location.origin + '/placeholder.png');
-    window.open(
-      `https://www.facebook.com/sharer/sharer.php?u=${url}`,
-      '_blank',
-      'width=600,height=400'
-    );
+    if (!postResponse?.data?.base64_image) {
+      alert(MESSAGES.SOCIAL.FACEBOOK_IMAGE_NOT_READY);
+      return;
+    }
+
+    socialShare.shareToFacebook({
+      url: window.location.href,
+    });
   };
 
   const handleInstagramShare = () => {
-    alert(
-      'Please download the image and share it on Instagram manually. Instagram does not support direct web sharing.'
-    );
+    socialShare.shareToInstagram();
   };
 
-  if (!businessProfile || !contentPreferences || isLoading) {
+  if (!businessProfile || !contentPreferences || isLoading || isPostLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-orange-50 via-pink-50 to-purple-50 flex items-center justify-center">
         <Loader2 className="w-10 h-10 animate-spin text-[var(--gradient-pink)]" />
@@ -106,6 +105,19 @@ export default function GeneratedPostPage({
 
   if (!idea) {
     return null;
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-orange-50 via-pink-50 to-purple-50 flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-red-600 mb-4">
+            Failed to generate post. Please try again.
+          </p>
+          <GradientButton onClick={() => refetch()}>Retry</GradientButton>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -134,94 +146,26 @@ export default function GeneratedPostPage({
           </div>
 
           <div className="grid lg:grid-cols-2 gap-6 items-start max-w-5xl mx-auto">
-            <GradientCard variant="highlighted">
-              <div className="relative w-full h-[360px] bg-gray-100 rounded-lg overflow-hidden">
-                <Image
-                  src="/placeholder.png"
-                  alt="Generated post"
-                  fill
-                  className="object-cover"
-                  priority
-                />
-              </div>
-            </GradientCard>
+            <PostImageDisplay
+              imageData={postResponse?.data?.base64_image}
+              isLoading={isPostLoading}
+              error={error}
+              onRetry={refetch}
+              alt="Generated educational post"
+            />
 
             <div className="space-y-4">
-              <div>
-                <h3 className="text-base font-semibold text-gray-800 mb-2">
-                  Caption
-                </h3>
-                <div className="bg-white rounded-lg p-4 shadow-sm border border-gray-200">
-                  <p className="font-medium text-gray-900 mb-2 text-sm">
-                    {idea.title}
-                  </p>
-                  <p className="text-gray-700 whitespace-pre-wrap text-sm">
-                    {idea.content}
-                  </p>
-                </div>
-              </div>
+              <PostCaption title={idea.title} content={idea.content} />
 
-              <div className="space-y-3">
-                <GradientButton
-                  onClick={handleDownload}
-                  disabled={isDownloading}
-                  className="w-full"
-                >
-                  {isDownloading ? (
-                    <>
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                      Downloading...
-                    </>
-                  ) : downloadSuccess ? (
-                    <>
-                      <CheckCircle className="w-4 h-4" />
-                      Downloaded!
-                    </>
-                  ) : (
-                    <>
-                      <Download className="w-4 h-4" />
-                      Download Post
-                    </>
-                  )}
-                </GradientButton>
-
-                <div className="relative">
-                  <div className="relative flex justify-center text-xs">
-                    <span className="px-2 text-gray-500">
-                      or share directly
-                    </span>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-3 gap-2">
-                  <GradientIconButton
-                    variant="ghost"
-                    onClick={handleWhatsAppShare}
-                    className="flex-col h-auto py-3"
-                  >
-                    <WhatsAppIcon className="w-8 h-8 mb-1" />
-                    <span className="text-xs">WhatsApp</span>
-                  </GradientIconButton>
-
-                  <GradientIconButton
-                    variant="ghost"
-                    onClick={handleFacebookShare}
-                    className="flex-col h-auto py-3"
-                  >
-                    <FacebookIcon className="w-8 h-8 mb-1" />
-                    <span className="text-xs">Facebook</span>
-                  </GradientIconButton>
-
-                  <GradientIconButton
-                    variant="ghost"
-                    onClick={handleInstagramShare}
-                    className="flex-col h-auto py-3"
-                  >
-                    <InstagramIcon className="w-8 h-8 mb-1" />
-                    <span className="text-xs">Instagram</span>
-                  </GradientIconButton>
-                </div>
-              </div>
+              <ShareActions
+                onDownload={handleDownload}
+                isDownloading={imageDownload.isDownloading}
+                downloadSuccess={imageDownload.downloadSuccess}
+                downloadDisabled={!postResponse?.data?.base64_image}
+                onWhatsAppShare={handleWhatsAppShare}
+                onFacebookShare={handleFacebookShare}
+                onInstagramShare={handleInstagramShare}
+              />
             </div>
           </div>
         </div>
