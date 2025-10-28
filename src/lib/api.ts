@@ -23,6 +23,16 @@ interface PostIdeasResponse {
   data: PostIdea[];
 }
 
+interface GeneratedPost {
+  id: string;
+  base64_image: string;
+}
+
+interface GeneratedPostResponse {
+  success: boolean;
+  data: GeneratedPost;
+}
+
 class ApiClient {
   async generateProductPromotionIdeas(
     businessProfile: BusinessProfileFormData,
@@ -62,6 +72,28 @@ class ApiClient {
     });
 
     return this.handleResponse<PostIdeasResponse>(response);
+  }
+
+  async generatePost(
+    businessProfile: BusinessProfileFormData,
+    contentPreferences: ContentPreferencesFormData,
+    postIdea: PostIdea
+  ) {
+    const url = `${API_BASE_URL}/posts/generate`;
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        businessProfile,
+        contentPreferences,
+        postIdea,
+      }),
+    });
+
+    return this.handleResponse<GeneratedPostResponse>(response);
   }
 
   private async handleResponse<T>(response: Response): Promise<T> {
