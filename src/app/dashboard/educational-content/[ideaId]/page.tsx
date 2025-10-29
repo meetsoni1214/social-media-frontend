@@ -63,7 +63,7 @@ export default function GeneratedPostPage({
   });
 
   const handleDownload = async () => {
-    if (!postResponse?.data?.base64_image) {
+    if (!postResponse?.data?.base64Image) {
       return;
     }
 
@@ -71,7 +71,7 @@ export default function GeneratedPostPage({
       ? `${idea.title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_post.png`
       : FILE_CONSTANTS.DEFAULT_FILENAME;
 
-    await imageDownload.downloadImage(postResponse.data.base64_image, filename);
+    await imageDownload.downloadImage(postResponse.data.base64Image, filename);
   };
 
   const handleWhatsAppShare = () => {
@@ -81,7 +81,7 @@ export default function GeneratedPostPage({
   };
 
   const handleFacebookShare = () => {
-    if (!postResponse?.data?.base64_image) {
+    if (!postResponse?.data?.base64Image) {
       alert(MESSAGES.SOCIAL.FACEBOOK_IMAGE_NOT_READY);
       return;
     }
@@ -147,7 +147,7 @@ export default function GeneratedPostPage({
 
           <div className="grid lg:grid-cols-2 gap-6 items-start max-w-5xl mx-auto">
             <PostImageDisplay
-              imageData={postResponse?.data?.base64_image}
+              imageData={postResponse?.data?.base64Image}
               isLoading={isPostLoading}
               error={error}
               onRetry={refetch}
@@ -162,7 +162,7 @@ export default function GeneratedPostPage({
                 onDownload={handleDownload}
                 isDownloading={imageDownload.isDownloading}
                 downloadSuccess={imageDownload.downloadSuccess}
-                downloadDisabled={!postResponse?.data?.base64_image}
+                downloadDisabled={!postResponse?.data?.base64Image}
                 onWhatsAppShare={handleWhatsAppShare}
                 onFacebookShare={handleFacebookShare}
                 onInstagramShare={handleInstagramShare}

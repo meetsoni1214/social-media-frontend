@@ -25,12 +25,22 @@ interface PostIdeasResponse {
 
 interface GeneratedPost {
   id: string;
+  base64Image: string;
+}
+
+interface GeneratedPostRawResponse {
+  id: string;
   base64_image: string;
 }
 
 interface GeneratedPostResponse {
   success: boolean;
   data: GeneratedPost;
+}
+
+interface GeneratedPostRawApiResponse {
+  success: boolean;
+  data: GeneratedPostRawResponse;
 }
 
 class ApiClient {
@@ -93,7 +103,19 @@ class ApiClient {
       }),
     });
 
-    return this.handleResponse<GeneratedPostResponse>(response);
+    const rawResponse =
+      await this.handleResponse<GeneratedPostRawApiResponse>(response);
+
+    // Transform snake_case to camelCase
+    const transformedResponse: GeneratedPostResponse = {
+      success: rawResponse.success,
+      data: {
+        id: rawResponse.data.id,
+        base64Image: rawResponse.data.base64_image,
+      },
+    };
+
+    return transformedResponse;
   }
 
   private async handleResponse<T>(response: Response): Promise<T> {
