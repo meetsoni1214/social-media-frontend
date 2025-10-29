@@ -4,19 +4,23 @@ import { GradientButton } from '@/components/GradientButton';
 import { GradientCard } from '@/components/GradientCard';
 
 interface PostImageDisplayProps {
+  imageSrc?: string;
   imageData?: string;
   isLoading: boolean;
   error: Error | null;
   onRetry: () => void;
   alt?: string;
+  height?: string; // Custom height class like 'h-96', 'h-[600px]', etc.
 }
 
 export function PostImageDisplay({
+  imageSrc,
   imageData,
   isLoading,
   error,
   onRetry,
   alt = 'Generated post',
+  height = 'h-[600px]', // Default to 600px height for 1024px images
 }: PostImageDisplayProps) {
   const renderContent = () => {
     if (error) {
@@ -52,6 +56,19 @@ export function PostImageDisplay({
       );
     }
 
+    if (imageSrc) {
+      return (
+        <Image
+          src={imageSrc}
+          alt={alt}
+          fill
+          className="object-cover"
+          priority
+          onError={e => console.error('Image failed to load:', e)}
+        />
+      );
+    }
+
     return (
       <div className="flex flex-col items-center justify-center h-full">
         <p className="text-sm text-gray-500">No image data received</p>
@@ -61,7 +78,9 @@ export function PostImageDisplay({
 
   return (
     <GradientCard variant="highlighted">
-      <div className="relative h-full w-full bg-gray-100 rounded-lg overflow-hidden">
+      <div
+        className={`relative w-full ${height} bg-gray-100 rounded-lg overflow-hidden`}
+      >
         {renderContent()}
       </div>
     </GradientCard>

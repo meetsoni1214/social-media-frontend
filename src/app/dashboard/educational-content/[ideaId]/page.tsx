@@ -152,6 +152,7 @@ export default function GeneratedPostPage({
               error={error}
               onRetry={refetch}
               alt="Generated educational post"
+              height="h-[512px]"
             />
 
             <div className="space-y-4">
