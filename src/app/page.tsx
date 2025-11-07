@@ -20,7 +20,7 @@ export default function Home() {
             Create engaging social media content in seconds with AI-powered
             generation tailored to your brand
           </p>
-          <Link href="/business-profile">
+          <Link href="/login">
             <GradientButton size="lg" className="text-lg px-12 py-6 h-auto">
               Get Started
             </GradientButton>
