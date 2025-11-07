@@ -1,7 +1,14 @@
 import type {
   BusinessProfileFormData,
   ContentPreferencesFormData,
+  SignupFormData,
 } from './validations';
+import type {
+  RequestOTPResponse,
+  VerifyOTPResponse,
+  RegisterResponse,
+} from '@/types/auth';
+import { keysToCamel, keysToSnake } from './utils';
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1:8000/api/v1';
@@ -28,19 +35,9 @@ interface GeneratedPost {
   base64Image: string;
 }
 
-interface GeneratedPostRawResponse {
-  id: string;
-  base64_image: string;
-}
-
 interface GeneratedPostResponse {
   success: boolean;
   data: GeneratedPost;
-}
-
-interface GeneratedPostRawApiResponse {
-  success: boolean;
-  data: GeneratedPostRawResponse;
 }
 
 class ApiClient {
@@ -55,10 +52,12 @@ class ApiClient {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        businessProfile,
-        contentPreferences,
-      }),
+      body: JSON.stringify(
+        keysToSnake({
+          businessProfile,
+          contentPreferences,
+        })
+      ),
     });
 
     return this.handleResponse<PostIdeasResponse>(response);
@@ -75,10 +74,12 @@ class ApiClient {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        businessProfile,
-        contentPreferences,
-      }),
+      body: JSON.stringify(
+        keysToSnake({
+          businessProfile,
+          contentPreferences,
+        })
+      ),
     });
 
     return this.handleResponse<PostIdeasResponse>(response);
@@ -96,26 +97,59 @@ class ApiClient {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        businessProfile,
-        contentPreferences,
-        postIdea,
-      }),
+      body: JSON.stringify(
+        keysToSnake({
+          businessProfile,
+          contentPreferences,
+          postIdea,
+        })
+      ),
     });
 
-    const rawResponse =
-      await this.handleResponse<GeneratedPostRawApiResponse>(response);
+    return this.handleResponse<GeneratedPostResponse>(response);
+  }
 
-    // Transform snake_case to camelCase
-    const transformedResponse: GeneratedPostResponse = {
-      success: rawResponse.success,
-      data: {
-        id: rawResponse.data.id,
-        base64Image: rawResponse.data.base64_image,
+  async requestOtp(phone: string): Promise<RequestOTPResponse> {
+    const url = `${API_BASE_URL}/auth/request-otp`;
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
       },
-    };
+      body: JSON.stringify({ phone }),
+    });
 
-    return transformedResponse;
+    return this.handleResponse<RequestOTPResponse>(response);
+  }
+
+  async verifyOtp(phone: string, otp: string): Promise<VerifyOTPResponse> {
+    const url = `${API_BASE_URL}/auth/verify-otp`;
+    console.log('Calling verifyOtp with:', { phone, otp, url });
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ phone, otp }),
+    });
+
+    return this.handleResponse<VerifyOTPResponse>(response);
+  }
+
+  async register(signupData: SignupFormData): Promise<RegisterResponse> {
+    const url = `${API_BASE_URL}/auth/register`;
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(keysToSnake(signupData)),
+    });
+
+    return this.handleResponse<RegisterResponse>(response);
   }
 
   private async handleResponse<T>(response: Response): Promise<T> {
@@ -138,7 +172,7 @@ class ApiClient {
     }
 
     const data = await response.json();
-    return data;
+    return keysToCamel<T>(data);
   }
 }
 
