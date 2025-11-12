@@ -40,13 +40,13 @@ export default function LoginPage() {
     setError('');
 
     try {
-      const response = await apiClient.requestOtp(data.phone);
+      const response = await apiClient.sendOTP(data.phone);
 
-      if (response.message) {
+      if (response.success) {
         setPhoneNumber(data.phone);
         setFlowState('otp-verification');
       } else {
-        setError('OTP Verification Failed!');
+        setError('Failed to send OTP. Please try again.');
       }
     } catch (err: unknown) {
       const errorMessage =
@@ -64,13 +64,17 @@ export default function LoginPage() {
     setError('');
 
     try {
-      const response = await apiClient.verifyOtp(phoneNumber, data.otp);
+      const response = await apiClient.verifyOTP(data.otp);
 
-      if (response.message) {
-        sessionStorage.setItem('verifiedPhone', phoneNumber);
-        router.push('/register');
+      if (response.success) {
+        if (response.isNewUser) {
+          sessionStorage.setItem('verifiedPhone', phoneNumber);
+          sessionStorage.setItem('userId', response.userId);
+          router.push('/register');
+        } else {
+          router.push('/dashboard');
+        }
       } else {
-        console.warn('Unexpected response structure:', response);
         setError('Invalid OTP. Please try again.');
       }
     } catch (err: unknown) {
@@ -88,9 +92,9 @@ export default function LoginPage() {
     setError('');
 
     try {
-      const response = await apiClient.requestOtp(phoneNumber);
+      const response = await apiClient.resendOTP();
 
-      if (response.message) {
+      if (response.success) {
         setError('OTP resent successfully!');
       } else {
         setError('Failed to resend OTP. Please try again.');

@@ -12,11 +12,14 @@ export interface User {
 }
 
 export interface RequestOTPResponse {
+  success: boolean;
   message: string;
-  expiresIn: number;
 }
 
 export interface VerifyOTPResponse {
+  success: boolean;
+  isNewUser: boolean;
+  userId: string;
   message: string;
 }
 

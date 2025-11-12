@@ -4,11 +4,19 @@ import type {
   SignupFormData,
 } from './validations';
 import type {
+  RegisterResponse,
   RequestOTPResponse,
   VerifyOTPResponse,
-  RegisterResponse,
 } from '@/types/auth';
 import { keysToCamel, keysToSnake } from './utils';
+
+import {
+  clearLoginAttemptInfo,
+  consumeCode,
+  createCode,
+  getLoginAttemptInfo,
+  resendCode,
+} from 'supertokens-web-js/recipe/passwordless';
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1:8000/api/v1';
@@ -41,6 +49,101 @@ interface GeneratedPostResponse {
 }
 
 class ApiClient {
+  private formatPhoneNumber(phone: string): string {
+    return `+91${phone}`;
+  }
+
+  async sendOTP(phone: string): Promise<RequestOTPResponse> {
+    try {
+      const formattedPhone = this.formatPhoneNumber(phone);
+
+      const response = await createCode({
+        phoneNumber: formattedPhone,
+      });
+
+      if (response.status === 'SIGN_IN_UP_NOT_ALLOWED') {
+        throw new Error(response.reason || 'Sign up not allowed');
+      }
+
+      return {
+        success: true,
+        message: 'OTP sent successfully to your phone',
+      };
+    } catch (err: unknown) {
+      throw new Error(
+        err instanceof Error
+          ? err.message
+          : 'Failed to send OTP. Please try again.'
+      );
+    }
+  }
+
+  async resendOTP(): Promise<RequestOTPResponse> {
+    try {
+      const response = await resendCode();
+
+      if (response.status === 'RESTART_FLOW_ERROR') {
+        await clearLoginAttemptInfo();
+        throw new Error('Session expired. Please start again.');
+      }
+
+      return {
+        success: true,
+        message: 'OTP resent successfully',
+      };
+    } catch (err: unknown) {
+      throw new Error(
+        err instanceof Error
+          ? err.message
+          : 'Failed to resend OTP. Please try again.'
+      );
+    }
+  }
+
+  async verifyOTP(otp: string): Promise<VerifyOTPResponse> {
+    try {
+      const response = await consumeCode({
+        userInputCode: otp,
+      });
+
+      if (response.status === 'OK') {
+        await clearLoginAttemptInfo();
+
+        const isNewUser =
+          response.createdNewRecipeUser &&
+          response.user.loginMethods.length === 1;
+
+        return {
+          success: true,
+          isNewUser,
+          userId: response.user.id,
+          message: isNewUser
+            ? 'Account created successfully'
+            : 'Login successful',
+        };
+      } else if (response.status === 'INCORRECT_USER_INPUT_CODE_ERROR') {
+        const attemptsLeft =
+          response.maximumCodeInputAttempts -
+          response.failedCodeInputAttemptCount;
+        throw new Error(
+          `Incorrect OTP. ${attemptsLeft} attempt${attemptsLeft !== 1 ? 's' : ''} remaining.`
+        );
+      } else if (response.status === 'EXPIRED_USER_INPUT_CODE_ERROR') {
+        throw new Error('OTP has expired. Please request a new one.');
+      } else if (response.status === 'RESTART_FLOW_ERROR') {
+        await clearLoginAttemptInfo();
+        throw new Error('Too many incorrect attempts. Please start again.');
+      } else if (response.status === 'SIGN_IN_UP_NOT_ALLOWED') {
+        await clearLoginAttemptInfo();
+        throw new Error(response.reason || 'Sign in not allowed');
+      }
+
+      throw new Error('Unexpected error occurred');
+    } catch (err: unknown) {
+      throw err instanceof Error ? err : new Error('Unexpected error occurred');
+    }
+  }
+
   async generateProductPromotionIdeas(
     businessProfile: BusinessProfileFormData,
     contentPreferences: ContentPreferencesFormData
@@ -107,35 +210,6 @@ class ApiClient {
     });
 
     return this.handleResponse<GeneratedPostResponse>(response);
-  }
-
-  async requestOtp(phone: string): Promise<RequestOTPResponse> {
-    const url = `${API_BASE_URL}/auth/request-otp`;
-
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ phone }),
-    });
-
-    return this.handleResponse<RequestOTPResponse>(response);
-  }
-
-  async verifyOtp(phone: string, otp: string): Promise<VerifyOTPResponse> {
-    const url = `${API_BASE_URL}/auth/verify-otp`;
-    console.log('Calling verifyOtp with:', { phone, otp, url });
-
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ phone, otp }),
-    });
-
-    return this.handleResponse<VerifyOTPResponse>(response);
   }
 
   async register(signupData: SignupFormData): Promise<RegisterResponse> {
