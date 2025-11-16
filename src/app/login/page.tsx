@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useRouter } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -17,7 +17,8 @@ import {
 } from '@/lib/validations';
 
 export default function LoginPage() {
-  const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectTo = searchParams.get('redirect') || '/dashboard';
   const [phoneNumber, setPhoneNumber] = useState('');
   const [flowState, setFlowState] = useState<
     'phone-entry' | 'otp-verification'
@@ -70,9 +71,9 @@ export default function LoginPage() {
         if (response.isNewUser) {
           sessionStorage.setItem('verifiedPhone', phoneNumber);
           sessionStorage.setItem('userId', response.userId);
-          router.push('/register');
+          window.location.href = '/register';
         } else {
-          router.push('/dashboard');
+          window.location.href = redirectTo;
         }
       } else {
         setError('Invalid OTP. Please try again.');

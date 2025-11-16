@@ -14,7 +14,6 @@ import {
   clearLoginAttemptInfo,
   consumeCode,
   createCode,
-  getLoginAttemptInfo,
   resendCode,
 } from 'supertokens-web-js/recipe/passwordless';
 
@@ -214,7 +213,6 @@ class ApiClient {
 
   async register(signupData: SignupFormData): Promise<RegisterResponse> {
     const url = `${API_BASE_URL}/auth/register`;
-
     const response = await fetch(url, {
       method: 'POST',
       headers: {
