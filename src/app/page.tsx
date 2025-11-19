@@ -1,7 +1,7 @@
-import Link from "next/link";
-import { Sparkles, Zap, Target, TrendingUp } from "lucide-react";
-import { GradientButton } from "@/components/GradientButton";
-import { GradientCard } from "@/components/GradientCard";
+import Link from 'next/link';
+import { Sparkles, Zap, Target, TrendingUp } from 'lucide-react';
+import { GradientButton } from '@/components/GradientButton';
+import { GradientCard } from '@/components/GradientCard';
 
 export default function Home() {
   return (
@@ -20,7 +20,7 @@ export default function Home() {
             Create engaging social media content in seconds with AI-powered
             generation tailored to your brand
           </p>
-          <Link href="/business-profile">
+          <Link href="/login">
             <GradientButton size="lg" className="text-lg px-12 py-6 h-auto">
               Get Started
             </GradientButton>

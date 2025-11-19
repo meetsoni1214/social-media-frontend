@@ -59,6 +59,7 @@ alwaysApply: false
 - Apply gradient via `from-[var(--gradient-orange)] via-[var(--gradient-pink)] to-[var(--gradient-purple)]`
 - Use `gradient-text` class for text with gradient
 - Use `cn()` utility from `@/lib/utils` for conditional classes
+- Prefer using components which are already there under components folder. If not present, create a new component, keeping in mind of reusability and scalability.
 - Prefer Tailwind utilities over custom CSS
 
 ### Component Variants (CVA)

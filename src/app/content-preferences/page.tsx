@@ -1,68 +1,55 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { CheckCircle2, ArrowLeft } from "lucide-react";
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { CheckCircle2, ArrowLeft } from 'lucide-react';
 import {
   contentPreferencesSchema,
   type ContentPreferencesFormData,
-} from "@/lib/validations";
-import { useOnboarding } from "@/contexts/OnboardingContext";
-import { mockApi } from "@/lib/mockApi";
+} from '@/lib/validations';
+import { useOnboarding } from '@/contexts/OnboardingContext';
+import { mockApi } from '@/lib/mockApi';
 import {
   GradientCard,
   GradientCardHeader,
   GradientCardTitle,
-} from "@/components/GradientCard";
-import { GradientButton } from "@/components/GradientButton";
-import { Label } from "@/components/ui/label";
-import { cn } from "@/lib/utils";
+} from '@/components/GradientCard';
+import { GradientButton } from '@/components/GradientButton';
+import { Label } from '@/components/ui/label';
+import { cn } from '@/lib/utils';
 
 const GOAL_OPTIONS = [
   {
-    value: "brand_awareness",
-    label: "Brand Awareness",
-    icon: "🎯",
-    description: "Get your brand noticed",
+    value: 'brand_awareness',
+    label: 'Brand Awareness',
+    icon: '🎯',
+    description: 'Get your brand noticed',
   },
   {
-    value: "engagement",
-    label: "Engagement",
-    icon: "💬",
-    description: "Drive conversations",
+    value: 'engagement',
+    label: 'Engagement',
+    icon: '💬',
+    description: 'Drive conversations',
   },
   {
-    value: "sales",
-    label: "Sales/Conversions",
-    icon: "💰",
-    description: "Convert to customers",
+    value: 'sales',
+    label: 'Sales/Conversions',
+    icon: '💰',
+    description: 'Convert to customers',
   },
   {
-    value: "education",
-    label: "Education",
-    icon: "📚",
-    description: "Inform your audience",
+    value: 'education',
+    label: 'Education',
+    icon: '📚',
+    description: 'Inform your audience',
   },
   {
-    value: "community",
-    label: "Community Building",
-    icon: "👥",
-    description: "Build loyal following",
-  },
-];
-
-const STEPS = [
-  {
-    number: 1,
-    title: "Business Profile",
-    description: "Tell us about your business",
-  },
-  {
-    number: 2,
-    title: "Content Preferences",
-    description: "Set your content style",
+    value: 'community',
+    label: 'Community Building',
+    icon: '👥',
+    description: 'Build loyal following',
   },
 ];
 
@@ -81,7 +68,7 @@ export default function ContentPreferencesPage() {
 
   useEffect(() => {
     if (!isBusinessProfileComplete) {
-      router.push("/business-profile");
+      router.push('/business-profile');
     }
   }, [isBusinessProfileComplete, router]);
 
@@ -98,10 +85,10 @@ export default function ContentPreferencesPage() {
 
   const toggleGoal = (goal: string) => {
     const newGoals = selectedGoals.includes(goal)
-      ? selectedGoals.filter((g) => g !== goal)
+      ? selectedGoals.filter(g => g !== goal)
       : [...selectedGoals, goal];
     setSelectedGoals(newGoals);
-    setValue("goals", newGoals);
+    setValue('goals', newGoals);
   };
 
   const onSubmit = async (data: ContentPreferencesFormData) => {
@@ -115,9 +102,9 @@ export default function ContentPreferencesPage() {
         contentPreferences: data,
       });
       updateContentPreferences(data);
-      router.push("/dashboard");
+      router.push('/dashboard');
     } catch (error) {
-      console.error("Error saving content preferences:", error);
+      console.error('Error saving content preferences:', error);
     } finally {
       setIsLoading(false);
     }
@@ -155,16 +142,16 @@ export default function ContentPreferencesPage() {
                 one) *
               </Label>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-2">
-                {GOAL_OPTIONS.map((option) => (
+                {GOAL_OPTIONS.map(option => (
                   <button
                     key={option.value}
                     type="button"
                     onClick={() => toggleGoal(option.value)}
                     className={cn(
-                      "flex items-start gap-3 p-4 rounded-lg border-2 transition-all text-left",
+                      'flex items-start gap-3 p-4 rounded-lg border-2 transition-all text-left',
                       selectedGoals.includes(option.value)
-                        ? "border-[var(--gradient-pink)] bg-pink-50"
-                        : "border-gray-200 hover:border-gray-300"
+                        ? 'border-[var(--gradient-pink)] bg-pink-50'
+                        : 'border-gray-200 hover:border-gray-300'
                     )}
                   >
                     <span className="text-2xl">{option.icon}</span>
@@ -191,13 +178,13 @@ export default function ContentPreferencesPage() {
               type="button"
               variant="secondary"
               size="lg"
-              onClick={() => router.push("/business-profile")}
+              onClick={() => router.push('/business-profile')}
             >
               <ArrowLeft className="w-4 h-4" />
               Back
             </GradientButton>
             <GradientButton type="submit" size="lg" disabled={isLoading}>
-              {isLoading ? "Completing Setup..." : "Complete Setup"}
+              {isLoading ? 'Completing Setup...' : 'Complete Setup'}
             </GradientButton>
           </div>
         </form>

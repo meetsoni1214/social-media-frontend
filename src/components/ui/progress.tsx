@@ -1,6 +1,6 @@
-import * as React from "react";
+import * as React from 'react';
 
-import { cn } from "@/lib/utils";
+import { cn } from '@/lib/utils';
 
 const Progress = React.forwardRef<
   HTMLDivElement,
@@ -9,7 +9,7 @@ const Progress = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      "relative h-2 w-full overflow-hidden rounded-full bg-primary/20",
+      'relative h-2 w-full overflow-hidden rounded-full bg-primary/20',
       className
     )}
     {...props}
@@ -20,7 +20,6 @@ const Progress = React.forwardRef<
     />
   </div>
 ));
-Progress.displayName = "Progress";
+Progress.displayName = 'Progress';
 
 export { Progress };
-

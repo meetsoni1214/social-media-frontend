@@ -1,15 +1,15 @@
-"use client";
+'use client';
 
 import React, {
   createContext,
   useContext,
   useState,
   type ReactNode,
-} from "react";
+} from 'react';
 import type {
   BusinessProfileFormData,
   ContentPreferencesFormData,
-} from "@/lib/validations";
+} from '@/lib/validations';
 
 interface OnboardingContextType {
   businessProfile: BusinessProfileFormData | null;
@@ -64,7 +64,7 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
 export function useOnboarding() {
   const context = useContext(OnboardingContext);
   if (context === undefined) {
-    throw new Error("useOnboarding must be used within an OnboardingProvider");
+    throw new Error('useOnboarding must be used within an OnboardingProvider');
   }
   return context;
 }

@@ -1,21 +1,23 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
-import { OnboardingProvider } from "@/contexts/OnboardingContext";
+import type { Metadata } from 'next';
+import { Geist, Geist_Mono } from 'next/font/google';
+import './globals.css';
+import { OnboardingProvider } from '@/contexts/OnboardingContext';
+import { QueryProvider } from '@/providers/QueryProvider';
+import { SuperTokensProvider } from '@/components/SuperTokensProvider';
 
 const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+  variable: '--font-geist-sans',
+  subsets: ['latin'],
 });
 
 const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+  variable: '--font-geist-mono',
+  subsets: ['latin'],
 });
 
 export const metadata: Metadata = {
-  title: "AI Social Media Generator",
-  description: "Create engaging social media content with AI",
+  title: 'AI Social Media Generator',
+  description: 'Create engaging social media content with AI',
 };
 
 export default function RootLayout({
@@ -28,7 +30,11 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <OnboardingProvider>{children}</OnboardingProvider>
+        <SuperTokensProvider>
+          <QueryProvider>
+            <OnboardingProvider>{children}</OnboardingProvider>
+          </QueryProvider>
+        </SuperTokensProvider>
       </body>
     </html>
   );

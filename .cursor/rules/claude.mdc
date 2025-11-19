@@ -1,0 +1,5 @@
+---
+alwaysApply: true
+---
+
+Do not generate any md files until it is explicitly asked for.
