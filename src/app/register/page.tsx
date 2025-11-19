@@ -95,7 +95,6 @@ export default function RegisterPage() {
           </div>
         )}
 
-        {/* Signup Form */}
         <form
           onSubmit={signupForm.handleSubmit(handleSignupSubmit)}
           className="space-y-4"

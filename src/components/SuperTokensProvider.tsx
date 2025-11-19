@@ -7,7 +7,7 @@ import Passwordless from 'supertokens-web-js/recipe/passwordless';
 
 let isInitialized = false;
 
-const apiDomain = process.env.NEXT_PUBLIC_API_DOMAIN || 'http://127.0.0.1:8000';
+const apiDomain = process.env.NEXT_PUBLIC_API_DOMAIN || 'http://localhost:8000';
 
 export function SuperTokensProvider({
   children,
