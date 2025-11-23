@@ -1,11 +1,7 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
-const protectedRoutes = [
-  '/dashboard',
-  '/business-profile',
-  '/content-preferences',
-];
+const protectedRoutes = ['/dashboard', '/business-profile'];
 
 const authRoutes = ['/login', '/register'];
 

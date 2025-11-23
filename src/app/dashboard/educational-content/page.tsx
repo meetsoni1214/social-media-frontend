@@ -22,8 +22,7 @@ import { useEducationalContentIdeas } from '@/hooks/usePostIdeas';
 
 export default function EducationalContentPage() {
   const router = useRouter();
-  const { businessProfile, contentPreferences, isBusinessProfileComplete } =
-    useOnboarding();
+  const { businessProfile, isBusinessProfileComplete } = useOnboarding();
 
   const {
     data: response,
@@ -32,7 +31,6 @@ export default function EducationalContentPage() {
     refetch,
   } = useEducationalContentIdeas({
     businessProfile: businessProfile!,
-    contentPreferences: contentPreferences!,
   });
 
   useEffect(() => {
@@ -41,7 +39,7 @@ export default function EducationalContentPage() {
     }
   }, [isBusinessProfileComplete, router]);
 
-  if (!businessProfile || !contentPreferences) {
+  if (!businessProfile) {
     return null;
   }
 
@@ -80,9 +78,6 @@ export default function EducationalContentPage() {
           <div className="inline-flex items-center gap-2 text-sm text-gray-600">
             <span className="px-3 py-1 rounded-full bg-white border border-gray-200">
               {businessProfile.category}
-            </span>
-            <span className="px-3 py-1 rounded-full bg-white border border-gray-200">
-              Focus: {contentPreferences.goals.join(', ')}
             </span>
           </div>
         </div>

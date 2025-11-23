@@ -1,7 +1,4 @@
-import type {
-  BusinessProfileFormData,
-  ContentPreferencesFormData,
-} from './validations';
+import type { BusinessProfileFormData } from './validations';
 import type { PostIdea } from './api';
 
 export interface ApiResponse<T> {
@@ -12,7 +9,6 @@ export interface ApiResponse<T> {
 
 export interface OnboardingData {
   businessProfile: BusinessProfileFormData;
-  contentPreferences: ContentPreferencesFormData;
 }
 
 export interface Festival {
@@ -168,19 +164,6 @@ export const mockApi = {
     return {
       success: true,
       data: { id: `profile_${Date.now()}` },
-    };
-  },
-
-  async saveContentPreferences(
-    data: ContentPreferencesFormData
-  ): Promise<ApiResponse<{ id: string }>> {
-    await delay(800);
-
-    console.log('Mock API: Saving content preferences', data);
-
-    return {
-      success: true,
-      data: { id: `preferences_${Date.now()}` },
     };
   },
 

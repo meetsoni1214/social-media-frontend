@@ -14,10 +14,6 @@ export const businessProfileSchema = z.object({
   accentColor: z.string().regex(/^#[0-9A-F]{6}$/i, 'Invalid color format'),
 });
 
-export const contentPreferencesSchema = z.object({
-  goals: z.array(z.string()).min(1, 'Please select at least one goal'),
-});
-
 export const phoneSchema = z.object({
   phone: z
     .string()
@@ -50,9 +46,6 @@ export const signupSchema = z.object({
 });
 
 export type BusinessProfileFormData = z.infer<typeof businessProfileSchema>;
-export type ContentPreferencesFormData = z.infer<
-  typeof contentPreferencesSchema
->;
 export type PhoneFormData = z.infer<typeof phoneSchema>;
 export type OTPFormData = z.infer<typeof otpSchema>;
 export type SignupFormData = z.infer<typeof signupSchema>;

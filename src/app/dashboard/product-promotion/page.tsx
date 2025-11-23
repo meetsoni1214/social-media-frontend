@@ -21,8 +21,7 @@ import { useProductPromotionIdeas } from '@/hooks/usePostIdeas';
 
 export default function ProductPromotionPage() {
   const router = useRouter();
-  const { businessProfile, contentPreferences, isBusinessProfileComplete } =
-    useOnboarding();
+  const { businessProfile, isBusinessProfileComplete } = useOnboarding();
 
   const {
     data: response,
@@ -31,7 +30,6 @@ export default function ProductPromotionPage() {
     refetch,
   } = useProductPromotionIdeas({
     businessProfile: businessProfile!,
-    contentPreferences: contentPreferences!,
   });
 
   useEffect(() => {
@@ -40,7 +38,7 @@ export default function ProductPromotionPage() {
     }
   }, [isBusinessProfileComplete, router]);
 
-  if (!businessProfile || !contentPreferences) {
+  if (!businessProfile) {
     return null;
   }
 
@@ -79,9 +77,6 @@ export default function ProductPromotionPage() {
           <div className="inline-flex items-center gap-2 text-sm text-gray-600">
             <span className="px-3 py-1 rounded-full bg-white border border-gray-200">
               {businessProfile.category}
-            </span>
-            <span className="px-3 py-1 rounded-full bg-white border border-gray-200">
-              {contentPreferences.goals.join(', ')}
             </span>
           </div>
         </div>

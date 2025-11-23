@@ -6,16 +6,11 @@ import React, {
   useState,
   type ReactNode,
 } from 'react';
-import type {
-  BusinessProfileFormData,
-  ContentPreferencesFormData,
-} from '@/lib/validations';
+import type { BusinessProfileFormData } from '@/lib/validations';
 
 interface OnboardingContextType {
   businessProfile: BusinessProfileFormData | null;
-  contentPreferences: ContentPreferencesFormData | null;
   updateBusinessProfile: (data: BusinessProfileFormData) => void;
-  updateContentPreferences: (data: ContentPreferencesFormData) => void;
   resetOnboarding: () => void;
   isBusinessProfileComplete: boolean;
 }
@@ -27,20 +22,13 @@ const OnboardingContext = createContext<OnboardingContextType | undefined>(
 export function OnboardingProvider({ children }: { children: ReactNode }) {
   const [businessProfile, setBusinessProfile] =
     useState<BusinessProfileFormData | null>(null);
-  const [contentPreferences, setContentPreferences] =
-    useState<ContentPreferencesFormData | null>(null);
 
   const updateBusinessProfile = (data: BusinessProfileFormData) => {
     setBusinessProfile(data);
   };
 
-  const updateContentPreferences = (data: ContentPreferencesFormData) => {
-    setContentPreferences(data);
-  };
-
   const resetOnboarding = () => {
     setBusinessProfile(null);
-    setContentPreferences(null);
   };
 
   const isBusinessProfileComplete = businessProfile !== null;
@@ -49,9 +37,7 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
     <OnboardingContext.Provider
       value={{
         businessProfile,
-        contentPreferences,
         updateBusinessProfile,
-        updateContentPreferences,
         resetOnboarding,
         isBusinessProfileComplete,
       }}

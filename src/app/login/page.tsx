@@ -208,7 +208,7 @@ export default function LoginPage() {
                 type="button"
                 onClick={handleResendOtp}
                 disabled={isLoading}
-                className="w-full text-sm text-purple-600 hover:text-purple-700 underline"
+                className="w-full text-sm text-purple-600 hover:text-purple-700"
               >
                 Resend OTP
               </button>

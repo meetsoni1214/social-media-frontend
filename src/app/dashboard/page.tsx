@@ -24,8 +24,7 @@ import { QuickActionCard } from '@/components/QuickActionCard';
 
 export default function DashboardPage() {
   const router = useRouter();
-  const { businessProfile, contentPreferences, isBusinessProfileComplete } =
-    useOnboarding();
+  const { businessProfile, isBusinessProfileComplete } = useOnboarding();
 
   useEffect(() => {
     if (!isBusinessProfileComplete) {
@@ -33,7 +32,7 @@ export default function DashboardPage() {
     }
   }, [isBusinessProfileComplete, router]);
 
-  if (!businessProfile || !contentPreferences) {
+  if (!businessProfile) {
     return null;
   }
 
@@ -119,9 +118,9 @@ export default function DashboardPage() {
             <div className="flex items-start gap-3">
               <Target className="w-8 h-8 text-[var(--gradient-purple)] flex-shrink-0" />
               <div>
-                <h3 className="font-semibold mb-2">Primary Goals</h3>
+                <h3 className="font-semibold mb-2">Target Audience</h3>
                 <p className="text-sm text-gray-600">
-                  {contentPreferences.goals.map(goal => goal).join(', ')}
+                  {businessProfile.targetAudience || 'Not specified'}
                 </p>
               </div>
             </div>

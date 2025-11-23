@@ -132,7 +132,7 @@ export default function BusinessProfilePage() {
     try {
       await mockApi.saveBusinessProfile(data);
       updateBusinessProfile(data);
-      router.push('/content-preferences');
+      router.push('/dashboard');
     } catch (error) {
       console.error('Error saving business profile:', error);
     } finally {

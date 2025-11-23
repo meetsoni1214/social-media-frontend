@@ -1,8 +1,4 @@
-import type {
-  BusinessProfileFormData,
-  ContentPreferencesFormData,
-  SignupFormData,
-} from './validations';
+import type { BusinessProfileFormData, SignupFormData } from './validations';
 import type {
   RegisterResponse,
   RequestOTPResponse,
@@ -144,8 +140,7 @@ class ApiClient {
   }
 
   async generateProductPromotionIdeas(
-    businessProfile: BusinessProfileFormData,
-    contentPreferences: ContentPreferencesFormData
+    businessProfile: BusinessProfileFormData
   ) {
     const url = `${API_BASE_URL}/post-ideas/promotion`;
 
@@ -157,7 +152,6 @@ class ApiClient {
       body: JSON.stringify(
         keysToSnake({
           businessProfile,
-          contentPreferences,
         })
       ),
     });
@@ -166,8 +160,7 @@ class ApiClient {
   }
 
   async generateEducationalContentIdeas(
-    businessProfile: BusinessProfileFormData,
-    contentPreferences: ContentPreferencesFormData
+    businessProfile: BusinessProfileFormData
   ) {
     const url = `${API_BASE_URL}/post-ideas/educational`;
 
@@ -179,7 +172,6 @@ class ApiClient {
       body: JSON.stringify(
         keysToSnake({
           businessProfile,
-          contentPreferences,
         })
       ),
     });
@@ -189,7 +181,6 @@ class ApiClient {
 
   async generatePost(
     businessProfile: BusinessProfileFormData,
-    contentPreferences: ContentPreferencesFormData,
     postIdea: PostIdea
   ) {
     const url = `${API_BASE_URL}/posts/generate`;
@@ -202,7 +193,6 @@ class ApiClient {
       body: JSON.stringify(
         keysToSnake({
           businessProfile,
-          contentPreferences,
           postIdea,
         })
       ),

@@ -21,8 +21,7 @@ export default function GeneratedPostPage({
 }) {
   const { ideaId } = use(params);
   const router = useRouter();
-  const { businessProfile, contentPreferences, isBusinessProfileComplete } =
-    useOnboarding();
+  const { businessProfile, isBusinessProfileComplete } = useOnboarding();
 
   const imageDownload = useImageDownload({
     filename: FILE_CONSTANTS.DEFAULT_FILENAME,
@@ -33,7 +32,6 @@ export default function GeneratedPostPage({
 
   const { data: response, isLoading } = useEducationalContentIdeas({
     businessProfile: businessProfile!,
-    contentPreferences: contentPreferences!,
   });
 
   useEffect(() => {
@@ -58,7 +56,6 @@ export default function GeneratedPostPage({
     refetch,
   } = usePosts({
     businessProfile: businessProfile!,
-    contentPreferences: contentPreferences!,
     postIdea: idea!,
   });
 
@@ -95,7 +92,7 @@ export default function GeneratedPostPage({
     socialShare.shareToInstagram();
   };
 
-  if (!businessProfile || !contentPreferences || isLoading || isPostLoading) {
+  if (!businessProfile || isLoading || isPostLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-orange-50 via-pink-50 to-purple-50 flex items-center justify-center">
         <Loader2 className="w-10 h-10 animate-spin text-[var(--gradient-pink)]" />
