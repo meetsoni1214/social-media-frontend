@@ -41,22 +41,26 @@ const BUSINESS_CATEGORIES = [
 
 export default function BusinessProfilePage() {
   const router = useRouter();
-  const { updateBusinessProfile, businessProfile } = useOnboarding();
+  const {
+    updateBusinessProfile,
+    businessProfile,
+    isBusinessProfileComplete,
+    isLoading: isProfileLoading,
+  } = useOnboarding();
   const [error, setError] = useState('');
   const [isDetectingColors, setIsDetectingColors] = useState(false);
   const [logoPreview, setLogoPreview] = useState<string | null>(
     businessProfile?.logo || null
   );
   const logoImageRef = useRef<HTMLImageElement>(null);
-  const { isBusinessProfileComplete } = useOnboarding();
 
   const { mutate: saveBusinessProfile, isPending } = useSaveBusinessProfile();
 
   useEffect(() => {
-    if (!isBusinessProfileComplete) {
-      router.push('/business-profile');
+    if (!isProfileLoading && isBusinessProfileComplete) {
+      router.push('/dashboard');
     }
-  }, [isBusinessProfileComplete, router]);
+  }, [isBusinessProfileComplete, isProfileLoading, router]);
 
   const {
     register,
@@ -151,6 +155,17 @@ export default function BusinessProfilePage() {
       },
     });
   };
+
+  if (isProfileLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-orange-50 via-pink-50 to-purple-50 flex items-center justify-center">
+        <div className="text-center">
+          <Sparkles className="w-12 h-12 text-[var(--gradient-pink)] animate-pulse mx-auto mb-4" />
+          <p className="text-lg text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-pink-50 to-purple-50">
