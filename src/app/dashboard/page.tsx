@@ -167,15 +167,6 @@ export default function DashboardPage() {
             </div>
           </GradientCard>
         </div>
-
-        <div className="mt-8 text-center">
-          <GradientButton
-            variant="ghost"
-            onClick={() => router.push('/business-profile')}
-          >
-            Edit Profile Settings
-          </GradientButton>
-        </div>
       </div>
     </div>
   );

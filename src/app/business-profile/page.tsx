@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -49,6 +49,13 @@ export default function BusinessProfilePage() {
     businessProfile?.logo || null
   );
   const logoImageRef = useRef<HTMLImageElement>(null);
+  const { isBusinessProfileComplete } = useOnboarding();
+
+  useEffect(() => {
+    if (!isBusinessProfileComplete) {
+      router.push('/business-profile');
+    }
+  }, [isBusinessProfileComplete, router]);
 
   const {
     register,
