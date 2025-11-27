@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select } from '@/components/ui/select';
 import { GradientButton } from '@/components/GradientButton';
-import { apiClient } from '@/lib/api';
+import { useRegister } from '@/hooks/useRegister';
 import { signupSchema, type SignupFormData } from '@/lib/validations';
 
 const ROLE_OPTIONS = [
@@ -23,9 +23,10 @@ const ROLE_OPTIONS = [
 export default function RegisterPage() {
   const router = useRouter();
   const [phoneNumber, setPhoneNumber] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [isRedirecting, setIsRedirecting] = useState(false);
+
+  const { mutate: register, isPending } = useRegister();
 
   const signupForm = useForm<SignupFormData>({
     resolver: zodResolver(signupSchema),
@@ -50,27 +51,21 @@ export default function RegisterPage() {
   }, [router, signupForm]);
 
   const handleSignupSubmit = async (data: SignupFormData) => {
-    setIsLoading(true);
     setError('');
 
-    try {
-      const response = await apiClient.register(data);
-
-      if (response.user) {
-        sessionStorage.removeItem('verifiedPhone');
-        router.push('/business-profile');
-      } else {
-        setError('Registration failed. Please try again.');
-      }
-    } catch (err: unknown) {
-      const errorMessage =
-        err instanceof Error
-          ? err.message
-          : 'Registration failed. Please try again.';
-      setError(errorMessage);
-    } finally {
-      setIsLoading(false);
-    }
+    register(data, {
+      onSuccess: response => {
+        if (response.user) {
+          sessionStorage.removeItem('verifiedPhone');
+          router.push('/business-profile');
+        } else {
+          setError('Registration failed. Please try again.');
+        }
+      },
+      onError: (err: Error) => {
+        setError(err.message || 'Registration failed. Please try again.');
+      },
+    });
   };
 
   if (isRedirecting) {
@@ -179,8 +174,8 @@ export default function RegisterPage() {
             )}
           </div>
 
-          <GradientButton type="submit" className="w-full" disabled={isLoading}>
-            {isLoading ? 'Creating Account...' : 'Create Account'}
+          <GradientButton type="submit" className="w-full" disabled={isPending}>
+            {isPending ? 'Creating Account...' : 'Create Account'}
           </GradientButton>
         </form>
       </Card>
