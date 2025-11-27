@@ -1,7 +1,14 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '@/lib/api';
 import type { BusinessProfileFormData } from '@/lib/validations';
 import type { BusinessProfileResponse } from '@/types/businessProfile';
+
+export function useBusinessProfile() {
+  return useQuery<BusinessProfileResponse | null>({
+    queryKey: ['businessProfile'],
+    queryFn: () => apiClient.getBusinessProfile(),
+  });
+}
 
 export function useSaveBusinessProfile() {
   const queryClient = useQueryClient();
@@ -10,8 +17,7 @@ export function useSaveBusinessProfile() {
     mutationFn: (businessProfile: BusinessProfileFormData) =>
       apiClient.saveBusinessProfile(businessProfile),
     onSuccess: data => {
-      // Optionally invalidate any business profile queries here
-      // queryClient.invalidateQueries({ queryKey: ['business-profile'] });
+      queryClient.setQueryData(['businessProfile'], data);
     },
   });
 }

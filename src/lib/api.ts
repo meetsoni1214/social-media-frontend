@@ -231,6 +231,23 @@ class ApiClient {
     return this.handleResponse<BusinessProfileResponse>(response);
   }
 
+  async getBusinessProfile(): Promise<BusinessProfileResponse | null> {
+    const url = `${API_BASE_URL}/business-profiles`;
+
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (response.status === 404) {
+      return null;
+    }
+
+    return this.handleResponse<BusinessProfileResponse>(response);
+  }
+
   private async handleResponse<T>(response: Response): Promise<T> {
     if (!response.ok) {
       let errorMessage = 'An error occurred while processing your request';
