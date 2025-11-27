@@ -12,7 +12,7 @@ import {
   type BusinessProfileFormData,
 } from '@/lib/validations';
 import { useOnboarding } from '@/contexts/OnboardingContext';
-import { apiClient } from '@/lib/api';
+import { useSaveBusinessProfile } from '@/hooks/useBusinessProfile';
 import { GradientCard, GradientCardTitle } from '@/components/GradientCard';
 import { GradientButton } from '@/components/GradientButton';
 import { Input } from '@/components/ui/input';
@@ -42,7 +42,6 @@ const BUSINESS_CATEGORIES = [
 export default function BusinessProfilePage() {
   const router = useRouter();
   const { updateBusinessProfile, businessProfile } = useOnboarding();
-  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [isDetectingColors, setIsDetectingColors] = useState(false);
   const [logoPreview, setLogoPreview] = useState<string | null>(
@@ -50,6 +49,8 @@ export default function BusinessProfilePage() {
   );
   const logoImageRef = useRef<HTMLImageElement>(null);
   const { isBusinessProfileComplete } = useOnboarding();
+
+  const { mutate: saveBusinessProfile, isPending } = useSaveBusinessProfile();
 
   useEffect(() => {
     if (!isBusinessProfileComplete) {
@@ -136,22 +137,19 @@ export default function BusinessProfilePage() {
   };
 
   const onSubmit = async (data: BusinessProfileFormData) => {
-    setIsLoading(true);
-    try {
-      const response = await apiClient.saveBusinessProfile(data);
+    setError('');
 
-      updateBusinessProfile(data, response.id);
-
-      router.push('/dashboard');
-    } catch (error) {
-      const errorMessage =
-        error instanceof Error
-          ? error.message
-          : 'Failed to save business profile. Please try again.';
-      setError(errorMessage);
-    } finally {
-      setIsLoading(false);
-    }
+    saveBusinessProfile(data, {
+      onSuccess: response => {
+        updateBusinessProfile(data, response.id);
+        router.push('/dashboard');
+      },
+      onError: (error: Error) => {
+        setError(
+          error.message || 'Failed to save business profile. Please try again.'
+        );
+      },
+    });
   };
 
   return (
@@ -380,8 +378,8 @@ export default function BusinessProfilePage() {
           </GradientCard>
 
           <div className="flex justify-end">
-            <GradientButton type="submit" size="lg" disabled={isLoading}>
-              {isLoading ? 'Saving...' : 'Save and Continue'}
+            <GradientButton type="submit" size="lg" disabled={isPending}>
+              {isPending ? 'Saving...' : 'Save and Continue'}
             </GradientButton>
           </div>
         </form>

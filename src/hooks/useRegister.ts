@@ -6,6 +6,5 @@ import type { RegisterResponse } from '@/types/auth';
 export function useRegister() {
   return useMutation<RegisterResponse, Error, SignupFormData>({
     mutationFn: (signupData: SignupFormData) => apiClient.register(signupData),
-    retry: 1,
   });
 }
