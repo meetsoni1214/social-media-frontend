@@ -4,9 +4,11 @@ import React, {
   createContext,
   useContext,
   useState,
+  useEffect,
   type ReactNode,
 } from 'react';
 import type { BusinessProfileFormData } from '@/lib/validations';
+import { useBusinessProfile } from '@/hooks/useBusinessProfile';
 
 interface OnboardingContextType {
   businessProfile: BusinessProfileFormData | null;
@@ -17,6 +19,7 @@ interface OnboardingContextType {
   ) => void;
   resetOnboarding: () => void;
   isBusinessProfileComplete: boolean;
+  isLoading: boolean;
 }
 
 const OnboardingContext = createContext<OnboardingContextType | undefined>(
@@ -29,6 +32,26 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
   const [businessProfileId, setBusinessProfileId] = useState<number | null>(
     null
   );
+
+  const { data: fetchedProfile, isLoading } = useBusinessProfile();
+
+  useEffect(() => {
+    if (fetchedProfile) {
+      const profileData: BusinessProfileFormData = {
+        businessName: fetchedProfile.businessName,
+        category: fetchedProfile.category,
+        description: fetchedProfile.description,
+        targetAudience: fetchedProfile.targetAudience,
+        websiteUrl: fetchedProfile.websiteUrl,
+        logo: fetchedProfile.logo,
+        primaryColor: fetchedProfile.primaryColor,
+        secondaryColor: fetchedProfile.secondaryColor,
+        accentColor: fetchedProfile.accentColor,
+      };
+      setBusinessProfile(profileData);
+      setBusinessProfileId(fetchedProfile.id);
+    }
+  }, [fetchedProfile]);
 
   const updateBusinessProfile = (
     data: BusinessProfileFormData,
@@ -55,6 +78,7 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
         updateBusinessProfile,
         resetOnboarding,
         isBusinessProfileComplete,
+        isLoading,
       }}
     >
       {children}
