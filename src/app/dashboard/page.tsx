@@ -21,6 +21,7 @@ import {
 } from '@/components/GradientCard';
 import { GradientButton } from '@/components/GradientButton';
 import { QuickActionCard } from '@/components/QuickActionCard';
+import { LoadingScreen } from '@/components/LoadingScreen';
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -34,14 +35,7 @@ export default function DashboardPage() {
   }, [isBusinessProfileComplete, isLoading, router]);
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-orange-50 via-pink-50 to-purple-50 flex items-center justify-center">
-        <div className="text-center">
-          <Sparkles className="w-12 h-12 text-[var(--gradient-pink)] animate-pulse mx-auto mb-4" />
-          <p className="text-lg text-gray-600">Loading your profile...</p>
-        </div>
-      </div>
-    );
+    return <LoadingScreen message="Loading your profile..." />;
   }
 
   if (!businessProfile) {
