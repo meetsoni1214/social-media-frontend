@@ -9,9 +9,18 @@ export const businessProfileSchema = z.object({
   targetAudience: z.string().optional(),
   websiteUrl: z.string().optional(),
   logo: z.string().optional(),
-  primaryColor: z.string().regex(/^#[0-9A-F]{6}$/i, 'Invalid color format'),
-  secondaryColor: z.string().regex(/^#[0-9A-F]{6}$/i, 'Invalid color format'),
-  accentColor: z.string().regex(/^#[0-9A-F]{6}$/i, 'Invalid color format'),
+  primaryColor: z
+    .string()
+    .regex(/^#[0-9A-F]{6}$/i, 'Invalid color format')
+    .optional(),
+  secondaryColor: z
+    .string()
+    .regex(/^#[0-9A-F]{6}$/i, 'Invalid color format')
+    .optional(),
+  accentColor: z
+    .string()
+    .regex(/^#[0-9A-F]{6}$/i, 'Invalid color format')
+    .optional(),
 });
 
 export const phoneSchema = z.object({
