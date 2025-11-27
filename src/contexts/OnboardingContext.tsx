@@ -10,7 +10,11 @@ import type { BusinessProfileFormData } from '@/lib/validations';
 
 interface OnboardingContextType {
   businessProfile: BusinessProfileFormData | null;
-  updateBusinessProfile: (data: BusinessProfileFormData) => void;
+  businessProfileId: number | null;
+  updateBusinessProfile: (
+    data: BusinessProfileFormData,
+    profileId?: number
+  ) => void;
   resetOnboarding: () => void;
   isBusinessProfileComplete: boolean;
 }
@@ -22,13 +26,23 @@ const OnboardingContext = createContext<OnboardingContextType | undefined>(
 export function OnboardingProvider({ children }: { children: ReactNode }) {
   const [businessProfile, setBusinessProfile] =
     useState<BusinessProfileFormData | null>(null);
+  const [businessProfileId, setBusinessProfileId] = useState<number | null>(
+    null
+  );
 
-  const updateBusinessProfile = (data: BusinessProfileFormData) => {
+  const updateBusinessProfile = (
+    data: BusinessProfileFormData,
+    profileId?: number
+  ) => {
     setBusinessProfile(data);
+    if (profileId !== undefined) {
+      setBusinessProfileId(profileId);
+    }
   };
 
   const resetOnboarding = () => {
     setBusinessProfile(null);
+    setBusinessProfileId(null);
   };
 
   const isBusinessProfileComplete = businessProfile !== null;
@@ -37,6 +51,7 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
     <OnboardingContext.Provider
       value={{
         businessProfile,
+        businessProfileId,
         updateBusinessProfile,
         resetOnboarding,
         isBusinessProfileComplete,

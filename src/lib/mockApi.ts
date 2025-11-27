@@ -7,10 +7,6 @@ export interface ApiResponse<T> {
   error?: string;
 }
 
-export interface OnboardingData {
-  businessProfile: BusinessProfileFormData;
-}
-
 export interface Festival {
   id: string;
   name: string;
@@ -154,32 +150,6 @@ const MOTIVATIONAL_QUOTES: Quote[] = [
 ];
 
 export const mockApi = {
-  async saveBusinessProfile(
-    data: BusinessProfileFormData
-  ): Promise<ApiResponse<{ id: string }>> {
-    await delay(800);
-
-    console.log('Mock API: Saving business profile', data);
-
-    return {
-      success: true,
-      data: { id: `profile_${Date.now()}` },
-    };
-  },
-
-  async completeOnboarding(
-    data: OnboardingData
-  ): Promise<ApiResponse<{ redirectUrl: string }>> {
-    await delay(1000);
-
-    console.log('Mock API: Completing onboarding', data);
-
-    return {
-      success: true,
-      data: { redirectUrl: '/dashboard' },
-    };
-  },
-
   async getFestivals(): Promise<ApiResponse<Festival[]>> {
     await delay(500);
     return {

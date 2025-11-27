@@ -4,6 +4,7 @@ import type {
   RequestOTPResponse,
   VerifyOTPResponse,
 } from '@/types/auth';
+import type { BusinessProfileResponse } from '@/types/businessProfile';
 import { keysToCamel, keysToSnake } from './utils';
 
 import {
@@ -212,6 +213,22 @@ class ApiClient {
     });
 
     return this.handleResponse<RegisterResponse>(response);
+  }
+
+  async saveBusinessProfile(
+    businessProfile: BusinessProfileFormData
+  ): Promise<BusinessProfileResponse> {
+    const url = `${API_BASE_URL}/business-profiles`;
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(keysToSnake(businessProfile)),
+    });
+
+    return this.handleResponse<BusinessProfileResponse>(response);
   }
 
   private async handleResponse<T>(response: Response): Promise<T> {

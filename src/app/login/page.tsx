@@ -79,7 +79,6 @@ export default function LoginPage() {
         setError('Invalid OTP. Please try again.');
       }
     } catch (err: unknown) {
-      console.error('Error during OTP verification:', err);
       const errorMessage =
         err instanceof Error ? err.message : 'Invalid OTP. Please try again.';
       setError(errorMessage);

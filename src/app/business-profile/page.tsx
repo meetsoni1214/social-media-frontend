@@ -12,7 +12,7 @@ import {
   type BusinessProfileFormData,
 } from '@/lib/validations';
 import { useOnboarding } from '@/contexts/OnboardingContext';
-import { mockApi } from '@/lib/mockApi';
+import { apiClient } from '@/lib/api';
 import { GradientCard, GradientCardTitle } from '@/components/GradientCard';
 import { GradientButton } from '@/components/GradientButton';
 import { Input } from '@/components/ui/input';
@@ -43,6 +43,7 @@ export default function BusinessProfilePage() {
   const router = useRouter();
   const { updateBusinessProfile, businessProfile } = useOnboarding();
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
   const [isDetectingColors, setIsDetectingColors] = useState(false);
   const [logoPreview, setLogoPreview] = useState<string | null>(
     businessProfile?.logo || null
@@ -130,11 +131,17 @@ export default function BusinessProfilePage() {
   const onSubmit = async (data: BusinessProfileFormData) => {
     setIsLoading(true);
     try {
-      await mockApi.saveBusinessProfile(data);
-      updateBusinessProfile(data);
+      const response = await apiClient.saveBusinessProfile(data);
+
+      updateBusinessProfile(data, response.id);
+
       router.push('/dashboard');
     } catch (error) {
-      console.error('Error saving business profile:', error);
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : 'Failed to save business profile. Please try again.';
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -153,6 +160,12 @@ export default function BusinessProfilePage() {
             Help us understand your brand to create personalized content
           </p>
         </div>
+
+        {error && (
+          <div className="mb-4 p-3 rounded-lg text-sm bg-red-50 text-red-700 border border-red-200">
+            {error}
+          </div>
+        )}
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <GradientCard>
@@ -361,7 +374,7 @@ export default function BusinessProfilePage() {
 
           <div className="flex justify-end">
             <GradientButton type="submit" size="lg" disabled={isLoading}>
-              {isLoading ? 'Saving...' : 'Next Step'}
+              {isLoading ? 'Saving...' : 'Save and Continue'}
             </GradientButton>
           </div>
         </form>
