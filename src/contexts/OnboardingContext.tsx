@@ -3,8 +3,7 @@
 import React, {
   createContext,
   useContext,
-  useState,
-  useEffect,
+  useMemo,
   type ReactNode,
 } from 'react';
 import type { BusinessProfileFormData } from '@/lib/validations';
@@ -13,10 +12,6 @@ import { useBusinessProfile } from '@/hooks/useBusinessProfile';
 interface OnboardingContextType {
   businessProfile: BusinessProfileFormData | null;
   businessProfileId: number | null;
-  updateBusinessProfile: (
-    data: BusinessProfileFormData,
-    profileId?: number
-  ) => void;
   resetOnboarding: () => void;
   isBusinessProfileComplete: boolean;
   isLoading: boolean;
@@ -27,17 +22,13 @@ const OnboardingContext = createContext<OnboardingContextType | undefined>(
 );
 
 export function OnboardingProvider({ children }: { children: ReactNode }) {
-  const [businessProfile, setBusinessProfile] =
-    useState<BusinessProfileFormData | null>(null);
-  const [businessProfileId, setBusinessProfileId] = useState<number | null>(
-    null
-  );
+  const { data: fetchedProfiles, isLoading } = useBusinessProfile();
 
-  const { data: fetchedProfile, isLoading } = useBusinessProfile();
-
-  useEffect(() => {
-    if (fetchedProfile) {
-      const profileData: BusinessProfileFormData = {
+  // Derive businessProfile directly from query data - eliminates race condition
+  const businessProfile = useMemo<BusinessProfileFormData | null>(() => {
+    if (fetchedProfiles && fetchedProfiles.length > 0) {
+      const fetchedProfile = fetchedProfiles[0];
+      return {
         businessName: fetchedProfile.businessName,
         category: fetchedProfile.category,
         description: fetchedProfile.description,
@@ -48,24 +39,23 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
         secondaryColor: fetchedProfile.secondaryColor,
         accentColor: fetchedProfile.accentColor,
       };
-      setBusinessProfile(profileData);
-      setBusinessProfileId(fetchedProfile.id);
     }
-  }, [fetchedProfile]);
+    return null;
+  }, [fetchedProfiles]);
 
-  const updateBusinessProfile = (
-    data: BusinessProfileFormData,
-    profileId?: number
-  ) => {
-    setBusinessProfile(data);
-    if (profileId !== undefined) {
-      setBusinessProfileId(profileId);
+  const businessProfileId = useMemo<number | null>(() => {
+    if (fetchedProfiles && fetchedProfiles.length > 0) {
+      return fetchedProfiles[0].id;
     }
-  };
+    return null;
+  }, [fetchedProfiles]);
 
   const resetOnboarding = () => {
-    setBusinessProfile(null);
-    setBusinessProfileId(null);
+    // This would typically invalidate the query cache
+    // For now, it's a placeholder
+    console.warn(
+      'resetOnboarding called - implement query invalidation if needed'
+    );
   };
 
   const isBusinessProfileComplete = businessProfile !== null;
@@ -75,7 +65,6 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
       value={{
         businessProfile,
         businessProfileId,
-        updateBusinessProfile,
         resetOnboarding,
         isBusinessProfileComplete,
         isLoading,

@@ -4,7 +4,7 @@ import type { BusinessProfileFormData } from '@/lib/validations';
 import type { BusinessProfileResponse } from '@/types/businessProfile';
 
 export function useBusinessProfile() {
-  return useQuery<BusinessProfileResponse | null>({
+  return useQuery<BusinessProfileResponse[]>({
     queryKey: ['businessProfile'],
     queryFn: () => apiClient.getBusinessProfile(),
   });
@@ -17,7 +17,7 @@ export function useSaveBusinessProfile() {
     mutationFn: (businessProfile: BusinessProfileFormData) =>
       apiClient.saveBusinessProfile(businessProfile),
     onSuccess: data => {
-      queryClient.setQueryData(['businessProfile'], data);
+      queryClient.setQueryData(['businessProfile'], [data]);
     },
   });
 }

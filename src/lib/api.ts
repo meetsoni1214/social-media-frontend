@@ -236,7 +236,7 @@ class ApiClient {
     return this.handleResponse<BusinessProfileResponse>(response);
   }
 
-  async getBusinessProfile(): Promise<BusinessProfileResponse | null> {
+  async getBusinessProfile(): Promise<BusinessProfileResponse[]> {
     const url = `${API_BASE_URL}/business-profiles`;
 
     const response = await fetch(url, {
@@ -248,10 +248,10 @@ class ApiClient {
     });
 
     if (response.status === 404) {
-      return null;
+      return [];
     }
 
-    return this.handleResponse<BusinessProfileResponse>(response);
+    return this.handleResponse<BusinessProfileResponse[]>(response);
   }
 
   private async handleResponse<T>(response: Response): Promise<T> {

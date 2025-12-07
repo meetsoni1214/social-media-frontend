@@ -43,7 +43,6 @@ const BUSINESS_CATEGORIES = [
 export default function BusinessProfilePage() {
   const router = useRouter();
   const {
-    updateBusinessProfile,
     businessProfile,
     isBusinessProfileComplete,
     isLoading: isProfileLoading,
@@ -145,8 +144,7 @@ export default function BusinessProfilePage() {
     setError('');
 
     saveBusinessProfile(data, {
-      onSuccess: response => {
-        updateBusinessProfile(data, response.id);
+      onSuccess: () => {
         router.push('/dashboard');
       },
       onError: (error: Error) => {
