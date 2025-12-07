@@ -150,6 +150,7 @@ class ApiClient {
       headers: {
         'Content-Type': 'application/json',
       },
+      credentials: 'include',
       body: JSON.stringify(
         keysToSnake({
           businessProfile,
@@ -170,6 +171,7 @@ class ApiClient {
       headers: {
         'Content-Type': 'application/json',
       },
+      credentials: 'include',
       body: JSON.stringify(
         keysToSnake({
           businessProfile,
@@ -191,6 +193,7 @@ class ApiClient {
       headers: {
         'Content-Type': 'application/json',
       },
+      credentials: 'include',
       body: JSON.stringify(
         keysToSnake({
           businessProfile,
@@ -209,6 +212,7 @@ class ApiClient {
       headers: {
         'Content-Type': 'application/json',
       },
+      credentials: 'include',
       body: JSON.stringify(keysToSnake(signupData)),
     });
 
@@ -225,6 +229,7 @@ class ApiClient {
       headers: {
         'Content-Type': 'application/json',
       },
+      credentials: 'include',
       body: JSON.stringify(keysToSnake(businessProfile)),
     });
 
@@ -239,6 +244,7 @@ class ApiClient {
       headers: {
         'Content-Type': 'application/json',
       },
+      credentials: 'include',
     });
 
     if (response.status === 404) {
