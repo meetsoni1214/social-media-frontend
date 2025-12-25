@@ -13,6 +13,11 @@ import {
   createCode,
   resendCode,
 } from 'supertokens-web-js/recipe/passwordless';
+import {
+  SocialProfileConnectRequest,
+  SocialProfileConnectResponse,
+  SocialProfileCreateResponse,
+} from '@/types/socialProfile';
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000/api/v1';
@@ -252,6 +257,36 @@ class ApiClient {
     }
 
     return this.handleResponse<BusinessProfileResponse[]>(response);
+  }
+
+  async createSocialProfile(): Promise<SocialProfileCreateResponse> {
+    const url = `${API_BASE_URL}/social-profiles`;
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include',
+    });
+
+    return this.handleResponse<SocialProfileCreateResponse>(response);
+  }
+
+  async connectSocialProfile(
+    request: SocialProfileConnectRequest
+  ): Promise<SocialProfileConnectResponse> {
+    const url = `${API_BASE_URL}/social-profiles/connect/${request.platform}`;
+
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include',
+    });
+
+    return this.handleResponse<SocialProfileConnectResponse>(response);
   }
 
   private async handleResponse<T>(response: Response): Promise<T> {
