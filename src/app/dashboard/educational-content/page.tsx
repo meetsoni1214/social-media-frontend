@@ -3,7 +3,7 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useOnboarding } from '@/contexts/OnboardingContext';
-import { ArrowLeft, BookOpen, Sparkles, Loader2 } from 'lucide-react';
+import { ArrowLeft, BookOpen, Sparkles } from 'lucide-react';
 import {
   GradientCard,
   GradientCardHeader,
@@ -12,6 +12,7 @@ import {
 } from '@/components/GradientCard';
 import { GradientButton } from '@/components/GradientButton';
 import { ErrorMessage } from '@/components/ErrorMessage';
+import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { useEducationalContentIdeas } from '@/hooks/usePostIdeas';
 import { GradientBar } from '@/components/GradientBar';
 
@@ -74,12 +75,10 @@ export default function EducationalContentPage() {
         </div>
 
         {isLoading ? (
-          <div className="flex flex-col items-center justify-center py-8">
-            <Loader2 className="w-10 h-10 animate-spin text-[var(--gradient-pink)] mb-4" />
-            <p className="text-gray-600">
-              Generating educational content ideas...
-            </p>
-          </div>
+          <LoadingSpinner
+            size="lg"
+            message="Generating educational content ideas..."
+          />
         ) : error ? (
           <ErrorMessage error={error} onRetry={refetch} />
         ) : (

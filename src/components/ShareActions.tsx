@@ -1,4 +1,4 @@
-import { Download, Loader2, CheckCircle } from 'lucide-react';
+import { Download, CheckCircle } from 'lucide-react';
 import {
   FacebookIcon,
   InstagramIcon,
@@ -30,41 +30,26 @@ export function ShareActions({
   onInstagramShare,
   className = '',
 }: ShareActionsProps) {
-  const renderDownloadButtonContent = () => {
-    if (isDownloading) {
-      return (
-        <>
-          <Loader2 className="w-4 h-4 animate-spin" />
-          Downloading...
-        </>
-      );
-    }
-
-    if (downloadSuccess) {
-      return (
-        <>
-          <CheckCircle className="w-4 h-4" />
-          Downloaded!
-        </>
-      );
-    }
-
-    return (
-      <>
-        <Download className="w-4 h-4" />
-        Download Post
-      </>
-    );
-  };
-
   return (
     <div className={`space-y-3 ${className}`}>
       <GradientButton
         onClick={onDownload}
-        disabled={isDownloading || downloadDisabled}
+        isLoading={isDownloading}
+        loadingText="Downloading..."
+        disabled={downloadDisabled}
         className="w-full"
       >
-        {renderDownloadButtonContent()}
+        {downloadSuccess ? (
+          <>
+            <CheckCircle className="w-4 h-4" />
+            Downloaded!
+          </>
+        ) : (
+          <>
+            <Download className="w-4 h-4" />
+            Download Post
+          </>
+        )}
       </GradientButton>
 
       {/* Divider */}

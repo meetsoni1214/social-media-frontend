@@ -161,9 +161,10 @@ export default function LoginPage() {
             <GradientButton
               type="submit"
               className="w-full"
-              disabled={isLoading}
+              isLoading={isLoading}
+              loadingText="Processing..."
             >
-              {isLoading ? 'Processing...' : 'Continue'}
+              Continue
             </GradientButton>
           </form>
         )}
@@ -198,9 +199,10 @@ export default function LoginPage() {
               <GradientButton
                 type="submit"
                 className="w-full"
-                disabled={isLoading}
+                isLoading={isLoading}
+                loadingText="Verifying..."
               >
-                {isLoading ? 'Verifying...' : 'Verify OTP'}
+                Verify OTP
               </GradientButton>
 
               <button

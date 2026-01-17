@@ -1,6 +1,6 @@
 import Image from 'next/image';
-import { Loader2 } from 'lucide-react';
 import { ErrorText } from './ErrorText';
+import { LoadingSpinner } from './LoadingSpinner';
 import { GradientCard } from '@/components/GradientCard';
 
 interface PostImageDisplayProps {
@@ -28,12 +28,7 @@ export function PostImageDisplay({
     }
 
     if (isLoading) {
-      return (
-        <div className="flex flex-col items-center justify-center h-full">
-          <Loader2 className="w-8 h-8 animate-spin text-[var(--gradient-pink)]" />
-          <p className="text-sm text-gray-500 mt-2">Generating your post...</p>
-        </div>
-      );
+      return <LoadingSpinner size="md" message="Generating your post..." />;
     }
 
     if (imageData) {

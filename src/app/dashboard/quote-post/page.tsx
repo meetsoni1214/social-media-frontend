@@ -3,7 +3,8 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useOnboarding } from '@/contexts/OnboardingContext';
-import { ArrowLeft, Quote as QuoteIcon, Sparkles, Loader2 } from 'lucide-react';
+import { ArrowLeft, Quote as QuoteIcon, Sparkles } from 'lucide-react';
+import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { GradientCard } from '@/components/GradientCard';
 import { GradientButton } from '@/components/GradientButton';
 import { mockApi, type Quote } from '@/lib/mockApi';
@@ -62,9 +63,7 @@ export default function QuotePostPage() {
         </div>
 
         {isLoading ? (
-          <div className="flex justify-center items-center py-12">
-            <Loader2 className="w-8 h-8 animate-spin text-[var(--gradient-pink)]" />
-          </div>
+          <LoadingSpinner size="md" className="py-12" />
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-slide-up">
             {quotes.map(quote => (

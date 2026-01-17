@@ -3,7 +3,8 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useOnboarding } from '@/contexts/OnboardingContext';
-import { ArrowLeft, Sparkles, Calendar, Loader2 } from 'lucide-react';
+import { ArrowLeft, Sparkles, Calendar } from 'lucide-react';
+import { LoadingSpinner } from '@/components/LoadingSpinner';
 import {
   GradientCard,
   GradientCardHeader,
@@ -99,9 +100,7 @@ export default function FestivalPostPage() {
             </div>
 
             {isLoadingFestivals ? (
-              <div className="flex justify-center items-center py-8">
-                <Loader2 className="w-8 h-8 animate-spin text-[var(--gradient-pink)]" />
-              </div>
+              <LoadingSpinner size="md" />
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {festivals.map(festival => (
@@ -137,12 +136,10 @@ export default function FestivalPostPage() {
             </div>
 
             {isGeneratingIdeas ? (
-              <div className="flex flex-col items-center justify-center py-8">
-                <Loader2 className="w-10 h-10 animate-spin text-[var(--gradient-pink)] mb-4" />
-                <p className="text-gray-600">
-                  Generating personalized post ideas...
-                </p>
-              </div>
+              <LoadingSpinner
+                size="lg"
+                message="Generating personalized post ideas..."
+              />
             ) : (
               <div className="space-y-4">
                 {postIdeas.map((idea, index) => (

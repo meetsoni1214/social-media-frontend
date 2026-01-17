@@ -3,7 +3,7 @@
 import { useEffect, use } from 'react';
 import { useRouter } from 'next/navigation';
 import { useOnboarding } from '@/contexts/OnboardingContext';
-import { ArrowLeft, Loader2 } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { GradientButton } from '@/components/GradientButton';
 import { useEducationalContentIdeas } from '@/hooks/usePostIdeas';
 import { usePosts } from '@/hooks/usePost';
@@ -15,6 +15,7 @@ import { PostCaption } from '@/components/PostCaption';
 import { ShareActions } from '@/components/ShareActions';
 import { UI_CONSTANTS, MESSAGES, FILE_CONSTANTS } from './constants';
 import { ErrorText } from '@/components/ErrorText';
+import { LoadingScreen } from '@/components/LoadingScreen';
 
 export default function GeneratedPostPage({
   params,
@@ -95,11 +96,7 @@ export default function GeneratedPostPage({
   };
 
   if (!businessProfile || isLoading || isPostLoading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-orange-50 via-pink-50 to-purple-50 flex items-center justify-center">
-        <Loader2 className="w-10 h-10 animate-spin text-[var(--gradient-pink)]" />
-      </div>
-    );
+    return <LoadingScreen message="Loading post details..." />;
   }
 
   if (!idea) {
