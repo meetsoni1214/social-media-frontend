@@ -9,6 +9,7 @@ import { useEducationalContentIdeas } from '@/hooks/usePostIdeas';
 import { usePosts } from '@/hooks/usePost';
 import { useImageDownload } from '@/hooks/useImageDownload';
 import { useSocialShare } from '@/hooks/useSocialShare';
+import { GradientBar } from '@/components/GradientBar';
 import { PostImageDisplay } from '@/components/PostImageDisplay';
 import { PostCaption } from '@/components/PostCaption';
 import { ShareActions } from '@/components/ShareActions';
@@ -119,7 +120,7 @@ export default function GeneratedPostPage({
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-pink-50 to-purple-50">
-      <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-[var(--gradient-orange)] via-[var(--gradient-pink)] to-[var(--gradient-purple)]" />
+      <GradientBar />
 
       <div className="container mx-auto px-4 py-4 max-w-6xl">
         <div className="mb-4">

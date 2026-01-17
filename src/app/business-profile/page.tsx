@@ -15,6 +15,7 @@ import { useOnboarding } from '@/contexts/OnboardingContext';
 import { useSaveBusinessProfile } from '@/hooks/useBusinessProfile';
 import { GradientCard, GradientCardTitle } from '@/components/GradientCard';
 import { GradientButton } from '@/components/GradientButton';
+import { GradientBar } from '@/components/GradientBar';
 import { LoadingScreen } from '@/components/LoadingScreen';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -161,7 +162,7 @@ export default function BusinessProfilePage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-pink-50 to-purple-50">
-      <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-[var(--gradient-orange)] via-[var(--gradient-pink)] to-[var(--gradient-purple)]" />
+      <GradientBar />
 
       <div className="container mx-auto px-4 py-12 max-w-4xl">
         <div className="text-center mb-8">

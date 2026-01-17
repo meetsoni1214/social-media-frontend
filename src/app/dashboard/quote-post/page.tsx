@@ -7,6 +7,7 @@ import { ArrowLeft, Quote as QuoteIcon, Sparkles, Loader2 } from 'lucide-react';
 import { GradientCard } from '@/components/GradientCard';
 import { GradientButton } from '@/components/GradientButton';
 import { mockApi, type Quote } from '@/lib/mockApi';
+import { GradientBar } from '@/components/GradientBar';
 
 export default function QuotePostPage() {
   const router = useRouter();
@@ -37,7 +38,7 @@ export default function QuotePostPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-pink-50 to-purple-50">
-      <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-[var(--gradient-orange)] via-[var(--gradient-pink)] to-[var(--gradient-purple)]" />
+      <GradientBar />
 
       <div className="container mx-auto px-4 py-12 max-w-6xl">
         <div className="mb-8">

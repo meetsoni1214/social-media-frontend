@@ -17,6 +17,7 @@ import {
   GradientCardTitle,
 } from '@/components/GradientCard';
 import { GradientButton } from '@/components/GradientButton';
+import { GradientBar } from '@/components/GradientBar';
 import { useProductPromotionIdeas } from '@/hooks/usePostIdeas';
 
 export default function ProductPromotionPage() {
@@ -50,7 +51,7 @@ export default function ProductPromotionPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-pink-50 to-purple-50">
-      <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-[var(--gradient-orange)] via-[var(--gradient-pink)] to-[var(--gradient-purple)]" />
+      <GradientBar />
 
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         <div className="mb-8">
