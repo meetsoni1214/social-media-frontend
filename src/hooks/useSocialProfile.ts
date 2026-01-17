@@ -3,6 +3,7 @@ import {
   SocialProfileConnectRequest,
   SocialProfileConnectResponse,
   SocialProfileCreateResponse,
+  SocialAccountsStatusResponse,
 } from '@/types/socialProfile';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
@@ -21,5 +22,15 @@ export function useConnectSocialProfile(request: SocialProfileConnectRequest) {
   return useQuery<SocialProfileConnectResponse, Error>({
     queryKey: ['socialProfileConnect', request],
     queryFn: () => apiClient.connectSocialProfile(request),
+  });
+}
+
+export function useSocialAccountsStatus() {
+  return useQuery<SocialAccountsStatusResponse, Error>({
+    queryKey: ['socialAccountsStatus'],
+    queryFn: () => apiClient.getSocialAccounts(),
+    staleTime: 30000,
+    refetchOnWindowFocus: true,
+    refetchOnMount: true,
   });
 }

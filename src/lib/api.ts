@@ -17,6 +17,8 @@ import {
   SocialProfileConnectRequest,
   SocialProfileConnectResponse,
   SocialProfileCreateResponse,
+  SocialAccount,
+  SocialAccountsStatusResponse,
 } from '@/types/socialProfile';
 
 const API_BASE_URL =
@@ -287,6 +289,40 @@ class ApiClient {
     });
 
     return this.handleResponse<SocialProfileConnectResponse>(response);
+  }
+
+  async getSocialAccounts(): Promise<SocialAccountsStatusResponse> {
+    const url = `${API_BASE_URL}/social-profiles/accounts`;
+
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include',
+    });
+
+    const accounts = await this.handleResponse<SocialAccount[]>(response);
+
+    const statusResponse: SocialAccountsStatusResponse = {
+      facebook: { isConnected: false },
+      instagram: { isConnected: false },
+      googlebusiness: { isConnected: false },
+    };
+
+    accounts.forEach(account => {
+      if (account.platform in statusResponse) {
+        statusResponse[account.platform] = {
+          isConnected: account.connected,
+          accountId: account.fieldId,
+          username: account.username,
+          displayName: account.displayName,
+          profileImageUrl: account.profileImageUrl,
+        };
+      }
+    });
+
+    return statusResponse;
   }
 
   private async handleResponse<T>(response: Response): Promise<T> {
