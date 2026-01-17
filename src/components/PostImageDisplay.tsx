@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import { Loader2 } from 'lucide-react';
-import { GradientButton } from '@/components/GradientButton';
+import { ErrorText } from './ErrorText';
 import { GradientCard } from '@/components/GradientCard';
 
 interface PostImageDisplayProps {
@@ -24,14 +24,7 @@ export function PostImageDisplay({
 }: PostImageDisplayProps) {
   const renderContent = () => {
     if (error) {
-      return (
-        <div className="flex flex-col items-center justify-center h-full">
-          <p className="text-sm text-red-500 mb-2">Failed to generate image</p>
-          <GradientButton onClick={onRetry} className="text-xs">
-            Retry
-          </GradientButton>
-        </div>
-      );
+      return <ErrorText message="Failed to generate image" onRetry={onRetry} />;
     }
 
     if (isLoading) {

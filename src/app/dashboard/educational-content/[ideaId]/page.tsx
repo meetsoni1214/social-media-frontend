@@ -14,6 +14,7 @@ import { PostImageDisplay } from '@/components/PostImageDisplay';
 import { PostCaption } from '@/components/PostCaption';
 import { ShareActions } from '@/components/ShareActions';
 import { UI_CONSTANTS, MESSAGES, FILE_CONSTANTS } from './constants';
+import { ErrorText } from '@/components/ErrorText';
 
 export default function GeneratedPostPage({
   params,
@@ -107,13 +108,11 @@ export default function GeneratedPostPage({
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-orange-50 via-pink-50 to-purple-50 flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-red-600 mb-4">
-            Failed to generate post. Please try again.
-          </p>
-          <GradientButton onClick={() => refetch()}>Retry</GradientButton>
-        </div>
+      <div className="min-h-screen bg-gradient-to-br from-orange-50 via-pink-50 to-purple-50 flex items-center justify-center p-8">
+        <ErrorText
+          message="Failed to generate post. Please try again."
+          onRetry={refetch}
+        />
       </div>
     );
   }

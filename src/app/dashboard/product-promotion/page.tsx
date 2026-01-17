@@ -3,20 +3,14 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useOnboarding } from '@/contexts/OnboardingContext';
-import {
-  ArrowLeft,
-  TrendingUp,
-  Sparkles,
-  Loader2,
-  AlertCircle,
-  RefreshCw,
-} from 'lucide-react';
+import { ArrowLeft, TrendingUp, Sparkles, Loader2 } from 'lucide-react';
 import {
   GradientCard,
   GradientCardHeader,
   GradientCardTitle,
 } from '@/components/GradientCard';
 import { GradientButton } from '@/components/GradientButton';
+import { ErrorMessage } from '@/components/ErrorMessage';
 import { GradientBar } from '@/components/GradientBar';
 import { useProductPromotionIdeas } from '@/hooks/usePostIdeas';
 
@@ -44,10 +38,6 @@ export default function ProductPromotionPage() {
   }
 
   const postIdeas = response?.data || [];
-  const errorMessage =
-    error instanceof Error
-      ? error.message
-      : 'An unexpected error occurred. Please try again.';
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-pink-50 to-purple-50">
@@ -90,21 +80,7 @@ export default function ProductPromotionPage() {
             </p>
           </div>
         ) : error ? (
-          <div className="flex flex-col items-center justify-center py-8">
-            <GradientCard variant="highlighted">
-              <div className="flex flex-col items-center text-center p-6">
-                <AlertCircle className="w-12 h-12 text-red-500 mb-4" />
-                <h3 className="text-xl font-semibold text-gray-800 mb-2">
-                  Something went wrong
-                </h3>
-                <p className="text-gray-600 mb-6">{errorMessage}</p>
-                <GradientButton onClick={() => refetch()}>
-                  <RefreshCw className="w-4 h-4" />
-                  Try Again
-                </GradientButton>
-              </div>
-            </GradientCard>
-          </div>
+          <ErrorMessage error={error} onRetry={refetch} />
         ) : (
           <div className="space-y-4 animate-slide-up">
             {postIdeas.map((idea, index) => (
