@@ -12,6 +12,7 @@ import {
   Megaphone,
   BookOpen,
   Quote,
+  ArrowRight,
 } from 'lucide-react';
 import {
   GradientCard,
@@ -22,6 +23,7 @@ import {
 import { GradientButton } from '@/components/GradientButton';
 import { QuickActionCard } from '@/components/QuickActionCard';
 import { LoadingScreen } from '@/components/LoadingScreen';
+import { GradientBar } from '@/components/GradientBar';
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -44,7 +46,7 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-pink-50 to-purple-50">
-      <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-[var(--gradient-orange)] via-[var(--gradient-pink)] to-[var(--gradient-purple)]" />
+      <GradientBar />
 
       <div className="container mx-auto px-4 py-12 max-w-6xl">
         <div className="text-center mb-12 animate-fade-in">
@@ -133,6 +135,8 @@ export default function DashboardPage() {
           </GradientCard>
         </div>
 
+        {connectSocialAccountsCard()}
+
         <div className="mt-12">
           <GradientCard>
             <GradientCardHeader>
@@ -176,4 +180,39 @@ export default function DashboardPage() {
       </div>
     </div>
   );
+
+  function connectSocialAccountsCard() {
+    return (
+      <div className="animate-slide-up mt-8">
+        <GradientCard
+          variant="highlighted"
+          className="relative overflow-hidden"
+        >
+          <div className="relative flex flex-col md:flex-row items-center justify-between gap-6 p-6">
+            <div className="flex-1">
+              <h2 className="text-2xl font-bold gradient-text mb-2">
+                Connect Your Social Accounts
+              </h2>
+              <p className="text-gray-600 mb-3">
+                Link your Instagram, Facebook, and Google My Business accounts
+                to start sharing your content across all platforms with one
+                click.
+              </p>
+            </div>
+
+            <div className="flex-shrink-0">
+              <GradientButton
+                size="lg"
+                className="text-lg shadow-xl hover:shadow-2xl transition-all"
+                onClick={() => router.push('/social-profiles')}
+              >
+                Connect Now
+                <ArrowRight className="w-5 h-5 ml-2" />
+              </GradientButton>
+            </div>
+          </div>
+        </GradientCard>
+      </div>
+    );
+  }
 }

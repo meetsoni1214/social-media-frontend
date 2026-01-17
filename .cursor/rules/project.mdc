@@ -50,6 +50,7 @@ alwaysApply: false
 ### Styling Guidelines
 
 - Use Tailwind CSS utility classes
+- Use always
 - For now over designl only for the light mode
 - Follow mobile-first responsive design
 - Use the custom gradient theme colors:
@@ -105,7 +106,7 @@ alwaysApply: false
 - Use Server Components by default, mark Client Components with `"use client"`
 - Leverage Next.js 15 features (Turbopack, React 19 support)
 - Use `next/link` for navigation
-- Optimize images with `next/image` when appropriate
+- Always use images with `next/image`
 
 ### Accessibility
 
