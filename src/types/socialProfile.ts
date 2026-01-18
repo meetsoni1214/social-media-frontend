@@ -12,6 +12,11 @@ export interface SocialProfileCreateResponse {
   profileId: string;
 }
 
+export interface SocialProfileExistsResponse {
+  exists: boolean;
+  profileId?: string;
+}
+
 export interface SocialProfileConnectRequest {
   platform: SocialPlatform;
 }

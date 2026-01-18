@@ -4,6 +4,7 @@ import {
   SocialProfileConnectResponse,
   SocialProfileCreateResponse,
   SocialAccountsStatusResponse,
+  SocialProfileExistsResponse,
 } from '@/types/socialProfile';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
@@ -15,6 +16,13 @@ export function useCreateSocialProfile() {
     onSuccess: data => {
       queryClient.setQueryData(['socialProfile'], data);
     },
+  });
+}
+
+export function useSocialProfileExists() {
+  return useQuery<SocialProfileExistsResponse, Error>({
+    queryKey: ['socialProfileExists'],
+    queryFn: () => apiClient.checkSocialProfileExists(),
   });
 }
 

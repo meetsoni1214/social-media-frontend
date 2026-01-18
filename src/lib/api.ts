@@ -19,6 +19,7 @@ import {
   SocialProfileCreateResponse,
   SocialAccount,
   SocialAccountsStatusResponse,
+  SocialProfileExistsResponse,
 } from '@/types/socialProfile';
 
 const API_BASE_URL =
@@ -273,6 +274,20 @@ class ApiClient {
     });
 
     return this.handleResponse<SocialProfileCreateResponse>(response);
+  }
+
+  async checkSocialProfileExists(): Promise<SocialProfileExistsResponse> {
+    const url = `${API_BASE_URL}/social-profiles/exists`;
+
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include',
+    });
+
+    return this.handleResponse<SocialProfileExistsResponse>(response);
   }
 
   async connectSocialProfile(
