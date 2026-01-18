@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useOnboarding } from '@/contexts/OnboardingContext';
+import { useSocialProfileExists } from '@/hooks/useSocialProfile';
 import {
   Sparkles,
   Building2,
@@ -29,6 +30,7 @@ export default function DashboardPage() {
   const router = useRouter();
   const { businessProfile, isBusinessProfileComplete, isLoading } =
     useOnboarding();
+  const { data: socialProfileData } = useSocialProfileExists();
 
   useEffect(() => {
     if (!isLoading && !isBusinessProfileComplete) {
@@ -182,6 +184,8 @@ export default function DashboardPage() {
   );
 
   function connectSocialAccountsCard() {
+    const hasSocialProfileCreated = socialProfileData?.exists;
+
     return (
       <div className="animate-slide-up mt-8">
         <GradientCard
@@ -191,12 +195,14 @@ export default function DashboardPage() {
           <div className="relative flex flex-col md:flex-row items-center justify-between gap-6 p-6">
             <div className="flex-1">
               <h2 className="text-2xl font-bold gradient-text mb-2">
-                Connect Your Social Accounts
+                {hasSocialProfileCreated
+                  ? 'Manage Your Social Accounts'
+                  : 'Connect Your Social Accounts'}
               </h2>
               <p className="text-gray-600 mb-3">
-                Link your Instagram, Facebook, and Google My Business accounts
-                to start sharing your content across all platforms with one
-                click.
+                {hasSocialProfileCreated
+                  ? 'View and manage your Instagram, Facebook, and Google My Business accounts at one place.'
+                  : 'Link your Instagram, Facebook, and Google My Business accounts to start sharing your content across all platforms with one click.'}
               </p>
             </div>
 
@@ -206,7 +212,7 @@ export default function DashboardPage() {
                 className="text-lg shadow-xl hover:shadow-2xl transition-all"
                 onClick={() => router.push('/social-profiles')}
               >
-                Connect Now
+                {hasSocialProfileCreated ? 'Manage Accounts' : 'Connect Now'}
                 <ArrowRight className="w-5 h-5 ml-2" />
               </GradientButton>
             </div>
