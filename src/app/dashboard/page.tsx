@@ -1,9 +1,12 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useOnboarding } from '@/contexts/OnboardingContext';
-import { useSocialProfileExists } from '@/hooks/useSocialProfile';
+import {
+  useSocialProfileExists,
+  useCreateSocialProfile,
+} from '@/hooks/useSocialProfile';
 import {
   Sparkles,
   Building2,
@@ -25,12 +28,19 @@ import { GradientButton } from '@/components/GradientButton';
 import { QuickActionCard } from '@/components/QuickActionCard';
 import { LoadingScreen } from '@/components/LoadingScreen';
 import { GradientBar } from '@/components/GradientBar';
+import { ErrorText } from '@/components/ErrorText';
 
 export default function DashboardPage() {
   const router = useRouter();
   const { businessProfile, isBusinessProfileComplete, isLoading } =
     useOnboarding();
   const { data: socialProfileData } = useSocialProfileExists();
+  const {
+    mutate: createSocialProfile,
+    isPending: isCreatingProfile,
+    isError: isCreateError,
+    error: createError,
+  } = useCreateSocialProfile();
 
   useEffect(() => {
     if (!isLoading && !isBusinessProfileComplete) {
@@ -186,6 +196,18 @@ export default function DashboardPage() {
   function connectSocialAccountsCard() {
     const hasSocialProfileCreated = socialProfileData?.exists;
 
+    const handleButtonClick = () => {
+      if (hasSocialProfileCreated) {
+        router.push('/social-profiles');
+      } else {
+        createSocialProfile(undefined, {
+          onSuccess: () => {
+            router.push('/social-profiles');
+          },
+        });
+      }
+    };
+
     return (
       <div className="animate-slide-up mt-8">
         <GradientCard
@@ -204,15 +226,27 @@ export default function DashboardPage() {
                   ? 'View and manage your Instagram, Facebook, and Google My Business accounts at one place.'
                   : 'Link your Instagram, Facebook, and Google My Business accounts to start sharing your content across all platforms with one click.'}
               </p>
+              {isCreateError && (
+                <ErrorText
+                  error={createError}
+                  message="Failed to create social profile. Please try again."
+                  className="mt-2"
+                />
+              )}
             </div>
 
             <div className="flex-shrink-0">
               <GradientButton
                 size="lg"
                 className="text-lg shadow-xl hover:shadow-2xl transition-all"
-                onClick={() => router.push('/social-profiles')}
+                onClick={handleButtonClick}
+                disabled={isCreatingProfile}
               >
-                {hasSocialProfileCreated ? 'Manage Accounts' : 'Connect Now'}
+                {isCreatingProfile
+                  ? 'Creating Profile...'
+                  : hasSocialProfileCreated
+                    ? 'Manage Accounts'
+                    : 'Connect Now'}
                 <ArrowRight className="w-5 h-5 ml-2" />
               </GradientButton>
             </div>
