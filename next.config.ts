@@ -7,6 +7,18 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'platform-lookaside.fbsbx.com',
       },
+      {
+        protocol: 'https',
+        hostname: 'scontent-iad3-1.cdninstagram.com',
+      },
+      {
+        protocol: 'https',
+        hostname: '**',
+      },
+      {
+        protocol: 'http',
+        hostname: '**',
+      },
     ],
   },
 };

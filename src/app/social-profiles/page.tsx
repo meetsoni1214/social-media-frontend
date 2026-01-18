@@ -1,8 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useSocialAccountsStatus } from '@/hooks/useSocialProfile';
+import {
+  useSocialAccountsStatus,
+  useConnectSocialProfile,
+} from '@/hooks/useSocialProfile';
 import { SocialAccountCard } from '@/components/SocialAccountCard';
 import {
   GradientCard,
@@ -23,22 +26,24 @@ export default function SocialProfilesPage() {
   const [connectingPlatform, setConnectingPlatform] =
     useState<SocialPlatform | null>(null);
 
+  const { data: connectData, error: connectError } = useConnectSocialProfile({
+    platform: connectingPlatform!,
+  });
+
+  useEffect(() => {
+    if (connectData?.authorizationUrl) {
+      window.location.href = connectData.authorizationUrl;
+    }
+  }, [connectData]);
+
+  useEffect(() => {
+    if (connectError) {
+      setConnectingPlatform(null);
+    }
+  }, [connectError]);
+
   const handleConnect = async (platform: SocialPlatform) => {
     setConnectingPlatform(platform);
-    // TODO: Implement actual connection flow
-    // This will likely redirect to OAuth URL from useConnectSocialProfile
-    console.log(`Connecting to ${platform}...`);
-
-    // Example: Use the connect hook when ready
-    // const { data } = await connectMutation.mutateAsync({ platform });
-    // if (data?.authorizationUrl) {
-    //   window.location.href = data.authorizationUrl;
-    // }
-
-    // Reset after some time (remove this in actual implementation)
-    setTimeout(() => {
-      setConnectingPlatform(null);
-    }, 2000);
   };
 
   const handleDisconnect = async (platform: SocialPlatform) => {

@@ -20,8 +20,11 @@ export function useCreateSocialProfile() {
 
 export function useConnectSocialProfile(request: SocialProfileConnectRequest) {
   return useQuery<SocialProfileConnectResponse, Error>({
-    queryKey: ['socialProfileConnect', request],
+    queryKey: ['socialProfileConnect', request.platform],
     queryFn: () => apiClient.connectSocialProfile(request),
+    enabled: !!request.platform,
+    staleTime: 0,
+    gcTime: 0,
   });
 }
 
