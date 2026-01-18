@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import {
   useSocialAccountsStatus,
   useConnectSocialProfile,
+  useSocialProfileExists,
 } from '@/hooks/useSocialProfile';
 import { SocialAccountCard } from '@/components/SocialAccountCard';
 import {
@@ -22,6 +23,8 @@ import { SocialPlatform } from '@/types/socialProfile';
 
 export default function SocialProfilesPage() {
   const router = useRouter();
+  const { data: socialProfileData, isLoading: isProfileLoading } =
+    useSocialProfileExists();
   const { data: accountsStatus, isLoading, error } = useSocialAccountsStatus();
   const [connectingPlatform, setConnectingPlatform] =
     useState<SocialPlatform | null>(null);
@@ -29,6 +32,12 @@ export default function SocialProfilesPage() {
   const { data: connectData, error: connectError } = useConnectSocialProfile({
     platform: connectingPlatform!,
   });
+
+  useEffect(() => {
+    if (!isProfileLoading && !socialProfileData?.exists) {
+      router.push('/dashboard');
+    }
+  }, [socialProfileData?.exists, isProfileLoading, router]);
 
   useEffect(() => {
     if (connectData?.authorizationUrl) {
@@ -51,7 +60,7 @@ export default function SocialProfilesPage() {
     console.log(`Disconnecting from ${platform}...`);
   };
 
-  if (isLoading) {
+  if (isLoading || isProfileLoading) {
     return <LoadingScreen message="Loading social accounts..." />;
   }
 
