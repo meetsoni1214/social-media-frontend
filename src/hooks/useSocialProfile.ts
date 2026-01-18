@@ -15,6 +15,7 @@ export function useCreateSocialProfile() {
     mutationFn: () => apiClient.createSocialProfile(),
     onSuccess: data => {
       queryClient.setQueryData(['socialProfile'], data);
+      queryClient.invalidateQueries({ queryKey: ['socialProfileExists'] });
     },
   });
 }

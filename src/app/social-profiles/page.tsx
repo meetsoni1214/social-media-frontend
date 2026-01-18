@@ -23,8 +23,11 @@ import { SocialPlatform } from '@/types/socialProfile';
 
 export default function SocialProfilesPage() {
   const router = useRouter();
-  const { data: socialProfileData, isLoading: isProfileLoading } =
-    useSocialProfileExists();
+  const {
+    data: socialProfileData,
+    isLoading: isProfileLoading,
+    isFetching: isProfileFetching,
+  } = useSocialProfileExists();
   const { data: accountsStatus, isLoading, error } = useSocialAccountsStatus();
   const [connectingPlatform, setConnectingPlatform] =
     useState<SocialPlatform | null>(null);
@@ -34,10 +37,10 @@ export default function SocialProfilesPage() {
   });
 
   useEffect(() => {
-    if (!isProfileLoading && !socialProfileData?.exists) {
+    if (!isProfileLoading && !isProfileFetching && !socialProfileData?.exists) {
       router.push('/dashboard');
     }
-  }, [socialProfileData?.exists, isProfileLoading, router]);
+  }, [socialProfileData?.exists, isProfileLoading, isProfileFetching, router]);
 
   useEffect(() => {
     if (connectData?.authorizationUrl) {
@@ -60,7 +63,7 @@ export default function SocialProfilesPage() {
     console.log(`Disconnecting from ${platform}...`);
   };
 
-  if (isLoading || isProfileLoading) {
+  if (isLoading || isProfileLoading || isProfileFetching) {
     return <LoadingScreen message="Loading social accounts..." />;
   }
 
