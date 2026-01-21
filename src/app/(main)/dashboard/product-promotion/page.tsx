@@ -2,18 +2,18 @@
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useOnboarding } from '@/contexts/OnboardingContext';
+import { useOnboarding } from '@/features/business-profile/contexts/OnboardingContext';
 import { ArrowLeft, TrendingUp, Sparkles } from 'lucide-react';
 import {
   GradientCard,
   GradientCardHeader,
   GradientCardTitle,
-} from '@/components/GradientCard';
-import { GradientButton } from '@/components/GradientButton';
-import { ErrorMessage } from '@/components/ErrorMessage';
-import { LoadingSpinner } from '@/components/LoadingSpinner';
-import { GradientBar } from '@/components/GradientBar';
-import { useProductPromotionIdeas } from '@/hooks/usePostIdeas';
+} from '@/components/common/GradientCard';
+import { GradientButton } from '@/components/common/GradientButton';
+import { ErrorMessage } from '@/components/common/ErrorMessage';
+import { LoadingSpinner } from '@/components/common/LoadingSpinner';
+import { GradientBar } from '@/components/common/GradientBar';
+import { useProductPromotionIdeas } from '@/features/posts/hooks/usePostIdeas';
 
 export default function ProductPromotionPage() {
   const router = useRouter();

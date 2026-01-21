@@ -2,19 +2,19 @@
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useOnboarding } from '@/contexts/OnboardingContext';
+import { useOnboarding } from '@/features/business-profile/contexts/OnboardingContext';
 import { ArrowLeft, BookOpen, Sparkles } from 'lucide-react';
 import {
   GradientCard,
   GradientCardHeader,
   GradientCardTitle,
   GradientCardDescription,
-} from '@/components/GradientCard';
-import { GradientButton } from '@/components/GradientButton';
-import { ErrorMessage } from '@/components/ErrorMessage';
-import { LoadingSpinner } from '@/components/LoadingSpinner';
-import { useEducationalContentIdeas } from '@/hooks/usePostIdeas';
-import { GradientBar } from '@/components/GradientBar';
+} from '@/components/common/GradientCard';
+import { GradientButton } from '@/components/common/GradientButton';
+import { ErrorMessage } from '@/components/common/ErrorMessage';
+import { LoadingSpinner } from '@/components/common/LoadingSpinner';
+import { useEducationalContentIdeas } from '@/features/posts/hooks/usePostIdeas';
+import { GradientBar } from '@/components/common/GradientBar';
 
 export default function EducationalContentPage() {
   const router = useRouter();

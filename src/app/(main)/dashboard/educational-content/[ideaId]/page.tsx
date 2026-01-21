@@ -2,20 +2,20 @@
 
 import { useEffect, use } from 'react';
 import { useRouter } from 'next/navigation';
-import { useOnboarding } from '@/contexts/OnboardingContext';
+import { useOnboarding } from '@/features/business-profile/contexts/OnboardingContext';
 import { ArrowLeft } from 'lucide-react';
-import { GradientButton } from '@/components/GradientButton';
-import { useEducationalContentIdeas } from '@/hooks/usePostIdeas';
-import { usePosts } from '@/hooks/usePost';
-import { useImageDownload } from '@/hooks/useImageDownload';
-import { useSocialShare } from '@/hooks/useSocialShare';
-import { GradientBar } from '@/components/GradientBar';
-import { PostImageDisplay } from '@/components/PostImageDisplay';
-import { PostCaption } from '@/components/PostCaption';
-import { ShareActions } from '@/components/ShareActions';
+import { GradientButton } from '@/components/common/GradientButton';
+import { useEducationalContentIdeas } from '@/features/posts/hooks/usePostIdeas';
+import { usePosts } from '@/features/posts/hooks/usePost';
+import { useImageDownload } from '@/features/posts/hooks/useImageDownload';
+import { useSocialShare } from '@/features/social-accounts/hooks/useSocialShare';
+import { GradientBar } from '@/components/common/GradientBar';
+import { PostImageDisplay } from '@/features/posts/components/PostImageDisplay';
+import { PostCaption } from '@/features/posts/components/PostCaption';
+import { ShareActions } from '@/features/posts/components/ShareActions';
 import { UI_CONSTANTS, MESSAGES, FILE_CONSTANTS } from './constants';
-import { ErrorText } from '@/components/ErrorText';
-import { LoadingScreen } from '@/components/LoadingScreen';
+import { ErrorText } from '@/components/common/ErrorText';
+import { LoadingScreen } from '@/components/common/LoadingScreen';
 
 export default function GeneratedPostPage({
   params,

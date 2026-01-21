@@ -5,7 +5,7 @@ import {
   SocialProfileCreateResponse,
   SocialAccountsStatusResponse,
   SocialProfileExistsResponse,
-} from '@/types/socialProfile';
+} from '@/features/social-accounts/types/socialProfile';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 export function useCreateSocialProfile() {

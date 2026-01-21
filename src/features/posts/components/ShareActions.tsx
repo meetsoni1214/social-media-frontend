@@ -4,8 +4,8 @@ import {
   InstagramIcon,
   WhatsAppIcon,
 } from '@/components/icons/SocialIcons';
-import { GradientButton } from '@/components/GradientButton';
-import { GradientIconButton } from '@/components/GradientIconButton';
+import { GradientButton } from '@/components/common/GradientButton';
+import { GradientIconButton } from '@/components/common/GradientIconButton';
 
 interface ShareActionsProps {
   onDownload: () => void;

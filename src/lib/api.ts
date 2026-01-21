@@ -3,8 +3,8 @@ import type {
   RegisterResponse,
   RequestOTPResponse,
   VerifyOTPResponse,
-} from '@/types/auth';
-import type { BusinessProfileResponse } from '@/types/businessProfile';
+} from '@/features/auth/types/auth';
+import type { BusinessProfileResponse } from '@/features/business-profile/types/businessProfile';
 import { keysToCamel, keysToSnake } from './utils';
 
 import {
@@ -20,7 +20,7 @@ import {
   SocialAccount,
   SocialAccountsStatusResponse,
   SocialProfileExistsResponse,
-} from '@/types/socialProfile';
+} from '@/features/social-accounts/types/socialProfile';
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000/api/v1';

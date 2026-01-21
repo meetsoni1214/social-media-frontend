@@ -1,7 +1,7 @@
 import Image from 'next/image';
-import { ErrorText } from './ErrorText';
-import { LoadingSpinner } from './LoadingSpinner';
-import { GradientCard } from '@/components/GradientCard';
+import { ErrorText } from '../../../components/common/ErrorText';
+import { LoadingSpinner } from '../../../components/common/LoadingSpinner';
+import { GradientCard } from '@/components/common/GradientCard';
 
 interface PostImageDisplayProps {
   imageSrc?: string;

@@ -6,20 +6,20 @@ import {
   useSocialAccountsStatus,
   useConnectSocialProfile,
   useSocialProfileExists,
-} from '@/hooks/useSocialProfile';
-import { SocialAccountCard } from '@/components/SocialAccountCard';
+} from '@/features/social-accounts/hooks/useSocialProfile';
+import { SocialAccountCard } from '@/features/social-accounts/components/SocialAccountCard';
 import {
   GradientCard,
   GradientCardHeader,
   GradientCardTitle,
   GradientCardDescription,
-} from '@/components/GradientCard';
-import { LoadingScreen } from '@/components/LoadingScreen';
-import { ErrorCard } from '@/components/ErrorCard';
+} from '@/components/common/GradientCard';
+import { LoadingScreen } from '@/components/common/LoadingScreen';
+import { ErrorCard } from '@/components/common/ErrorCard';
 import { ArrowLeft, Link2 } from 'lucide-react';
-import { GradientButton } from '@/components/GradientButton';
-import { GradientBar } from '@/components/GradientBar';
-import { SocialPlatform } from '@/types/socialProfile';
+import { GradientButton } from '@/components/common/GradientButton';
+import { GradientBar } from '@/components/common/GradientBar';
+import { SocialPlatform } from '@/features/social-accounts/types/socialProfile';
 
 export default function SocialProfilesPage() {
   const router = useRouter();

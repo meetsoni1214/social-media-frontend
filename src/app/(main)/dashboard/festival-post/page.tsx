@@ -2,17 +2,17 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useOnboarding } from '@/contexts/OnboardingContext';
+import { useOnboarding } from '@/features/business-profile/contexts/OnboardingContext';
 import { ArrowLeft, Sparkles, Calendar } from 'lucide-react';
-import { LoadingSpinner } from '@/components/LoadingSpinner';
+import { LoadingSpinner } from '@/components/common/LoadingSpinner';
 import {
   GradientCard,
   GradientCardHeader,
   GradientCardTitle,
-} from '@/components/GradientCard';
-import { GradientButton } from '@/components/GradientButton';
+} from '@/components/common/GradientCard';
+import { GradientButton } from '@/components/common/GradientButton';
 import { mockApi, type Festival, type PostIdea } from '@/lib/mockApi';
-import { GradientBar } from '@/components/GradientBar';
+import { GradientBar } from '@/components/common/GradientBar';
 
 export default function FestivalPostPage() {
   const router = useRouter();

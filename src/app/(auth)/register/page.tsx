@@ -8,8 +8,8 @@ import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select } from '@/components/ui/select';
-import { GradientButton } from '@/components/GradientButton';
-import { useRegister } from '@/hooks/useRegister';
+import { GradientButton } from '@/components/common/GradientButton';
+import { useRegister } from '@/features/auth/hooks/useRegister';
 import { signupSchema, type SignupFormData } from '@/lib/validations';
 
 const ROLE_OPTIONS = [

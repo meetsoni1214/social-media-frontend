@@ -11,12 +11,15 @@ import {
   businessProfileSchema,
   type BusinessProfileFormData,
 } from '@/lib/validations';
-import { useOnboarding } from '@/contexts/OnboardingContext';
-import { useSaveBusinessProfile } from '@/hooks/useBusinessProfile';
-import { GradientCard, GradientCardTitle } from '@/components/GradientCard';
-import { GradientButton } from '@/components/GradientButton';
-import { GradientBar } from '@/components/GradientBar';
-import { LoadingScreen } from '@/components/LoadingScreen';
+import { useOnboarding } from '@/features/business-profile/contexts/OnboardingContext';
+import { useSaveBusinessProfile } from '@/features/business-profile/hooks/useBusinessProfile';
+import {
+  GradientCard,
+  GradientCardTitle,
+} from '@/components/common/GradientCard';
+import { GradientButton } from '@/components/common/GradientButton';
+import { GradientBar } from '@/components/common/GradientBar';
+import { LoadingScreen } from '@/components/common/LoadingScreen';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';

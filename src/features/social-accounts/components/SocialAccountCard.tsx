@@ -1,13 +1,16 @@
 import * as React from 'react';
-import { GradientCard } from './GradientCard';
-import { GradientButton } from './GradientButton';
+import { GradientCard } from '../../../components/common/GradientCard';
+import { GradientButton } from '../../../components/common/GradientButton';
 import { cn } from '@/lib/utils';
-import { SocialAccountStatus, SocialPlatform } from '@/types/socialProfile';
+import {
+  SocialAccountStatus,
+  SocialPlatform,
+} from '@/features/social-accounts/types/socialProfile';
 import {
   FacebookIcon,
   InstagramIcon,
   GoogleMyBusinessIcon,
-} from './icons/SocialIcons';
+} from '../../../components/icons/SocialIcons';
 import { ExternalLink, Unplug } from 'lucide-react';
 import Image from 'next/image';
 

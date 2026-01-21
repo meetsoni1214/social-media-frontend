@@ -7,7 +7,7 @@ import React, {
   type ReactNode,
 } from 'react';
 import type { BusinessProfileFormData } from '@/lib/validations';
-import { useBusinessProfile } from '@/hooks/useBusinessProfile';
+import { useBusinessProfile } from '@/features/business-profile/hooks/useBusinessProfile';
 
 interface OnboardingContextType {
   businessProfile: BusinessProfileFormData | null;

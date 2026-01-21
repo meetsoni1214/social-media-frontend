@@ -2,13 +2,13 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useOnboarding } from '@/contexts/OnboardingContext';
+import { useOnboarding } from '@/features/business-profile/contexts/OnboardingContext';
 import { ArrowLeft, Quote as QuoteIcon, Sparkles } from 'lucide-react';
-import { LoadingSpinner } from '@/components/LoadingSpinner';
-import { GradientCard } from '@/components/GradientCard';
-import { GradientButton } from '@/components/GradientButton';
+import { LoadingSpinner } from '@/components/common/LoadingSpinner';
+import { GradientCard } from '@/components/common/GradientCard';
+import { GradientButton } from '@/components/common/GradientButton';
 import { mockApi, type Quote } from '@/lib/mockApi';
-import { GradientBar } from '@/components/GradientBar';
+import { GradientBar } from '@/components/common/GradientBar';
 
 export default function QuotePostPage() {
   const router = useRouter();

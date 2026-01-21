@@ -2,11 +2,11 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useOnboarding } from '@/contexts/OnboardingContext';
+import { useOnboarding } from '@/features/business-profile/contexts/OnboardingContext';
 import {
   useSocialProfileExists,
   useCreateSocialProfile,
-} from '@/hooks/useSocialProfile';
+} from '@/features/social-accounts/hooks/useSocialProfile';
 import {
   Sparkles,
   Building2,
@@ -23,12 +23,12 @@ import {
   GradientCardHeader,
   GradientCardTitle,
   GradientCardDescription,
-} from '@/components/GradientCard';
-import { GradientButton } from '@/components/GradientButton';
-import { QuickActionCard } from '@/components/QuickActionCard';
-import { LoadingScreen } from '@/components/LoadingScreen';
-import { GradientBar } from '@/components/GradientBar';
-import { ErrorText } from '@/components/ErrorText';
+} from '@/components/common/GradientCard';
+import { GradientButton } from '@/components/common/GradientButton';
+import { QuickActionCard } from '@/features/dashboard/components/QuickActionCard';
+import { LoadingScreen } from '@/components/common/LoadingScreen';
+import { GradientBar } from '@/components/common/GradientBar';
+import { ErrorText } from '@/components/common/ErrorText';
 
 export default function DashboardPage() {
   const router = useRouter();
