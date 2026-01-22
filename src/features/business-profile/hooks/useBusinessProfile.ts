@@ -1,12 +1,12 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { apiClient } from '@/lib/api/client';
+import { businessProfileService } from '@/lib/api';
 import type { BusinessProfileFormData } from '@/lib/utils/validation';
 import type { BusinessProfileResponse } from '@/features/business-profile/types/businessProfile';
 
 export function useBusinessProfile() {
   return useQuery<BusinessProfileResponse[]>({
     queryKey: ['businessProfile'],
-    queryFn: () => apiClient.getBusinessProfile(),
+    queryFn: () => businessProfileService.getProfiles(),
   });
 }
 
@@ -15,7 +15,7 @@ export function useSaveBusinessProfile() {
 
   return useMutation<BusinessProfileResponse, Error, BusinessProfileFormData>({
     mutationFn: (businessProfile: BusinessProfileFormData) =>
-      apiClient.saveBusinessProfile(businessProfile),
+      businessProfileService.createProfile(businessProfile),
     onSuccess: data => {
       queryClient.setQueryData(['businessProfile'], [data]);
     },

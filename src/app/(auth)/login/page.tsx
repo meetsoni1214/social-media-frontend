@@ -8,7 +8,7 @@ import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { GradientButton } from '@/components/common/GradientButton';
-import { apiClient } from '@/lib/api/client';
+import { authService } from '@/lib/api';
 import {
   phoneSchema,
   otpSchema,
@@ -41,7 +41,7 @@ export default function LoginPage() {
     setError('');
 
     try {
-      const response = await apiClient.sendOTP(data.phone);
+      const response = await authService.sendOTP(data.phone);
 
       if (response.success) {
         setPhoneNumber(data.phone);
@@ -65,7 +65,7 @@ export default function LoginPage() {
     setError('');
 
     try {
-      const response = await apiClient.verifyOTP(data.otp);
+      const response = await authService.verifyOTP(data.otp);
 
       if (response.success) {
         if (response.isNewUser) {
@@ -92,7 +92,7 @@ export default function LoginPage() {
     setError('');
 
     try {
-      const response = await apiClient.resendOTP();
+      const response = await authService.resendOTP();
 
       if (response.success) {
         setError('OTP resent successfully!');

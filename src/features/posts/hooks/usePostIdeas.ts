@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { apiClient } from '@/lib/api/client';
+import { postService } from '@/lib/api';
 import type { BusinessProfileFormData } from '@/lib/utils/validation';
 
 interface PostIdeasParams {
@@ -17,8 +17,7 @@ const POST_IDEAS_KEYS = {
 export function useProductPromotionIdeas(params: PostIdeasParams) {
   return useQuery({
     queryKey: POST_IDEAS_KEYS.promotion(params),
-    queryFn: () =>
-      apiClient.generateProductPromotionIdeas(params.businessProfile),
+    queryFn: () => postService.generatePromotionIdeas(params.businessProfile),
     enabled: !!params.businessProfile,
   });
 }
@@ -26,8 +25,7 @@ export function useProductPromotionIdeas(params: PostIdeasParams) {
 export function useEducationalContentIdeas(params: PostIdeasParams) {
   return useQuery({
     queryKey: POST_IDEAS_KEYS.educational(params),
-    queryFn: () =>
-      apiClient.generateEducationalContentIdeas(params.businessProfile),
+    queryFn: () => postService.generateEducationalIdeas(params.businessProfile),
     enabled: !!params.businessProfile,
   });
 }

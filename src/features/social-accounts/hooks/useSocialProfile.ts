@@ -1,4 +1,4 @@
-import { apiClient } from '@/lib/api/client';
+import { socialProfileService } from '@/lib/api';
 import {
   SocialProfileConnectRequest,
   SocialProfileConnectResponse,
@@ -12,7 +12,7 @@ export function useCreateSocialProfile() {
   const queryClient = useQueryClient();
 
   return useMutation<SocialProfileCreateResponse, Error>({
-    mutationFn: () => apiClient.createSocialProfile(),
+    mutationFn: () => socialProfileService.create(),
     onSuccess: data => {
       queryClient.setQueryData(['socialProfile'], data);
       queryClient.invalidateQueries({ queryKey: ['socialProfileExists'] });
@@ -23,14 +23,14 @@ export function useCreateSocialProfile() {
 export function useSocialProfileExists() {
   return useQuery<SocialProfileExistsResponse, Error>({
     queryKey: ['socialProfileExists'],
-    queryFn: () => apiClient.checkSocialProfileExists(),
+    queryFn: () => socialProfileService.checkExists(),
   });
 }
 
 export function useConnectSocialProfile(request: SocialProfileConnectRequest) {
   return useQuery<SocialProfileConnectResponse, Error>({
     queryKey: ['socialProfileConnect', request.platform],
-    queryFn: () => apiClient.connectSocialProfile(request),
+    queryFn: () => socialProfileService.connect(request),
     enabled: !!request.platform,
     staleTime: 0,
     gcTime: 0,
@@ -40,7 +40,7 @@ export function useConnectSocialProfile(request: SocialProfileConnectRequest) {
 export function useSocialAccountsStatus() {
   return useQuery<SocialAccountsStatusResponse, Error>({
     queryKey: ['socialAccountsStatus'],
-    queryFn: () => apiClient.getSocialAccounts(),
+    queryFn: () => socialProfileService.getAccounts(),
     staleTime: 30000,
     refetchOnWindowFocus: true,
     refetchOnMount: true,

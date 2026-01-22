@@ -1,4 +1,5 @@
-import { apiClient, PostIdea } from '@/lib/api/client';
+import { postService } from '@/lib/api';
+import type { PostIdea } from '@/features/posts/types/post';
 import { BusinessProfileFormData } from '@/lib/utils/validation';
 import { useQuery } from '@tanstack/react-query';
 
@@ -11,7 +12,7 @@ export function usePosts(params: PostParams) {
   return useQuery({
     queryKey: ['post', params],
     queryFn: () =>
-      apiClient.generatePost(params.businessProfile, params.postIdea),
+      postService.generatePost(params.businessProfile, params.postIdea),
     enabled: !!params.businessProfile && !!params.postIdea,
   });
 }

@@ -12,7 +12,7 @@ import {
 } from '@/components/common/GradientCard';
 import { GradientButton } from '@/components/common/GradientButton';
 import { mockApi, type Festival } from '@/lib/api/mock';
-import type { PostIdea } from '@/lib/api/client';
+import type { PostIdea } from '@/features/posts/types/post';
 import { GradientBar } from '@/components/common/GradientBar';
 
 export default function FestivalPostPage() {
