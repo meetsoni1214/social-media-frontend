@@ -1,6 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
-import { apiClient } from '@/lib/api';
-import type { SignupFormData } from '@/lib/validations';
+import { apiClient } from '@/lib/api/client';
+import type { SignupFormData } from '@/lib/utils/validation';
 import type { RegisterResponse } from '@/features/auth/types/auth';
 
 export function useRegister() {

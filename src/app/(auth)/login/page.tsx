@@ -8,13 +8,13 @@ import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { GradientButton } from '@/components/common/GradientButton';
-import { apiClient } from '@/lib/api';
+import { apiClient } from '@/lib/api/client';
 import {
   phoneSchema,
   otpSchema,
   type PhoneFormData,
   OTPFormData,
-} from '@/lib/validations';
+} from '@/lib/utils/validation';
 
 export default function LoginPage() {
   const searchParams = useSearchParams();

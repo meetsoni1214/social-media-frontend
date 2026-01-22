@@ -7,7 +7,7 @@ import { ArrowLeft, Quote as QuoteIcon, Sparkles } from 'lucide-react';
 import { LoadingSpinner } from '@/components/common/LoadingSpinner';
 import { GradientCard } from '@/components/common/GradientCard';
 import { GradientButton } from '@/components/common/GradientButton';
-import { mockApi, type Quote } from '@/lib/mockApi';
+import { mockApi, type Quote } from '@/lib/api/mock';
 import { GradientBar } from '@/components/common/GradientBar';
 
 export default function QuotePostPage() {

@@ -1,5 +1,5 @@
-import type { BusinessProfileFormData } from './validations';
-import type { PostIdea } from './api';
+import { BusinessProfileFormData } from '../utils/validation';
+import type { PostIdea } from './client';
 
 export interface ApiResponse<T> {
   success: boolean;

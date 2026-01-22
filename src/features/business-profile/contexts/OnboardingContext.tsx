@@ -6,7 +6,7 @@ import React, {
   useMemo,
   type ReactNode,
 } from 'react';
-import type { BusinessProfileFormData } from '@/lib/validations';
+import type { BusinessProfileFormData } from '@/lib/utils/validation';
 import { useBusinessProfile } from '@/features/business-profile/hooks/useBusinessProfile';
 
 interface OnboardingContextType {

@@ -1,5 +1,5 @@
-import { apiClient, PostIdea } from '@/lib/api';
-import { BusinessProfileFormData } from '@/lib/validations';
+import { apiClient, PostIdea } from '@/lib/api/client';
+import { BusinessProfileFormData } from '@/lib/utils/validation';
 import { useQuery } from '@tanstack/react-query';
 
 interface PostParams {

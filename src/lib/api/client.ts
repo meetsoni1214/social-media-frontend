@@ -1,11 +1,10 @@
-import type { BusinessProfileFormData, SignupFormData } from './validations';
 import type {
   RegisterResponse,
   RequestOTPResponse,
   VerifyOTPResponse,
 } from '@/features/auth/types/auth';
 import type { BusinessProfileResponse } from '@/features/business-profile/types/businessProfile';
-import { keysToCamel, keysToSnake } from './utils';
+import { keysToCamel, keysToSnake } from '../utils/format';
 
 import {
   clearLoginAttemptInfo,
@@ -21,6 +20,7 @@ import {
   SocialAccountsStatusResponse,
   SocialProfileExistsResponse,
 } from '@/features/social-accounts/types/socialProfile';
+import { BusinessProfileFormData, SignupFormData } from '../utils/validation';
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000/api/v1';

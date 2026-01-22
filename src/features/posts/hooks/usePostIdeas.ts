@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
-import { apiClient } from '@/lib/api';
-import type { BusinessProfileFormData } from '@/lib/validations';
+import { apiClient } from '@/lib/api/client';
+import type { BusinessProfileFormData } from '@/lib/utils/validation';
 
 interface PostIdeasParams {
   businessProfile: BusinessProfileFormData;

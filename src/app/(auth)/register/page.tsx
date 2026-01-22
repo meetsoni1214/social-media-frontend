@@ -10,7 +10,7 @@ import { Label } from '@/components/ui/label';
 import { Select } from '@/components/ui/select';
 import { GradientButton } from '@/components/common/GradientButton';
 import { useRegister } from '@/features/auth/hooks/useRegister';
-import { signupSchema, type SignupFormData } from '@/lib/validations';
+import { signupSchema, type SignupFormData } from '@/lib/utils/validation';
 
 const ROLE_OPTIONS = [
   { value: 'business-owner', label: 'Business Owner' },

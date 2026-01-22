@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { apiClient } from '@/lib/api';
-import type { BusinessProfileFormData } from '@/lib/validations';
+import { apiClient } from '@/lib/api/client';
+import type { BusinessProfileFormData } from '@/lib/utils/validation';
 import type { BusinessProfileResponse } from '@/features/business-profile/types/businessProfile';
 
 export function useBusinessProfile() {

@@ -11,7 +11,8 @@ import {
   GradientCardTitle,
 } from '@/components/common/GradientCard';
 import { GradientButton } from '@/components/common/GradientButton';
-import { mockApi, type Festival, type PostIdea } from '@/lib/mockApi';
+import { mockApi, type Festival } from '@/lib/api/mock';
+import type { PostIdea } from '@/lib/api/client';
 import { GradientBar } from '@/components/common/GradientBar';
 
 export default function FestivalPostPage() {

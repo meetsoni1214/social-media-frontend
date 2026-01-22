@@ -10,7 +10,7 @@ import ColorThief from 'colorthief';
 import {
   businessProfileSchema,
   type BusinessProfileFormData,
-} from '@/lib/validations';
+} from '@/lib/utils/validation';
 import { useOnboarding } from '@/features/business-profile/contexts/OnboardingContext';
 import { useSaveBusinessProfile } from '@/features/business-profile/hooks/useBusinessProfile';
 import {

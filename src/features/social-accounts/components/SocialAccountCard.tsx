@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { GradientCard } from '../../../components/common/GradientCard';
 import { GradientButton } from '../../../components/common/GradientButton';
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/utils/cn';
 import {
   SocialAccountStatus,
   SocialPlatform,
