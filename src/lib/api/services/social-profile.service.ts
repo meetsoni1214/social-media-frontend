@@ -5,6 +5,7 @@ import type {
   SocialAccount,
   SocialAccountsStatusResponse,
   SocialProfileExistsResponse,
+  SocialProfileDisconnectRequest,
 } from '@/features/social-accounts/types/socialProfile';
 import { httpClient } from '../core/http-client';
 
@@ -50,9 +51,18 @@ async function getAccounts(): Promise<SocialAccountsStatusResponse> {
   return statusResponse;
 }
 
+async function disconnect(
+  request: SocialProfileDisconnectRequest
+): Promise<void> {
+  return httpClient.delete<void>(
+    `/social-profiles/disconnect/${request.platform}`
+  );
+}
+
 export const socialProfileService = {
   create,
   checkExists,
   connect,
   getAccounts,
+  disconnect,
 };

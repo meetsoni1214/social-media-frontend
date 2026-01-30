@@ -5,6 +5,7 @@ import {
   SocialProfileCreateResponse,
   SocialAccountsStatusResponse,
   SocialProfileExistsResponse,
+  SocialProfileDisconnectRequest,
 } from '@/features/social-accounts/types/socialProfile';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
@@ -41,8 +42,20 @@ export function useSocialAccountsStatus() {
   return useQuery<SocialAccountsStatusResponse, Error>({
     queryKey: ['socialAccountsStatus'],
     queryFn: () => socialProfileService.getAccounts(),
-    staleTime: 30000,
+    staleTime: 0,
+    gcTime: 0,
     refetchOnWindowFocus: true,
     refetchOnMount: true,
+  });
+}
+
+export function useDisconnectSocialProfile() {
+  const queryClient = useQueryClient();
+
+  return useMutation<void, Error, SocialProfileDisconnectRequest>({
+    mutationFn: request => socialProfileService.disconnect(request),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['socialAccountsStatus'] });
+    },
   });
 }

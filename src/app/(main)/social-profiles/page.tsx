@@ -6,6 +6,7 @@ import {
   useSocialAccountsStatus,
   useConnectSocialProfile,
   useSocialProfileExists,
+  useDisconnectSocialProfile,
 } from '@/features/social-accounts/hooks/useSocialProfile';
 import { SocialAccountCard } from '@/features/social-accounts/components/SocialAccountCard';
 import {
@@ -31,10 +32,15 @@ export default function SocialProfilesPage() {
   const { data: accountsStatus, isLoading, error } = useSocialAccountsStatus();
   const [connectingPlatform, setConnectingPlatform] =
     useState<SocialPlatform | null>(null);
+  const [disconnectingPlatform, setDisconnectingPlatform] =
+    useState<SocialPlatform | null>(null);
 
   const { data: connectData, error: connectError } = useConnectSocialProfile({
     platform: connectingPlatform!,
   });
+
+  const { mutate: disconnectMutate, error: disconnectError } =
+    useDisconnectSocialProfile();
 
   useEffect(() => {
     if (!isProfileLoading && !isProfileFetching && !socialProfileData?.exists) {
@@ -54,13 +60,29 @@ export default function SocialProfilesPage() {
     }
   }, [connectError]);
 
+  useEffect(() => {
+    if (disconnectError) {
+      setDisconnectingPlatform(null);
+    }
+  }, [disconnectError]);
+
   const handleConnect = async (platform: SocialPlatform) => {
     setConnectingPlatform(platform);
   };
 
   const handleDisconnect = async (platform: SocialPlatform) => {
-    // TODO: Implement disconnect functionality
-    console.log(`Disconnecting from ${platform}...`);
+    setDisconnectingPlatform(platform);
+    disconnectMutate(
+      { platform },
+      {
+        onSuccess: () => {
+          setDisconnectingPlatform(null);
+        },
+        onError: () => {
+          setDisconnectingPlatform(null);
+        },
+      }
+    );
   };
 
   if (isLoading || isProfileLoading || isProfileFetching) {
@@ -128,6 +150,9 @@ export default function SocialProfilesPage() {
                   onConnect={() => handleConnect(SocialPlatform.FACEBOOK)}
                   onDisconnect={() => handleDisconnect(SocialPlatform.FACEBOOK)}
                   isConnecting={connectingPlatform === SocialPlatform.FACEBOOK}
+                  isDisconnecting={
+                    disconnectingPlatform === SocialPlatform.FACEBOOK
+                  }
                 />
               )}
               {accountsStatus.instagram.isConnected && (
@@ -139,6 +164,9 @@ export default function SocialProfilesPage() {
                     handleDisconnect(SocialPlatform.INSTAGRAM)
                   }
                   isConnecting={connectingPlatform === SocialPlatform.INSTAGRAM}
+                  isDisconnecting={
+                    disconnectingPlatform === SocialPlatform.INSTAGRAM
+                  }
                 />
               )}
               {accountsStatus.googlebusiness.isConnected && (
@@ -151,6 +179,9 @@ export default function SocialProfilesPage() {
                   }
                   isConnecting={
                     connectingPlatform === SocialPlatform.GOOGLEBUSINESS
+                  }
+                  isDisconnecting={
+                    disconnectingPlatform === SocialPlatform.GOOGLEBUSINESS
                   }
                 />
               )}

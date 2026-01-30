@@ -21,6 +21,10 @@ export interface SocialProfileConnectRequest {
   platform: SocialPlatform;
 }
 
+export interface SocialProfileDisconnectRequest {
+  platform: SocialPlatform;
+}
+
 export interface SocialAccount {
   fieldId: string;
   platform: SocialPlatform;
