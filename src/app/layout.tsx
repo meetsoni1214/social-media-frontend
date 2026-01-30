@@ -4,6 +4,7 @@ import './globals.css';
 import { OnboardingProvider } from '@/features/business-profile/contexts/OnboardingContext';
 import { QueryProvider } from '@/providers/QueryProvider';
 import { SuperTokensProvider } from '@/components/common/SuperTokensProvider';
+import { ToastProvider } from '@/components/common/Toast';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -32,7 +33,9 @@ export default function RootLayout({
       >
         <SuperTokensProvider>
           <QueryProvider>
-            <OnboardingProvider>{children}</OnboardingProvider>
+            <ToastProvider>
+              <OnboardingProvider>{children}</OnboardingProvider>
+            </ToastProvider>
           </QueryProvider>
         </SuperTokensProvider>
       </body>

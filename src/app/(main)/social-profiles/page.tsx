@@ -21,9 +21,12 @@ import { ArrowLeft, Link2 } from 'lucide-react';
 import { GradientButton } from '@/components/common/GradientButton';
 import { GradientBar } from '@/components/common/GradientBar';
 import { SocialPlatform } from '@/features/social-accounts/types/socialProfile';
+import { useToast } from '@/components/common/Toast';
+import { ConfirmationDialog } from '@/components/common/ConfirmationDialog';
 
 export default function SocialProfilesPage() {
   const router = useRouter();
+  const { showToast } = useToast();
   const {
     data: socialProfileData,
     isLoading: isProfileLoading,
@@ -33,6 +36,8 @@ export default function SocialProfilesPage() {
   const [connectingPlatform, setConnectingPlatform] =
     useState<SocialPlatform | null>(null);
   const [disconnectingPlatform, setDisconnectingPlatform] =
+    useState<SocialPlatform | null>(null);
+  const [confirmDisconnectPlatform, setConfirmDisconnectPlatform] =
     useState<SocialPlatform | null>(null);
 
   const { data: connectData, error: connectError } = useConnectSocialProfile({
@@ -57,29 +62,60 @@ export default function SocialProfilesPage() {
   useEffect(() => {
     if (connectError) {
       setConnectingPlatform(null);
+      const errorMessage =
+        connectError.message || 'Failed to connect account. Please try again.';
+      showToast(errorMessage, 'error');
     }
-  }, [connectError]);
+  }, [connectError, showToast]);
 
   useEffect(() => {
     if (disconnectError) {
       setDisconnectingPlatform(null);
+      const errorMessage =
+        disconnectError.message ||
+        'Failed to disconnect account. Please try again.';
+      showToast(errorMessage, 'error');
     }
-  }, [disconnectError]);
+  }, [disconnectError, showToast]);
 
   const handleConnect = async (platform: SocialPlatform) => {
     setConnectingPlatform(platform);
   };
 
-  const handleDisconnect = async (platform: SocialPlatform) => {
-    setDisconnectingPlatform(platform);
+  const handleDisconnect = (platform: SocialPlatform) => {
+    setConfirmDisconnectPlatform(platform);
+  };
+
+  const getPlatformDisplayName = (platform: SocialPlatform): string => {
+    const names: Record<SocialPlatform, string> = {
+      facebook: 'Facebook',
+      instagram: 'Instagram',
+      googlebusiness: 'Google My Business',
+    };
+    return names[platform];
+  };
+
+  const handleDisconnectConfirm = async () => {
+    if (!confirmDisconnectPlatform) return;
+
+    setDisconnectingPlatform(confirmDisconnectPlatform);
     disconnectMutate(
-      { platform },
+      { platform: confirmDisconnectPlatform },
       {
         onSuccess: () => {
+          const platformName = getPlatformDisplayName(
+            confirmDisconnectPlatform
+          );
+          showToast(
+            `${platformName} account disconnected successfully`,
+            'success'
+          );
           setDisconnectingPlatform(null);
+          setConfirmDisconnectPlatform(null);
         },
         onError: () => {
           setDisconnectingPlatform(null);
+          setConfirmDisconnectPlatform(null);
         },
       }
     );
@@ -235,6 +271,18 @@ export default function SocialProfilesPage() {
         )}
 
         {renderWhyConnectSocialAccounts()}
+
+        <ConfirmationDialog
+          isOpen={confirmDisconnectPlatform !== null}
+          onClose={() => setConfirmDisconnectPlatform(null)}
+          onConfirm={handleDisconnectConfirm}
+          title="Disconnect Account?"
+          message={`Are you sure you want to disconnect your ${confirmDisconnectPlatform ? getPlatformDisplayName(confirmDisconnectPlatform) : ''} account? You can reconnect it anytime.`}
+          confirmText="Disconnect"
+          cancelText="Cancel"
+          isLoading={disconnectingPlatform !== null}
+          variant="warning"
+        />
       </div>
     </div>
   );
