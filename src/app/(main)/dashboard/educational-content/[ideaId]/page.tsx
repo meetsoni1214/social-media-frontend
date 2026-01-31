@@ -12,8 +12,8 @@ import { useSocialShare } from '@/features/social-accounts/hooks/useSocialShare'
 import { GradientBar } from '@/components/common/GradientBar';
 import { PostImageDisplay } from '@/features/posts/components/PostImageDisplay';
 import { PostCaption } from '@/features/posts/components/PostCaption';
-import { ShareActions } from '@/features/posts/components/ShareActions';
-import { UI_CONSTANTS, MESSAGES, FILE_CONSTANTS } from './constants';
+import { SocialProfileShareSection } from '@/features/posts/components/SocialProfileShareSection';
+import { UI_CONSTANTS, FILE_CONSTANTS } from './constants';
 import { ErrorText } from '@/components/common/ErrorText';
 import { LoadingScreen } from '@/components/common/LoadingScreen';
 
@@ -30,8 +30,6 @@ export default function GeneratedPostPage({
     filename: FILE_CONSTANTS.DEFAULT_FILENAME,
     successDuration: UI_CONSTANTS.SUCCESS_NOTIFICATION_DURATION,
   });
-
-  const socialShare = useSocialShare();
 
   const { data: response, isLoading } = useEducationalContentIdeas({
     businessProfile: businessProfile!,
@@ -152,14 +150,12 @@ export default function GeneratedPostPage({
             <div className="space-y-4">
               <PostCaption title={idea.title} content={idea.content} />
 
-              <ShareActions
+              <SocialProfileShareSection
                 onDownload={handleDownload}
                 isDownloading={imageDownload.isDownloading}
                 downloadSuccess={imageDownload.downloadSuccess}
-                downloadDisabled={!postResponse?.data?.base64Image}
-                onWhatsAppShare={handleWhatsAppShare}
-                onFacebookShare={handleFacebookShare}
-                onInstagramShare={handleInstagramShare}
+                downloadDisabled={!displayPostResponse?.data?.base64Image}
+                postTitle={idea.title}
               />
             </div>
           </div>
