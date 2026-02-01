@@ -17,9 +17,7 @@ import {
 } from '@/components/common/GradientCard';
 import { LoadingScreen } from '@/components/common/LoadingScreen';
 import { ErrorCard } from '@/components/common/ErrorCard';
-import { ArrowLeft, Link2 } from 'lucide-react';
-import { GradientButton } from '@/components/common/GradientButton';
-import { GradientBar } from '@/components/common/GradientBar';
+import { Link2 } from 'lucide-react';
 import { SocialPlatform } from '@/features/social-accounts/types/socialProfile';
 import { useToast } from '@/components/common/Toast';
 import { ConfirmationDialog } from '@/components/common/ConfirmationDialog';
@@ -144,21 +142,8 @@ export default function SocialProfilesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-pink-50 to-purple-50">
-      <GradientBar />
-
+    <div className="min-h-screen">
       <div className="container mx-auto px-4 py-12 max-w-6xl">
-        <div className="mb-6 animate-fade-in">
-          <GradientButton
-            variant="ghost"
-            size="sm"
-            onClick={() => router.push('/dashboard')}
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Dashboard
-          </GradientButton>
-        </div>
-
         <div className="text-center mb-12 animate-fade-in">
           <div className="inline-flex items-center gap-2 mb-4">
             <Link2 className="w-10 h-10 text-[var(--gradient-pink)]" />

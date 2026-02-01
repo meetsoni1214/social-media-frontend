@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useOnboarding } from '@/features/business-profile/contexts/OnboardingContext';
-import { ArrowLeft, Sparkles, Calendar } from 'lucide-react';
+import { Sparkles, Calendar } from 'lucide-react';
 import { LoadingSpinner } from '@/components/common/LoadingSpinner';
 import {
   GradientCard,
@@ -13,7 +13,6 @@ import {
 import { GradientButton } from '@/components/common/GradientButton';
 import { mockApi, type Festival } from '@/lib/api/mock';
 import type { PostIdea } from '@/features/posts/types/post';
-import { GradientBar } from '@/components/common/GradientBar';
 
 export default function FestivalPostPage() {
   const router = useRouter();
@@ -61,31 +60,13 @@ export default function FestivalPostPage() {
     setIsGeneratingIdeas(false);
   };
 
-  const handleBack = () => {
-    if (selectedFestival) {
-      setSelectedFestival(null);
-      setPostIdeas([]);
-    } else {
-      router.push('/dashboard');
-    }
-  };
-
   if (!businessProfile) {
     return null;
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-pink-50 to-purple-50">
-      <GradientBar />
-
+    <div className="min-h-screen">
       <div className="container mx-auto px-4 py-8 max-w-4xl">
-        <div className="mb-8">
-          <GradientButton variant="ghost" onClick={handleBack}>
-            <ArrowLeft className="w-4 h-4" />
-            {selectedFestival ? 'Back to Festivals' : 'Back to Dashboard'}
-          </GradientButton>
-        </div>
-
         {!selectedFestival ? (
           <div className="animate-fade-in">
             <div className="text-center mb-8">

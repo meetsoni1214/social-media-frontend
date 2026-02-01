@@ -3,12 +3,11 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useOnboarding } from '@/features/business-profile/contexts/OnboardingContext';
-import { ArrowLeft, Quote as QuoteIcon, Sparkles } from 'lucide-react';
+import { Quote as QuoteIcon, Sparkles } from 'lucide-react';
 import { LoadingSpinner } from '@/components/common/LoadingSpinner';
 import { GradientCard } from '@/components/common/GradientCard';
 import { GradientButton } from '@/components/common/GradientButton';
 import { mockApi, type Quote } from '@/lib/api/mock';
-import { GradientBar } from '@/components/common/GradientBar';
 
 export default function QuotePostPage() {
   const router = useRouter();
@@ -38,20 +37,8 @@ export default function QuotePostPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-pink-50 to-purple-50">
-      <GradientBar />
-
+    <div className="min-h-screen">
       <div className="container mx-auto px-4 py-12 max-w-6xl">
-        <div className="mb-8">
-          <GradientButton
-            variant="ghost"
-            onClick={() => router.push('/dashboard')}
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Back to Dashboard
-          </GradientButton>
-        </div>
-
         <div className="text-center mb-12 animate-fade-in">
           <div className="inline-flex items-center gap-2 mb-4">
             <QuoteIcon className="w-10 h-10 text-[var(--gradient-pink)]" />

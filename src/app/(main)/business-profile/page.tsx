@@ -18,7 +18,6 @@ import {
   GradientCardTitle,
 } from '@/components/common/GradientCard';
 import { GradientButton } from '@/components/common/GradientButton';
-import { GradientBar } from '@/components/common/GradientBar';
 import { LoadingScreen } from '@/components/common/LoadingScreen';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -164,9 +163,7 @@ export default function BusinessProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-pink-50 to-purple-50">
-      <GradientBar />
-
+    <div className="min-h-screen">
       <div className="container mx-auto px-4 py-12 max-w-4xl">
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold gradient-text mb-2">

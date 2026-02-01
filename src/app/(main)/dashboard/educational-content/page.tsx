@@ -3,7 +3,7 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useOnboarding } from '@/features/business-profile/contexts/OnboardingContext';
-import { ArrowLeft, BookOpen, Sparkles } from 'lucide-react';
+import { BookOpen, Sparkles } from 'lucide-react';
 import {
   GradientCard,
   GradientCardHeader,
@@ -14,7 +14,6 @@ import { GradientButton } from '@/components/common/GradientButton';
 import { ErrorMessage } from '@/components/common/ErrorMessage';
 import { LoadingSpinner } from '@/components/common/LoadingSpinner';
 import { useEducationalContentIdeas } from '@/features/posts/hooks/usePostIdeas';
-import { GradientBar } from '@/components/common/GradientBar';
 
 export default function EducationalContentPage() {
   const router = useRouter();
@@ -42,20 +41,8 @@ export default function EducationalContentPage() {
   const postIdeas = response?.data || [];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-pink-50 to-purple-50">
-      <GradientBar />
-
+    <div className="min-h-screen">
       <div className="container mx-auto px-4 py-8 max-w-4xl">
-        <div className="mb-8">
-          <GradientButton
-            variant="ghost"
-            onClick={() => router.push('/dashboard')}
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Back to Dashboard
-          </GradientButton>
-        </div>
-
         <div className="text-center mb-8 animate-fade-in">
           <div className="inline-flex items-center gap-2 mb-3">
             <BookOpen className="w-8 h-8 text-[var(--gradient-pink)]" />

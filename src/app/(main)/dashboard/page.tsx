@@ -27,7 +27,6 @@ import {
 import { GradientButton } from '@/components/common/GradientButton';
 import { QuickActionCard } from '@/features/dashboard/components/QuickActionCard';
 import { LoadingScreen } from '@/components/common/LoadingScreen';
-import { GradientBar } from '@/components/common/GradientBar';
 import { ErrorText } from '@/components/common/ErrorText';
 
 export default function DashboardPage() {
@@ -57,9 +56,7 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-pink-50 to-purple-50">
-      <GradientBar />
-
+    <div className="min-h-screen">
       <div className="container mx-auto px-4 py-12 max-w-6xl">
         <div className="text-center mb-12 animate-fade-in">
           <div className="inline-flex items-center gap-2 mb-4">
