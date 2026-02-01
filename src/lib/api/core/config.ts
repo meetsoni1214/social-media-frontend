@@ -7,5 +7,3 @@ export const DEFAULT_REQUEST_OPTIONS: RequestInit = {
     'Content-Type': 'application/json',
   },
 };
-
-export const API_TIMEOUT = 30000;

@@ -17,7 +17,7 @@ const gradientCardVariants = cva('rounded-xl bg-white shadow transition-all', {
   },
 });
 
-export interface GradientCardProps
+interface GradientCardProps
   extends React.HTMLAttributes<HTMLDivElement>,
     VariantProps<typeof gradientCardVariants> {}
 
@@ -101,5 +101,4 @@ export {
   GradientCardHeader,
   GradientCardTitle,
   GradientCardDescription,
-  gradientCardVariants,
 };

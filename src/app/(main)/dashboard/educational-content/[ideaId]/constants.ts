@@ -4,16 +4,6 @@ export const UI_CONSTANTS = {
   RETRY_DELAY: 1000,
 } as const;
 
-export const MESSAGES = {
-  SOCIAL: {
-    WHATSAPP_DEFAULT: 'Check out this post!',
-    INSTAGRAM_WEB_LIMITATION:
-      'Please download the image and share it on Instagram manually. Instagram does not support direct web sharing.',
-    FACEBOOK_IMAGE_NOT_READY:
-      'Image not ready yet. Please wait for the image to load.',
-  },
-} as const;
-
 export const FILE_CONSTANTS = {
   DEFAULT_FILENAME: 'educational_post.png',
   IMAGE_TYPE: 'image/png',

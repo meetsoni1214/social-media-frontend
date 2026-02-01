@@ -1,7 +1,7 @@
 import { BusinessProfileFormData } from '../utils/validation';
 import type { PostIdea } from '@/features/posts/types/post';
 
-export interface ApiResponse<T> {
+interface ApiResponse<T> {
   success: boolean;
   data?: T;
   error?: string;

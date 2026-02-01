@@ -29,6 +29,3 @@ export function getQueryClient() {
     return browserQueryClient;
   }
 }
-
-export const queryClient =
-  typeof window !== 'undefined' ? getQueryClient() : makeQueryClient();

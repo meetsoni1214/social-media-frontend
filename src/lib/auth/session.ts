@@ -1,6 +1,6 @@
 import Session from 'supertokens-web-js/recipe/session';
 
-export async function isUserAuthenticated(): Promise<boolean> {
+async function isUserAuthenticated(): Promise<boolean> {
   return await Session.doesSessionExist();
 }
 
@@ -11,7 +11,7 @@ export async function signOut(): Promise<void> {
   }
 }
 
-export async function getUserId(): Promise<string | undefined> {
+async function getUserId(): Promise<string | undefined> {
   if (await Session.doesSessionExist()) {
     const userId = await Session.getUserId();
     return userId;
@@ -19,7 +19,7 @@ export async function getUserId(): Promise<string | undefined> {
   return undefined;
 }
 
-export async function getAccessToken(): Promise<string | undefined> {
+async function getAccessToken(): Promise<string | undefined> {
   if (await Session.doesSessionExist()) {
     const accessToken = await Session.getAccessTokenPayloadSecurely();
     return JSON.stringify(accessToken);
@@ -27,7 +27,7 @@ export async function getAccessToken(): Promise<string | undefined> {
   return undefined;
 }
 
-export async function getAccessTokenPayload(): Promise<
+async function getAccessTokenPayload(): Promise<
   Record<string, unknown> | undefined
 > {
   if (await Session.doesSessionExist()) {
@@ -36,7 +36,7 @@ export async function getAccessTokenPayload(): Promise<
   return undefined;
 }
 
-export async function refreshSession(): Promise<boolean> {
+async function refreshSession(): Promise<boolean> {
   try {
     if (await Session.doesSessionExist()) {
       await Session.attemptRefreshingSession();

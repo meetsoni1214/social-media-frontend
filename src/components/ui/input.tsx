@@ -21,4 +21,4 @@ const Input = React.forwardRef<
 Input.displayName = 'Input';
 
 export { Input };
-export type InputProps = React.InputHTMLAttributes<HTMLInputElement>;
+type InputProps = React.InputHTMLAttributes<HTMLInputElement>;

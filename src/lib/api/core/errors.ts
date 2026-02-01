@@ -10,7 +10,7 @@ export class ApiError extends Error {
   }
 }
 
-export class AuthenticationError extends ApiError {
+class AuthenticationError extends ApiError {
   constructor(message: string, status?: number) {
     super(message, status, 'AUTHENTICATION_ERROR');
     this.name = 'AuthenticationError';
@@ -18,7 +18,7 @@ export class AuthenticationError extends ApiError {
   }
 }
 
-export class ValidationError extends ApiError {
+class ValidationError extends ApiError {
   constructor(message: string, status?: number) {
     super(message, status, 'VALIDATION_ERROR');
     this.name = 'ValidationError';

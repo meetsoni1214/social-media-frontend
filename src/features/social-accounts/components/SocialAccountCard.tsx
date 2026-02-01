@@ -14,8 +14,7 @@ import {
 import { ExternalLink, Unplug } from 'lucide-react';
 import Image from 'next/image';
 
-export interface SocialAccountCardProps
-  extends React.HTMLAttributes<HTMLDivElement> {
+interface SocialAccountCardProps extends React.HTMLAttributes<HTMLDivElement> {
   platform: SocialPlatform;
   accountStatus: SocialAccountStatus;
   onConnect?: () => void;

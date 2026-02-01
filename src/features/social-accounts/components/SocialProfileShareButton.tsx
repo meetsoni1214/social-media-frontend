@@ -12,7 +12,7 @@ import {
 } from '@/components/icons/SocialIcons';
 import { ExternalLink, Share2 } from 'lucide-react';
 
-export interface SocialProfileShareCardProps
+interface SocialProfileShareCardProps
   extends React.HTMLAttributes<HTMLDivElement> {
   platform: SocialPlatform;
   accountStatus: SocialAccountStatus;

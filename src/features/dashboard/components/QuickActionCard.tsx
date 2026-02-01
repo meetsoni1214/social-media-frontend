@@ -2,7 +2,7 @@ import * as React from 'react';
 import { LucideIcon } from 'lucide-react';
 import { cn } from '@/lib/utils/cn';
 
-export interface QuickActionCardProps
+interface QuickActionCardProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   title: string;
   description: string;
