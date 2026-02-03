@@ -1,31 +1,62 @@
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { postService } from '@/lib/api';
 import type { BusinessProfileFormData } from '@/lib/utils/validation';
+import type {
+  SavedPostIdea,
+  SavePostIdeaRequest,
+  PostIdeasResponse,
+} from '@/features/posts/types/post';
 
 interface PostIdeasParams {
   businessProfile: BusinessProfileFormData;
 }
 
+const POST_IDEAS_BASE_KEY = ['post-ideas'] as const;
+const POST_IDEAS_SAVED_BASE_KEY = [...POST_IDEAS_BASE_KEY, 'saved'] as const;
+
 const POST_IDEAS_KEYS = {
-  all: ['post-ideas'] as const,
-  promotion: (params: PostIdeasParams) =>
-    [...POST_IDEAS_KEYS.all, 'promotion', params] as const,
-  educational: (params: PostIdeasParams) =>
-    [...POST_IDEAS_KEYS.all, 'educational', params] as const,
+  all: POST_IDEAS_BASE_KEY,
+  saved: POST_IDEAS_SAVED_BASE_KEY,
+  generatedPromotion: (params: PostIdeasParams) =>
+    [...POST_IDEAS_BASE_KEY, 'generated', 'promotion', params] as const,
+  generatedEducational: (params: PostIdeasParams) =>
+    [...POST_IDEAS_BASE_KEY, 'generated', 'educational', params] as const,
 };
 
-export function useProductPromotionIdeas(params: PostIdeasParams) {
-  return useQuery({
-    queryKey: POST_IDEAS_KEYS.promotion(params),
-    queryFn: () => postService.generatePromotionIdeas(params.businessProfile),
-    enabled: !!params.businessProfile,
+export function useGetSavedPostIdeas() {
+  return useQuery<SavedPostIdea[]>({
+    queryKey: POST_IDEAS_KEYS.saved,
+    queryFn: () => postService.listSavedPostIdeas(),
+    enabled: true,
   });
 }
 
-export function useEducationalContentIdeas(params: PostIdeasParams) {
-  return useQuery({
-    queryKey: POST_IDEAS_KEYS.educational(params),
-    queryFn: () => postService.generateEducationalIdeas(params.businessProfile),
-    enabled: !!params.businessProfile,
+export function useGenerateProductPromotionIdeas() {
+  return useMutation<PostIdeasResponse, Error, PostIdeasParams>({
+    mutationFn: params =>
+      postService.generatePromotionIdeas(params.businessProfile),
+  });
+}
+
+export function useGenerateEducationalContentIdeas() {
+  return useMutation<PostIdeasResponse, Error, PostIdeasParams>({
+    mutationFn: params =>
+      postService.generateEducationalIdeas(params.businessProfile),
+  });
+}
+
+export function useSavePostIdea() {
+  const queryClient = useQueryClient();
+
+  return useMutation<SavedPostIdea, Error, SavePostIdeaRequest>({
+    mutationFn: payload => postService.savePostIdea(payload),
+    onSuccess: data => {
+      queryClient.setQueryData(
+        POST_IDEAS_KEYS.saved,
+        (existing: SavedPostIdea[] = []) => {
+          return [data, ...existing];
+        }
+      );
+    },
   });
 }

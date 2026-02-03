@@ -1,7 +1,26 @@
+export type PostIdeaType = 'PROMOTION' | 'EDUCATIONAL';
+
 export interface PostIdea {
   id: string;
   title: string;
   content: string;
+}
+
+export interface SavedPostIdea {
+  id: number;
+  userId: number;
+  businessProfileId: number;
+  title: string;
+  content: string;
+  ideaType: PostIdeaType;
+  createdAt: string;
+  updatedAt: string | null;
+}
+
+export interface SavePostIdeaRequest {
+  title: string;
+  content: string;
+  ideaType: PostIdeaType;
 }
 
 export interface PostIdeasResponse {
