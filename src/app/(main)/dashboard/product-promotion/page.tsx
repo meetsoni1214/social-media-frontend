@@ -25,7 +25,7 @@ export default function ProductPromotionPage() {
   const { businessProfile, isBusinessProfileComplete } = useOnboarding();
   const [newIdeas, setNewIdeas] = useState<PostIdea[]>([]);
   const [savingIdeaId, setSavingIdeaId] = useState<string | null>(null);
-  const ideaType: PostIdeaType = 'PROMOTION';
+  const ideaType: PostIdeaType = 'PROMOTIONAL';
 
   const {
     data: savedPostIdeasResponse,

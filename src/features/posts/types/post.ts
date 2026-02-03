@@ -1,4 +1,4 @@
-export type PostIdeaType = 'PROMOTION' | 'EDUCATIONAL';
+export type PostIdeaType = 'PROMOTIONAL' | 'EDUCATIONAL';
 
 export interface PostIdea {
   id: string;
