@@ -5,10 +5,9 @@ import { useRouter } from 'next/navigation';
 import { useOnboarding } from '@/features/business-profile/contexts/OnboardingContext';
 import { ArrowLeft } from 'lucide-react';
 import { GradientButton } from '@/components/common/GradientButton';
-import { useEducationalContentIdeas } from '@/features/posts/hooks/usePostIdeas';
+import { useGetSavedPostIdeas } from '@/features/posts/hooks/usePostIdeas';
 import { usePosts } from '@/features/posts/hooks/usePost';
 import { useImageDownload } from '@/features/posts/hooks/useImageDownload';
-import { useSocialShare } from '@/features/social-accounts/hooks/useSocialShare';
 import { GradientBar } from '@/components/common/GradientBar';
 import { PostImageDisplay } from '@/features/posts/components/PostImageDisplay';
 import { PostCaption } from '@/features/posts/components/PostCaption';
@@ -31,9 +30,7 @@ export default function GeneratedPostPage({
     successDuration: UI_CONSTANTS.SUCCESS_NOTIFICATION_DURATION,
   });
 
-  const { data: response, isLoading } = useEducationalContentIdeas({
-    businessProfile: businessProfile!,
-  });
+  const { data: response, isLoading } = useGetSavedPostIdeas();
 
   useEffect(() => {
     if (!isBusinessProfileComplete) {
@@ -41,14 +38,20 @@ export default function GeneratedPostPage({
     }
   }, [isBusinessProfileComplete, router]);
 
-  const postIdeas = response?.data || [];
-  const idea = postIdeas.find(idea => idea.id === ideaId);
+  const postIdeas = (response || []).filter(
+    idea => idea.ideaType === 'EDUCATIONAL'
+  );
+  const idea = postIdeas.find(item => String(item.id) === ideaId);
 
   useEffect(() => {
     if (!isLoading && !idea && postIdeas.length > 0) {
       router.push('/dashboard/educational-content');
     }
   }, [idea, isLoading, postIdeas.length, router]);
+
+  const selectedIdea = idea
+    ? { id: String(idea.id), title: idea.title, content: idea.content }
+    : null;
 
   const {
     data: postResponse,
@@ -57,7 +60,7 @@ export default function GeneratedPostPage({
     refetch,
   } = usePosts({
     businessProfile: businessProfile!,
-    postIdea: idea!,
+    postIdea: selectedIdea!,
   });
 
   const handleDownload = async () => {
@@ -65,39 +68,20 @@ export default function GeneratedPostPage({
       return;
     }
 
-    const filename = idea?.title
-      ? `${idea.title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_post.png`
+    const filename = selectedIdea?.title
+      ? `${selectedIdea.title
+          .replace(/[^a-z0-9]/gi, '_')
+          .toLowerCase()}_post.png`
       : FILE_CONSTANTS.DEFAULT_FILENAME;
 
     await imageDownload.downloadImage(postResponse.data.base64Image, filename);
-  };
-
-  const handleWhatsAppShare = () => {
-    socialShare.shareToWhatsApp({
-      text: idea?.title || MESSAGES.SOCIAL.WHATSAPP_DEFAULT,
-    });
-  };
-
-  const handleFacebookShare = () => {
-    if (!postResponse?.data?.base64Image) {
-      alert(MESSAGES.SOCIAL.FACEBOOK_IMAGE_NOT_READY);
-      return;
-    }
-
-    socialShare.shareToFacebook({
-      url: window.location.href,
-    });
-  };
-
-  const handleInstagramShare = () => {
-    socialShare.shareToInstagram();
   };
 
   if (!businessProfile || isLoading || isPostLoading) {
     return <LoadingScreen message="Loading post details..." />;
   }
 
-  if (!idea) {
+  if (!selectedIdea) {
     return null;
   }
 
@@ -148,14 +132,17 @@ export default function GeneratedPostPage({
             />
 
             <div className="space-y-4">
-              <PostCaption title={idea.title} content={idea.content} />
+              <PostCaption
+                title={selectedIdea.title}
+                content={selectedIdea.content}
+              />
 
               <SocialProfileShareSection
                 onDownload={handleDownload}
                 isDownloading={imageDownload.isDownloading}
                 downloadSuccess={imageDownload.downloadSuccess}
-                downloadDisabled={!displayPostResponse?.data?.base64Image}
-                postTitle={idea.title}
+                downloadDisabled={!postResponse?.data?.base64Image}
+                postTitle={selectedIdea.title}
               />
             </div>
           </div>
