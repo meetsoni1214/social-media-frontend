@@ -4,6 +4,7 @@ import type {
   GeneratedPostResponse,
   SavedPostIdea,
   SavePostIdeaRequest,
+  PostIdeaType,
 } from '@/features/posts/types/post';
 import type { BusinessProfileFormData } from '@/lib/utils/validation';
 import { httpClient } from '../core/http-client';
@@ -34,8 +35,16 @@ async function generatePost(
   });
 }
 
-async function listSavedPostIdeas(): Promise<SavedPostIdea[]> {
-  return httpClient.get<SavedPostIdea[]>('/post-ideas');
+const IDEA_TYPE_QUERY_MAP: Record<PostIdeaType, string> = {
+  PROMOTIONAL: 'PROMOTIONAL',
+  EDUCATIONAL: 'EDUCATIONAL',
+};
+
+async function listSavedPostIdeas(
+  ideaType?: PostIdeaType
+): Promise<SavedPostIdea[]> {
+  const query = ideaType ? `?idea_type=${IDEA_TYPE_QUERY_MAP[ideaType]}` : '';
+  return httpClient.get<SavedPostIdea[]>(`/post-ideas${query}`);
 }
 
 async function savePostIdea(

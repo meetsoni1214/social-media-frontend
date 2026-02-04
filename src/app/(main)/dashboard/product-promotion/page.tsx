@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useOnboarding } from '@/features/business-profile/contexts/OnboardingContext';
 import { Check, Sparkles, TrendingUp, X } from 'lucide-react';
@@ -32,7 +32,7 @@ export default function ProductPromotionPage() {
     isLoading: isLoadingSavedPostIdeas,
     error,
     refetch,
-  } = useGetSavedPostIdeas();
+  } = useGetSavedPostIdeas(ideaType);
   const {
     mutate: generateIdeas,
     isPending: isGenerating,
@@ -46,11 +46,7 @@ export default function ProductPromotionPage() {
     }
   }, [isBusinessProfileComplete, router]);
 
-  const savedIdeas = useMemo(
-    () =>
-      (savedPostIdeasResponse || []).filter(idea => idea.ideaType === ideaType),
-    [savedPostIdeasResponse, ideaType]
-  );
+  const savedIdeas = savedPostIdeasResponse || [];
 
   if (!businessProfile) {
     return null;

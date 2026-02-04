@@ -5,6 +5,7 @@ import type {
   SavedPostIdea,
   SavePostIdeaRequest,
   PostIdeasResponse,
+  PostIdeaType,
 } from '@/features/posts/types/post';
 
 interface PostIdeasParams {
@@ -16,17 +17,18 @@ const POST_IDEAS_SAVED_BASE_KEY = [...POST_IDEAS_BASE_KEY, 'saved'] as const;
 
 const POST_IDEAS_KEYS = {
   all: POST_IDEAS_BASE_KEY,
-  saved: POST_IDEAS_SAVED_BASE_KEY,
+  saved: (ideaType: PostIdeaType) =>
+    [...POST_IDEAS_SAVED_BASE_KEY, ideaType] as const,
   generatedPromotion: (params: PostIdeasParams) =>
     [...POST_IDEAS_BASE_KEY, 'generated', 'promotion', params] as const,
   generatedEducational: (params: PostIdeasParams) =>
     [...POST_IDEAS_BASE_KEY, 'generated', 'educational', params] as const,
 };
 
-export function useGetSavedPostIdeas() {
+export function useGetSavedPostIdeas(ideaType: PostIdeaType) {
   return useQuery<SavedPostIdea[]>({
-    queryKey: POST_IDEAS_KEYS.saved,
-    queryFn: () => postService.listSavedPostIdeas(),
+    queryKey: POST_IDEAS_KEYS.saved(ideaType),
+    queryFn: () => postService.listSavedPostIdeas(ideaType),
     enabled: true,
   });
 }
@@ -52,7 +54,7 @@ export function useSavePostIdea() {
     mutationFn: payload => postService.savePostIdea(payload),
     onSuccess: data => {
       queryClient.setQueryData(
-        POST_IDEAS_KEYS.saved,
+        POST_IDEAS_KEYS.saved(data.ideaType),
         (existing: SavedPostIdea[] = []) => {
           return [data, ...existing];
         }

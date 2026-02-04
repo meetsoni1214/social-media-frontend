@@ -30,7 +30,7 @@ export default function GeneratedPostPage({
     successDuration: UI_CONSTANTS.SUCCESS_NOTIFICATION_DURATION,
   });
 
-  const { data: response, isLoading } = useGetSavedPostIdeas();
+  const { data: response, isLoading } = useGetSavedPostIdeas('EDUCATIONAL');
 
   useEffect(() => {
     if (!isBusinessProfileComplete) {
@@ -38,9 +38,7 @@ export default function GeneratedPostPage({
     }
   }, [isBusinessProfileComplete, router]);
 
-  const postIdeas = (response || []).filter(
-    idea => idea.ideaType === 'EDUCATIONAL'
-  );
+  const postIdeas = response || [];
   const idea = postIdeas.find(item => String(item.id) === ideaId);
 
   useEffect(() => {
