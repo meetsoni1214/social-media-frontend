@@ -26,12 +26,12 @@ export function IdeaCard({ title, content, action }: IdeaCardProps) {
         </div>
       </GradientCardHeader>
 
-      <div className="flex flex-col">
+      <div>
         <div className="rounded-lg bg-gray-50 p-4">
           <p className="whitespace-pre-wrap text-gray-800">{content}</p>
         </div>
 
-        <div className="mt-4 flex">{action}</div>
+        <div className="mt-4">{action}</div>
       </div>
     </GradientCard>
   );

@@ -1,9 +1,9 @@
 'use client';
 
-type SectionHeaderProps = {
+interface SectionHeaderProps {
   title: string;
   description: string;
-};
+}
 
 export function SectionHeader({ title, description }: SectionHeaderProps) {
   return (

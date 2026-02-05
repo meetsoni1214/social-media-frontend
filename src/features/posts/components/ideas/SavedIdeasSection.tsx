@@ -15,6 +15,11 @@ import { IdeaCard } from './IdeaCard';
 import { SectionHeader } from './SectionHeader';
 
 interface SavedIdeasSectionProps {
+  title?: string;
+  description?: string;
+  emptyTitle?: string;
+  emptyMessage: string;
+  useButtonLabel?: string;
   ideas: SavedPostIdea[];
   isLoading: boolean;
   error?: Error | null;
@@ -23,6 +28,11 @@ interface SavedIdeasSectionProps {
 }
 
 export function SavedIdeasSection({
+  title = 'Saved Ideas',
+  description = 'Launch an idea into your next post when you are ready.',
+  emptyTitle = 'No saved ideas yet',
+  emptyMessage,
+  useButtonLabel = 'Use This Idea',
   ideas,
   isLoading,
   error,
@@ -39,19 +49,13 @@ export function SavedIdeasSection({
 
   return (
     <div className="space-y-4 animate-slide-up">
-      <SectionHeader
-        title="Saved Ideas"
-        description="Launch an idea into your next post when you are ready."
-      />
+      <SectionHeader title={title} description={description} />
 
       {ideas.length === 0 ? (
         <GradientCard variant="highlighted">
           <GradientCardHeader>
-            <GradientCardTitle>No saved ideas yet</GradientCardTitle>
-            <GradientCardDescription>
-              Click &quot;Generate New Ideas&quot; to start building your
-              promotion library.
-            </GradientCardDescription>
+            <GradientCardTitle>{emptyTitle}</GradientCardTitle>
+            <GradientCardDescription>{emptyMessage}</GradientCardDescription>
           </GradientCardHeader>
         </GradientCard>
       ) : (
@@ -62,13 +66,14 @@ export function SavedIdeasSection({
               title={idea.title}
               content={idea.content}
               action={
-                <div className="flex justify-center">
+                <div className="flex gap-3">
                   <GradientButton
                     size="sm"
+                    className="flex-1"
                     onClick={() => onUseIdea(String(idea.id))}
                   >
                     <Sparkles className="h-4 w-4" />
-                    Use This Idea
+                    {useButtonLabel}
                   </GradientButton>
                 </div>
               }

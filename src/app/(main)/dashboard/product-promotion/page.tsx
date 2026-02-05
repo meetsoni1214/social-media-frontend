@@ -3,12 +3,13 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useOnboarding } from '@/features/business-profile/contexts/OnboardingContext';
+import { TrendingUp } from 'lucide-react';
 import {
-  Hero,
+  IdeaStudioHero,
   NewIdeasSection,
   QuickControls,
   SavedIdeasSection,
-} from '@/features/posts/product/components';
+} from '@/features/posts/components/ideas';
 import {
   useGenerateProductPromotionIdeas,
   useSavePostIdea,
@@ -97,16 +98,30 @@ export default function ProductPromotionPage() {
         </div>
 
         <div className="container relative mx-auto max-w-5xl px-4 pb-16 pt-10">
-          <Hero businessName={businessProfile.businessName} />
+          <IdeaStudioHero
+            title="Product Promotion Ideas"
+            icon={<TrendingUp className="h-9 w-9 text-emerald-600" />}
+            description={
+              <>
+                A Place that shapes campaigns for{' '}
+                <span className="font-semibold text-slate-900">
+                  {businessProfile.businessName}
+                </span>
+                . Generate, refine, and save ideas in a single flow.
+              </>
+            }
+          />
 
           <div className="grid gap-6 lg:grid-cols-[1fr_2fr]">
             <QuickControls
+              description="Create fresh promotional concepts tailored to your business and keep only what feels right."
               onGenerate={handleGenerateIdeas}
               isGenerating={isGenerating}
             />
 
             <div className="space-y-6">
               <NewIdeasSection
+                emptyMessage="Generate a fresh set to start sculpting your next campaign."
                 ideas={newIdeas}
                 isSaving={isSaving}
                 savingIdeaId={savingIdeaId}
@@ -120,6 +135,7 @@ export default function ProductPromotionPage() {
 
           <div className="mt-10 space-y-4">
             <SavedIdeasSection
+              emptyMessage='Click "Generate New Ideas" to start building your promotion library.'
               ideas={savedIdeas}
               isLoading={isLoadingSavedPostIdeas}
               error={error}

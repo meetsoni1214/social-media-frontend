@@ -12,6 +12,11 @@ const CARD_SHELL_CLASS =
   'rounded-2xl border border-white/70 bg-white/80 p-6 shadow-[0_20px_50px_-30px_rgba(15,23,42,0.45)] backdrop-blur';
 
 interface NewIdeasSectionProps {
+  title?: string;
+  description?: string;
+  emptyMessage: string;
+  errorTitle?: string;
+  retryLabel?: string;
   ideas: PostIdea[];
   isSaving: boolean;
   savingIdeaId: string | null;
@@ -22,6 +27,11 @@ interface NewIdeasSectionProps {
 }
 
 export function NewIdeasSection({
+  title = 'New Ideas',
+  description = 'Review each idea, save the winners, and discard the rest.',
+  emptyMessage,
+  errorTitle = 'Could not generate new ideas',
+  retryLabel = 'Try Generating Again',
   ideas,
   isSaving,
   savingIdeaId,
@@ -32,23 +42,20 @@ export function NewIdeasSection({
 }: NewIdeasSectionProps) {
   return (
     <div className={CARD_SHELL_CLASS}>
-      <SectionHeader
-        title="New Ideas"
-        description="Review each idea, save the winners, and discard the rest."
-      />
+      <SectionHeader title={title} description={description} />
 
       <div className="mt-6 space-y-4">
         {error && (
           <ErrorMessage
-            title="Could not generate new ideas"
+            title={errorTitle}
             error={error}
             onRetry={onRetry}
-            retryLabel="Try Generating Again"
+            retryLabel={retryLabel}
           />
         )}
 
         {ideas.length === 0 ? (
-          <EmptyState message="Generate a fresh set of ideas." />
+          <EmptyState message={emptyMessage} />
         ) : (
           <div className="space-y-4 animate-slide-up">
             {ideas.map(idea => (
