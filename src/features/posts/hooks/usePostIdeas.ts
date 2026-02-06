@@ -7,10 +7,12 @@ import type {
   PostIdeasResponse,
   PostIdeaType,
 } from '@/features/posts/types/post';
+import { normalizeIdeaCount } from '@/features/posts/utils/ideaCount';
 
 interface PostIdeasParams {
   businessProfile: BusinessProfileFormData;
   ideaType: PostIdeaType;
+  ideaCount?: number;
 }
 
 const POST_IDEAS_KEYS = {
@@ -28,7 +30,11 @@ export function useGetSavedPostIdeas(ideaType: PostIdeaType) {
 export function useGeneratePostIdeas() {
   return useMutation<PostIdeasResponse, Error, PostIdeasParams>({
     mutationFn: params =>
-      postService.generatePostIdeas(params.businessProfile, params.ideaType),
+      postService.generatePostIdeas(
+        params.businessProfile,
+        params.ideaType,
+        normalizeIdeaCount(params.ideaCount)
+      ),
   });
 }
 

@@ -11,11 +11,13 @@ import { httpClient } from '../core/http-client';
 
 async function generatePostIdeas(
   businessProfile: BusinessProfileFormData,
-  ideaType: PostIdeaType
+  ideaType: PostIdeaType,
+  ideaCount?: number
 ): Promise<PostIdeasResponse> {
   return httpClient.post<PostIdeasResponse>('/post-ideas/generate', {
     businessProfile,
     ideaType,
+    ideaCount,
   });
 }
 

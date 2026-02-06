@@ -49,13 +49,13 @@ export default function ProductPromotionPage() {
     return null;
   }
 
-  const handleGenerateIdeas = () => {
+  const handleGenerateIdeas = (ideaCount?: number) => {
     if (!businessProfile) {
       return;
     }
 
     generateIdeas(
-      { businessProfile, ideaType },
+      { businessProfile, ideaType, ideaCount },
       {
         onSuccess: data => {
           setNewIdeas(data.data);
