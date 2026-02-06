@@ -10,19 +10,11 @@ import type {
 
 interface PostIdeasParams {
   businessProfile: BusinessProfileFormData;
+  ideaType: PostIdeaType;
 }
 
-const POST_IDEAS_BASE_KEY = ['post-ideas'] as const;
-const POST_IDEAS_SAVED_BASE_KEY = [...POST_IDEAS_BASE_KEY, 'saved'] as const;
-
 const POST_IDEAS_KEYS = {
-  all: POST_IDEAS_BASE_KEY,
-  saved: (ideaType: PostIdeaType) =>
-    [...POST_IDEAS_SAVED_BASE_KEY, ideaType] as const,
-  generatedPromotion: (params: PostIdeasParams) =>
-    [...POST_IDEAS_BASE_KEY, 'generated', 'promotion', params] as const,
-  generatedEducational: (params: PostIdeasParams) =>
-    [...POST_IDEAS_BASE_KEY, 'generated', 'educational', params] as const,
+  saved: (ideaType: PostIdeaType) => ['post-ideas', 'saved', ideaType] as const,
 };
 
 export function useGetSavedPostIdeas(ideaType: PostIdeaType) {
@@ -33,17 +25,10 @@ export function useGetSavedPostIdeas(ideaType: PostIdeaType) {
   });
 }
 
-export function useGenerateProductPromotionIdeas() {
+export function useGeneratePostIdeas() {
   return useMutation<PostIdeasResponse, Error, PostIdeasParams>({
     mutationFn: params =>
-      postService.generatePromotionIdeas(params.businessProfile),
-  });
-}
-
-export function useGenerateEducationalContentIdeas() {
-  return useMutation<PostIdeasResponse, Error, PostIdeasParams>({
-    mutationFn: params =>
-      postService.generateEducationalIdeas(params.businessProfile),
+      postService.generatePostIdeas(params.businessProfile, params.ideaType),
   });
 }
 

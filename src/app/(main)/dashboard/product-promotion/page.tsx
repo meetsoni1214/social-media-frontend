@@ -11,7 +11,7 @@ import {
   SavedIdeasSection,
 } from '@/features/posts/components/ideas';
 import {
-  useGenerateProductPromotionIdeas,
+  useGeneratePostIdeas,
   useSavePostIdea,
   useGetSavedPostIdeas,
 } from '@/features/posts/hooks/usePostIdeas';
@@ -34,7 +34,7 @@ export default function ProductPromotionPage() {
     mutate: generateIdeas,
     isPending: isGenerating,
     error: generateError,
-  } = useGenerateProductPromotionIdeas();
+  } = useGeneratePostIdeas();
   const { mutate: saveIdea, isPending: isSaving } = useSavePostIdea();
 
   useEffect(() => {
@@ -55,7 +55,7 @@ export default function ProductPromotionPage() {
     }
 
     generateIdeas(
-      { businessProfile },
+      { businessProfile, ideaType },
       {
         onSuccess: data => {
           setNewIdeas(data.data);

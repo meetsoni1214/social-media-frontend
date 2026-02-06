@@ -9,19 +9,13 @@ import type {
 import type { BusinessProfileFormData } from '@/lib/utils/validation';
 import { httpClient } from '../core/http-client';
 
-async function generatePromotionIdeas(
-  businessProfile: BusinessProfileFormData
+async function generatePostIdeas(
+  businessProfile: BusinessProfileFormData,
+  ideaType: PostIdeaType
 ): Promise<PostIdeasResponse> {
-  return httpClient.post<PostIdeasResponse>('/post-ideas/promotion', {
+  return httpClient.post<PostIdeasResponse>('/post-ideas/generate', {
     businessProfile,
-  });
-}
-
-async function generateEducationalIdeas(
-  businessProfile: BusinessProfileFormData
-): Promise<PostIdeasResponse> {
-  return httpClient.post<PostIdeasResponse>('/post-ideas/educational', {
-    businessProfile,
+    ideaType,
   });
 }
 
@@ -54,8 +48,7 @@ async function savePostIdea(
 }
 
 export const postService = {
-  generatePromotionIdeas,
-  generateEducationalIdeas,
+  generatePostIdeas,
   generatePost,
   listSavedPostIdeas,
   savePostIdea,

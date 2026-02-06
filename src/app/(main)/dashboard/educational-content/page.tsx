@@ -11,7 +11,7 @@ import {
   SavedIdeasSection,
 } from '@/features/posts/components/ideas';
 import {
-  useGenerateEducationalContentIdeas,
+  useGeneratePostIdeas,
   useSavePostIdea,
   useGetSavedPostIdeas,
 } from '@/features/posts/hooks/usePostIdeas';
@@ -34,7 +34,7 @@ export default function EducationalContentPage() {
     mutate: generateIdeas,
     isPending: isGenerating,
     error: generateError,
-  } = useGenerateEducationalContentIdeas();
+  } = useGeneratePostIdeas();
   const { mutate: saveIdea, isPending: isSaving } = useSavePostIdea();
 
   useEffect(() => {
@@ -55,7 +55,7 @@ export default function EducationalContentPage() {
     }
 
     generateIdeas(
-      { businessProfile },
+      { businessProfile, ideaType },
       {
         onSuccess: data => {
           setNewIdeas(data.data);
