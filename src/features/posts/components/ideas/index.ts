@@ -1,6 +1,6 @@
 export { EmptyState } from './EmptyState';
 export { IdeaCard } from './IdeaCard';
-export { IdeaStudioHero } from './IdeaStudioHero';
+export { IdeaHeroSection as IdeaStudioHero } from './IdeaHeroSection';
 export { NewIdeasSection } from './NewIdeasSection';
 export { QuickControls } from './QuickControls';
 export { SavedIdeasSection } from './SavedIdeasSection';

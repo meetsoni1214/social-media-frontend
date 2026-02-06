@@ -2,17 +2,17 @@
 
 import type { ReactNode } from 'react';
 
-interface IdeaStudioHeroProps {
+interface IdeaHeroSectionProps {
   title: string;
   description: ReactNode;
   icon: ReactNode;
 }
 
-export function IdeaStudioHero({
+export function IdeaHeroSection({
   title,
   description,
   icon,
-}: IdeaStudioHeroProps) {
+}: IdeaHeroSectionProps) {
   return (
     <div className="mb-10 animate-fade-in">
       <div className="mt-5 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
