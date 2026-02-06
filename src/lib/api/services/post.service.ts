@@ -4,6 +4,7 @@ import type {
   GeneratedPostResponse,
   SavedPostIdea,
   SavePostIdeaRequest,
+  UpdatePostIdeaRequest,
   PostIdeaType,
 } from '@/features/posts/types/post';
 import type { BusinessProfileFormData } from '@/lib/utils/validation';
@@ -49,9 +50,17 @@ async function savePostIdea(
   return httpClient.post<SavedPostIdea>('/post-ideas', postIdea);
 }
 
+async function updatePostIdea(
+  ideaId: number,
+  postIdea: UpdatePostIdeaRequest
+): Promise<SavedPostIdea> {
+  return httpClient.patch<SavedPostIdea>(`/post-ideas/${ideaId}`, postIdea);
+}
+
 export const postService = {
   generatePostIdeas,
   generatePost,
   listSavedPostIdeas,
   savePostIdea,
+  updatePostIdea,
 };

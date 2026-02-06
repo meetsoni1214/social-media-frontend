@@ -23,6 +23,12 @@ export interface SavePostIdeaRequest {
   ideaType: PostIdeaType;
 }
 
+export interface UpdatePostIdeaRequest {
+  title?: string;
+  content?: string;
+  ideaType?: PostIdeaType;
+}
+
 export interface PostIdeasResponse {
   success: boolean;
   data: PostIdea[];
