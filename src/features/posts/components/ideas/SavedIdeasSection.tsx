@@ -1,16 +1,17 @@
 'use client';
 
-import { Sparkles } from 'lucide-react';
 import {
   GradientCard,
   GradientCardDescription,
   GradientCardHeader,
   GradientCardTitle,
 } from '@/components/common/GradientCard';
-import { GradientButton } from '@/components/common/GradientButton';
 import { ErrorMessage } from '@/components/common/ErrorMessage';
 import { LoadingSpinner } from '@/components/common/LoadingSpinner';
-import type { SavedPostIdea } from '@/features/posts/types/post';
+import type {
+  SavedPostIdea,
+  UpdatePostIdeaRequest,
+} from '@/features/posts/types/post';
 import { IdeaCard } from './IdeaCard';
 import { SectionHeader } from './SectionHeader';
 
@@ -22,9 +23,11 @@ interface SavedIdeasSectionProps {
   useButtonLabel?: string;
   ideas: SavedPostIdea[];
   isLoading: boolean;
+  updatingIdeaId: string | null;
   error?: Error | null;
   onRetry: () => void;
   onUseIdea: (ideaId: string) => void;
+  onUpdateIdea: (ideaId: string, updates: UpdatePostIdeaRequest) => void;
 }
 
 export function SavedIdeasSection({
@@ -35,9 +38,11 @@ export function SavedIdeasSection({
   useButtonLabel = 'Use This Idea',
   ideas,
   isLoading,
+  updatingIdeaId,
   error,
   onRetry,
   onUseIdea,
+  onUpdateIdea,
 }: SavedIdeasSectionProps) {
   if (isLoading) {
     return <LoadingSpinner size="lg" message="Loading saved ideas..." />;
@@ -63,20 +68,12 @@ export function SavedIdeasSection({
           {ideas.map(idea => (
             <IdeaCard
               key={idea.id}
-              title={idea.title}
-              content={idea.content}
-              action={
-                <div className="flex gap-3">
-                  <GradientButton
-                    size="sm"
-                    className="flex-1"
-                    onClick={() => onUseIdea(String(idea.id))}
-                  >
-                    <Sparkles className="h-4 w-4" />
-                    {useButtonLabel}
-                  </GradientButton>
-                </div>
-              }
+              variant="saved"
+              idea={idea}
+              isInProgress={updatingIdeaId === String(idea.id)}
+              useButtonLabel={useButtonLabel}
+              onUse={onUseIdea}
+              onUpdate={onUpdateIdea}
             />
           ))}
         </div>

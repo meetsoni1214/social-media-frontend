@@ -12,7 +12,7 @@ import {
 import { SectionHeader } from './SectionHeader';
 
 const CARD_SHELL_CLASS =
-  'rounded-2xl border border-white/70 bg-white/80 p-6 shadow-[0_20px_50px_-30px_rgba(15,23,42,0.45)] backdrop-blur';
+  'rounded-2xl h-fit border border-white/70 bg-white/80 p-6 shadow-[0_20px_50px_-30px_rgba(15,23,42,0.45)] backdrop-blur';
 
 interface QuickControlsProps {
   title?: string;

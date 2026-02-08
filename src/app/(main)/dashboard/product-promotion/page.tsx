@@ -14,14 +14,20 @@ import {
   useGeneratePostIdeas,
   useSavePostIdea,
   useGetSavedPostIdeas,
+  useUpdatePostIdea,
 } from '@/features/posts/hooks/usePostIdeas';
-import type { PostIdea, PostIdeaType } from '@/features/posts/types/post';
+import type {
+  PostIdea,
+  PostIdeaType,
+  UpdatePostIdeaRequest,
+} from '@/features/posts/types/post';
 
 export default function ProductPromotionPage() {
   const router = useRouter();
   const { businessProfile, isBusinessProfileComplete } = useOnboarding();
   const [newIdeas, setNewIdeas] = useState<PostIdea[]>([]);
   const [savingIdeaId, setSavingIdeaId] = useState<string | null>(null);
+  const [updatingIdeaId, setUpdatingIdeaId] = useState<string | null>(null);
   const ideaType: PostIdeaType = 'PROMOTIONAL';
 
   const {
@@ -36,6 +42,7 @@ export default function ProductPromotionPage() {
     error: generateError,
   } = useGeneratePostIdeas();
   const { mutate: saveIdea, isPending: isSaving } = useSavePostIdea();
+  const { mutate: updateIdea } = useUpdatePostIdea();
 
   useEffect(() => {
     if (!isBusinessProfileComplete) {
@@ -88,6 +95,27 @@ export default function ProductPromotionPage() {
     setNewIdeas(current => current.filter(item => item.id !== ideaId));
   };
 
+  const handleUpdateIdea = (ideaId: string, updates: UpdatePostIdeaRequest) => {
+    const parsedId = Number(ideaId);
+    if (!Number.isFinite(parsedId)) {
+      return;
+    }
+
+    setUpdatingIdeaId(ideaId);
+    updateIdea(
+      {
+        ideaId: parsedId,
+        ideaType,
+        data: updates,
+      },
+      {
+        onSettled: () => {
+          setUpdatingIdeaId(null);
+        },
+      }
+    );
+  };
+
   return (
     <div className="min-h-screen text-slate-900">
       <div className="relative overflow-hidden">
@@ -138,8 +166,10 @@ export default function ProductPromotionPage() {
               emptyMessage='Click "Generate New Ideas" to start building your promotion library.'
               ideas={savedIdeas}
               isLoading={isLoadingSavedPostIdeas}
+              updatingIdeaId={updatingIdeaId}
               error={error}
               onRetry={refetch}
+              onUpdateIdea={handleUpdateIdea}
               onUseIdea={ideaId =>
                 router.push(`/dashboard/product-promotion/${ideaId}`)
               }

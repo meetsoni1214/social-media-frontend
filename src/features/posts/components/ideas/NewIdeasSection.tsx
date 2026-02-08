@@ -1,7 +1,5 @@
 'use client';
 
-import { Check, X } from 'lucide-react';
-import { GradientButton } from '@/components/common/GradientButton';
 import { ErrorMessage } from '@/components/common/ErrorMessage';
 import type { PostIdea } from '@/features/posts/types/post';
 import { EmptyState } from './EmptyState';
@@ -61,31 +59,11 @@ export function NewIdeasSection({
             {ideas.map(idea => (
               <IdeaCard
                 key={idea.id}
-                title={idea.title}
-                content={idea.content}
-                action={
-                  <div className="flex flex-col gap-3 sm:flex-row">
-                    <GradientButton
-                      size="sm"
-                      className="flex-1"
-                      isLoading={isSaving && savingIdeaId === idea.id}
-                      loadingText="Saving..."
-                      onClick={() => onAccept(idea)}
-                    >
-                      <Check className="h-4 w-4" />
-                      Save Idea
-                    </GradientButton>
-                    <GradientButton
-                      size="sm"
-                      variant="ghost"
-                      className="flex-1"
-                      onClick={() => onDiscard(idea.id)}
-                    >
-                      <X className="h-4 w-4" />
-                      Discard
-                    </GradientButton>
-                  </div>
-                }
+                variant="new"
+                idea={idea}
+                isInProgress={isSaving && savingIdeaId === idea.id}
+                onSave={onAccept}
+                onDiscard={onDiscard}
               />
             ))}
           </div>
