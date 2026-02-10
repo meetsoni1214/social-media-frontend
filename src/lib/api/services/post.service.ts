@@ -2,6 +2,7 @@ import type {
   PostIdea,
   PostIdeasResponse,
   GeneratedPostResponse,
+  GeneratedPostsByBusinessProfileResponse,
   SavedPostIdea,
   SavePostIdeaRequest,
   UpdatePostIdeaRequest,
@@ -32,6 +33,14 @@ async function generatePost(
   });
 }
 
+async function listGeneratedPostsByBusinessProfile(
+  businessProfileId: number
+): Promise<GeneratedPostsByBusinessProfileResponse> {
+  return httpClient.get<GeneratedPostsByBusinessProfileResponse>(
+    `/posts/business-profile/${businessProfileId}`
+  );
+}
+
 const IDEA_TYPE_QUERY_MAP: Record<PostIdeaType, string> = {
   PROMOTIONAL: 'PROMOTIONAL',
   EDUCATIONAL: 'EDUCATIONAL',
@@ -60,6 +69,7 @@ async function updatePostIdea(
 export const postService = {
   generatePostIdeas,
   generatePost,
+  listGeneratedPostsByBusinessProfile,
   listSavedPostIdeas,
   savePostIdea,
   updatePostIdea,

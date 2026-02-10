@@ -35,11 +35,19 @@ export interface PostIdeasResponse {
 }
 
 export interface GeneratedPost {
-  id: string;
-  base64Image: string;
+  imageId: number;
+  businessProfileId: number;
+  status: string;
+  imageUrl: string;
+  expiresIn: number;
 }
 
 export interface GeneratedPostResponse {
   success: boolean;
   data: GeneratedPost;
+}
+
+export interface GeneratedPostsByBusinessProfileResponse {
+  success: boolean;
+  data: GeneratedPost[];
 }
