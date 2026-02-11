@@ -26,13 +26,18 @@ import {
 } from '@/components/common/GradientCard';
 import { GradientButton } from '@/components/common/GradientButton';
 import { QuickActionCard } from '@/features/dashboard/components/QuickActionCard';
+import { GeneratedPostsSection } from '@/features/dashboard/components/GeneratedPostsSection';
 import { LoadingScreen } from '@/components/common/LoadingScreen';
 import { ErrorText } from '@/components/common/ErrorText';
 
 export default function DashboardPage() {
   const router = useRouter();
-  const { businessProfile, isBusinessProfileComplete, isLoading } =
-    useOnboarding();
+  const {
+    businessProfile,
+    businessProfileId,
+    isBusinessProfileComplete,
+    isLoading,
+  } = useOnboarding();
   const { data: socialProfileData } = useSocialProfileExists();
   const {
     mutate: createSocialProfile,
@@ -186,6 +191,11 @@ export default function DashboardPage() {
             </div>
           </GradientCard>
         </div>
+
+        <GeneratedPostsSection
+          businessProfileId={businessProfileId}
+          businessName={businessProfile.businessName}
+        />
       </div>
     </div>
   );
