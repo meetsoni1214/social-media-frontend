@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { ImageIcon, RefreshCw } from 'lucide-react';
 import { useGeneratedPostsByBusinessProfile } from '@/features/posts/hooks/useGeneratedPosts';
 import {
@@ -73,9 +74,10 @@ export function GeneratedPostsSection({
           <>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-2">
               {visibleGeneratedPosts.map(post => (
-                <div
+                <Link
                   key={post.imageId}
-                  className="relative overflow-hidden rounded-lg border border-gray-200 bg-gray-100 aspect-square"
+                  href={`/dashboard/generated-posts/${post.imageId}`}
+                  className="relative block overflow-hidden rounded-lg border border-gray-200 bg-gray-100 aspect-square focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--gradient-pink)] focus-visible:ring-offset-2"
                 >
                   <Image
                     src={post.imageUrl}
@@ -92,7 +94,7 @@ export function GeneratedPostsSection({
                       });
                     }}
                   />
-                </div>
+                </Link>
               ))}
             </div>
 

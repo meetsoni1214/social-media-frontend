@@ -1,18 +1,25 @@
 import { postService } from '@/lib/api';
-import type { PostIdea } from '@/features/posts/types/post';
-import { BusinessProfileFormData } from '@/lib/utils/validation';
 import { useQuery } from '@tanstack/react-query';
 
 interface PostParams {
-  businessProfile: BusinessProfileFormData;
-  postIdea: PostIdea;
+  postIdeaId: number | null;
+  businessProfileId: number | null;
 }
 
 export function usePosts(params: PostParams) {
+  const hasValidParams =
+    Number.isFinite(params.businessProfileId) &&
+    Number.isFinite(params.postIdeaId) &&
+    (params.businessProfileId as number) > 0 &&
+    (params.postIdeaId as number) > 0;
+
   return useQuery({
-    queryKey: ['post', params],
+    queryKey: ['post', params.businessProfileId, params.postIdeaId],
     queryFn: () =>
-      postService.generatePost(params.businessProfile, params.postIdea),
-    enabled: !!params.businessProfile && !!params.postIdea,
+      postService.generatePost(
+        params.postIdeaId as number,
+        params.businessProfileId as number
+      ),
+    enabled: hasValidParams,
   });
 }

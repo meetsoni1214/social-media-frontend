@@ -1,5 +1,4 @@
 import type {
-  PostIdea,
   PostIdeasResponse,
   GeneratedPostResponse,
   GeneratedPostsByBusinessProfileResponse,
@@ -24,12 +23,12 @@ async function generatePostIdeas(
 }
 
 async function generatePost(
-  businessProfile: BusinessProfileFormData,
-  postIdea: PostIdea
+  postIdeaId: number,
+  businessProfileId: number
 ): Promise<GeneratedPostResponse> {
   return httpClient.post<GeneratedPostResponse>('/posts/generate', {
-    businessProfile,
-    postIdea,
+    postIdeaId,
+    businessProfileId,
   });
 }
 
@@ -53,6 +52,10 @@ async function listSavedPostIdeas(
   return httpClient.get<SavedPostIdea[]>(`/post-ideas${query}`);
 }
 
+async function getPostIdeaById(ideaId: number): Promise<SavedPostIdea> {
+  return httpClient.get<SavedPostIdea>(`/post-ideas/${ideaId}`);
+}
+
 async function savePostIdea(
   postIdea: SavePostIdeaRequest
 ): Promise<SavedPostIdea> {
@@ -71,6 +74,7 @@ export const postService = {
   generatePost,
   listGeneratedPostsByBusinessProfile,
   listSavedPostIdeas,
+  getPostIdeaById,
   savePostIdea,
   updatePostIdea,
 };

@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useOnboarding } from '@/features/business-profile/contexts/OnboardingContext';
 import { ArrowLeft } from 'lucide-react';
 import { GradientButton } from '@/components/common/GradientButton';
-import { useGetSavedPostIdeas } from '@/features/posts/hooks/usePostIdeas';
+import { useGetPostIdeaById } from '@/features/posts/hooks/usePostIdeas';
 import { usePosts } from '@/features/posts/hooks/usePost';
 import { useImageDownload } from '@/features/posts/hooks/useImageDownload';
 import { GradientBar } from '@/components/common/GradientBar';
@@ -15,6 +15,7 @@ import { SocialProfileShareSection } from '@/features/posts/components/SocialPro
 import { UI_CONSTANTS, FILE_CONSTANTS } from './constants';
 import { ErrorText } from '@/components/common/ErrorText';
 import { LoadingScreen } from '@/components/common/LoadingScreen';
+import { ApiError } from '@/lib/api/core/errors';
 
 export default function GeneratedPostPage({
   params,
@@ -23,14 +24,25 @@ export default function GeneratedPostPage({
 }) {
   const { ideaId } = use(params);
   const router = useRouter();
-  const { businessProfile, isBusinessProfileComplete } = useOnboarding();
+  const { businessProfileId, isBusinessProfileComplete } = useOnboarding();
+
+  const parsedIdeaId = Number(ideaId);
+  const hasValidIdeaId =
+    Number.isFinite(parsedIdeaId) &&
+    Number.isInteger(parsedIdeaId) &&
+    parsedIdeaId > 0;
 
   const imageDownload = useImageDownload({
     filename: FILE_CONSTANTS.DEFAULT_FILENAME,
     successDuration: UI_CONSTANTS.SUCCESS_NOTIFICATION_DURATION,
   });
 
-  const { data: response, isLoading } = useGetSavedPostIdeas('EDUCATIONAL');
+  const {
+    data: selectedIdea,
+    isLoading: isIdeaLoading,
+    error: ideaError,
+    refetch: refetchIdea,
+  } = useGetPostIdeaById(hasValidIdeaId ? parsedIdeaId : null);
 
   useEffect(() => {
     if (!isBusinessProfileComplete) {
@@ -38,31 +50,24 @@ export default function GeneratedPostPage({
     }
   }, [isBusinessProfileComplete, router]);
 
-  const postIdeas = response || [];
-  const idea = postIdeas.find(item => String(item.id) === ideaId);
-
   useEffect(() => {
-    if (!isLoading && !idea && postIdeas.length > 0) {
+    if (!hasValidIdeaId) {
       router.push('/dashboard/educational-content');
     }
-  }, [idea, isLoading, postIdeas.length, router]);
-
-  const selectedIdea = idea
-    ? { id: String(idea.id), title: idea.title, content: idea.content }
-    : null;
+  }, [hasValidIdeaId, router]);
 
   const {
     data: postResponse,
     isLoading: isPostLoading,
-    error,
+    error: postError,
     refetch,
   } = usePosts({
-    businessProfile: businessProfile!,
-    postIdea: selectedIdea!,
+    postIdeaId: selectedIdea?.id ?? null,
+    businessProfileId,
   });
 
   const handleDownload = async () => {
-    if (!postResponse?.data?.base64Image) {
+    if (!postResponse?.data?.imageUrl) {
       return;
     }
 
@@ -72,18 +77,41 @@ export default function GeneratedPostPage({
           .toLowerCase()}_post.png`
       : FILE_CONSTANTS.DEFAULT_FILENAME;
 
-    await imageDownload.downloadImage(postResponse.data.base64Image, filename);
+    await imageDownload.downloadImageFromUrl(
+      postResponse.data.imageUrl,
+      filename
+    );
   };
 
-  if (!businessProfile || isLoading || isPostLoading) {
+  useEffect(() => {
+    if (
+      ideaError instanceof ApiError &&
+      (ideaError.status === 404 || ideaError.status === 403)
+    ) {
+      router.push('/dashboard/educational-content');
+    }
+  }, [ideaError, router]);
+
+  if (!businessProfileId || isIdeaLoading || isPostLoading) {
     return <LoadingScreen message="Loading post details..." />;
+  }
+
+  if (ideaError) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-orange-50 via-pink-50 to-purple-50 flex items-center justify-center p-8">
+        <ErrorText
+          message="Failed to load idea details. Please try again."
+          onRetry={refetchIdea}
+        />
+      </div>
+    );
   }
 
   if (!selectedIdea) {
     return null;
   }
 
-  if (error) {
+  if (postError) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-orange-50 via-pink-50 to-purple-50 flex items-center justify-center p-8">
         <ErrorText
@@ -121,9 +149,9 @@ export default function GeneratedPostPage({
 
           <div className="grid lg:grid-cols-2 gap-6 items-start max-w-5xl mx-auto">
             <PostImageDisplay
-              imageData={postResponse?.data?.base64Image}
+              imageSrc={postResponse?.data?.imageUrl}
               isLoading={isPostLoading}
-              error={error}
+              error={postError}
               onRetry={refetch}
               alt="Generated educational post"
               height="h-[512px]"
@@ -139,7 +167,7 @@ export default function GeneratedPostPage({
                 onDownload={handleDownload}
                 isDownloading={imageDownload.isDownloading}
                 downloadSuccess={imageDownload.downloadSuccess}
-                downloadDisabled={!postResponse?.data?.base64Image}
+                downloadDisabled={!postResponse?.data?.imageUrl}
                 postTitle={selectedIdea.title}
               />
             </div>

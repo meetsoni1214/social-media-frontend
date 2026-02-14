@@ -28,6 +28,16 @@ export function useGetSavedPostIdeas(ideaType: PostIdeaType) {
   });
 }
 
+export function useGetPostIdeaById(ideaId: number | null) {
+  const hasValidIdeaId = Number.isFinite(ideaId) && (ideaId as number) > 0;
+
+  return useQuery<SavedPostIdea>({
+    queryKey: ['post-idea', ideaId],
+    queryFn: () => postService.getPostIdeaById(ideaId as number),
+    enabled: hasValidIdeaId,
+  });
+}
+
 export function useGeneratePostIdeas() {
   return useMutation<PostIdeasResponse, Error, PostIdeasParams>({
     mutationFn: params =>

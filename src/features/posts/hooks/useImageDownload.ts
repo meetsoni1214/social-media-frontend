@@ -9,7 +9,10 @@ interface UseImageDownloadReturn {
   isDownloading: boolean;
   downloadSuccess: boolean;
   error: string | null;
-  downloadImage: (base64Data: string, customFilename?: string) => Promise<void>;
+  downloadImageFromUrl: (
+    imageUrl: string,
+    customFilename?: string
+  ) => Promise<void>;
   resetStates: () => void;
 }
 
@@ -27,10 +30,10 @@ export function useImageDownload(
     setError(null);
   }, []);
 
-  const downloadImage = useCallback(
-    async (base64Data: string, customFilename?: string) => {
-      if (!base64Data) {
-        setError('No image data available');
+  const downloadImageFromUrl = useCallback(
+    async (imageUrl: string, customFilename?: string) => {
+      if (!imageUrl) {
+        setError('No image URL available');
         return;
       }
 
@@ -39,7 +42,11 @@ export function useImageDownload(
       setDownloadSuccess(false);
 
       try {
-        const response = await fetch(`data:image/png;base64,${base64Data}`);
+        const response = await fetch(imageUrl);
+        if (!response.ok) {
+          throw new Error(`Download failed with status ${response.status}`);
+        }
+
         const blob = await response.blob();
 
         const url = URL.createObjectURL(blob);
@@ -59,7 +66,6 @@ export function useImageDownload(
         const errorMessage =
           err instanceof Error ? err.message : 'Download failed';
         setError(errorMessage);
-        console.error('Download failed:', err);
       } finally {
         setIsDownloading(false);
       }
@@ -71,7 +77,7 @@ export function useImageDownload(
     isDownloading,
     downloadSuccess,
     error,
-    downloadImage,
+    downloadImageFromUrl,
     resetStates,
   };
 }

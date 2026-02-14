@@ -1,11 +1,11 @@
 import Image from 'next/image';
-import { ErrorText } from '../../../components/common/ErrorText';
-import { LoadingSpinner } from '../../../components/common/LoadingSpinner';
+import { useEffect, useState } from 'react';
+import { ErrorText } from '@/components/common/ErrorText';
+import { LoadingSpinner } from '@/components/common/LoadingSpinner';
 import { GradientCard } from '@/components/common/GradientCard';
 
 interface PostImageDisplayProps {
   imageSrc?: string;
-  imageData?: string;
   isLoading: boolean;
   error: Error | null;
   onRetry: () => void;
@@ -15,13 +15,18 @@ interface PostImageDisplayProps {
 
 export function PostImageDisplay({
   imageSrc,
-  imageData,
   isLoading,
   error,
   onRetry,
   alt = 'Generated post',
   height = 'h-[600px]', // Default to 600px height for 1024px images
 }: PostImageDisplayProps) {
+  const [hasImageError, setHasImageError] = useState(false);
+
+  useEffect(() => {
+    setHasImageError(false);
+  }, [imageSrc]);
+
   const renderContent = () => {
     if (error) {
       return <ErrorText message="Failed to generate image" onRetry={onRetry} />;
@@ -31,15 +36,14 @@ export function PostImageDisplay({
       return <LoadingSpinner size="md" message="Generating your post..." />;
     }
 
-    if (imageData) {
+    if (hasImageError) {
       return (
-        <Image
-          src={`data:image/png;base64,${imageData}`}
-          alt={alt}
-          fill
-          className="object-cover"
-          priority
-          onError={e => console.error('Image failed to load:', e)}
+        <ErrorText
+          message="Failed to load generated image"
+          onRetry={() => {
+            setHasImageError(false);
+            onRetry();
+          }}
         />
       );
     }
@@ -52,7 +56,9 @@ export function PostImageDisplay({
           fill
           className="object-cover"
           priority
-          onError={e => console.error('Image failed to load:', e)}
+          onError={() => {
+            setHasImageError(true);
+          }}
         />
       );
     }
