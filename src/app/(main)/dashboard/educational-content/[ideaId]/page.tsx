@@ -2,7 +2,7 @@
 
 import { useEffect, use } from 'react';
 import { useRouter } from 'next/navigation';
-import { useOnboarding } from '@/features/business-profile/contexts/OnboardingContext';
+import { useBusinessProfileId } from '@/features/business-profile/hooks/useBusinessProfileData';
 import { ArrowLeft } from 'lucide-react';
 import { GradientButton } from '@/components/common/GradientButton';
 import { useGetPostIdeaById } from '@/features/posts/hooks/usePostIdeas';
@@ -24,7 +24,7 @@ export default function GeneratedPostPage({
 }) {
   const { ideaId } = use(params);
   const router = useRouter();
-  const { businessProfileId, isBusinessProfileComplete } = useOnboarding();
+  const { data: businessProfileId = null } = useBusinessProfileId();
 
   const parsedIdeaId = Number(ideaId);
   const hasValidIdeaId =
@@ -43,12 +43,6 @@ export default function GeneratedPostPage({
     error: ideaError,
     refetch: refetchIdea,
   } = useGetPostIdeaById(hasValidIdeaId ? parsedIdeaId : null);
-
-  useEffect(() => {
-    if (!isBusinessProfileComplete) {
-      router.push('/business-profile');
-    }
-  }, [isBusinessProfileComplete, router]);
 
   useEffect(() => {
     if (!hasValidIdeaId) {

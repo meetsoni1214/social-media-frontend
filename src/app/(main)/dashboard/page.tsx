@@ -1,8 +1,10 @@
 'use client';
 
-import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useOnboarding } from '@/features/business-profile/contexts/OnboardingContext';
+import {
+  useBusinessProfileData,
+  useBusinessProfileId,
+} from '@/features/business-profile/hooks/useBusinessProfileData';
 import {
   useSocialProfileExists,
   useCreateSocialProfile,
@@ -27,17 +29,13 @@ import {
 import { GradientButton } from '@/components/common/GradientButton';
 import { QuickActionCard } from '@/features/dashboard/components/QuickActionCard';
 import { GeneratedPostsSection } from '@/features/dashboard/components/GeneratedPostsSection';
-import { LoadingScreen } from '@/components/common/LoadingScreen';
 import { ErrorText } from '@/components/common/ErrorText';
 
 export default function DashboardPage() {
   const router = useRouter();
-  const {
-    businessProfile,
-    businessProfileId,
-    isBusinessProfileComplete,
-    isLoading,
-  } = useOnboarding();
+  const { data } = useBusinessProfileData();
+  const { data: businessProfileId = null } = useBusinessProfileId();
+  const businessProfile = data!.businessProfile!;
   const { data: socialProfileData } = useSocialProfileExists();
   const {
     mutate: createSocialProfile,
@@ -45,20 +43,6 @@ export default function DashboardPage() {
     isError: isCreateError,
     error: createError,
   } = useCreateSocialProfile();
-
-  useEffect(() => {
-    if (!isLoading && !isBusinessProfileComplete) {
-      router.push('/business-profile');
-    }
-  }, [isBusinessProfileComplete, isLoading, router]);
-
-  if (isLoading) {
-    return <LoadingScreen message="Loading your profile..." />;
-  }
-
-  if (!businessProfile) {
-    return null;
-  }
 
   return (
     <div className="min-h-screen">

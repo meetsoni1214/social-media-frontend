@@ -1,8 +1,8 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useOnboarding } from '@/features/business-profile/contexts/OnboardingContext';
+import { useBusinessProfileData } from '@/features/business-profile/hooks/useBusinessProfileData';
 import { BookOpen } from 'lucide-react';
 import {
   IdeaStudioHero,
@@ -24,7 +24,8 @@ import type {
 
 export default function EducationalContentPage() {
   const router = useRouter();
-  const { businessProfile, isBusinessProfileComplete } = useOnboarding();
+  const { data } = useBusinessProfileData();
+  const businessProfile = data!.businessProfile!;
   const [newIdeas, setNewIdeas] = useState<PostIdea[]>([]);
   const [savingIdeaId, setSavingIdeaId] = useState<string | null>(null);
   const [updatingIdeaId, setUpdatingIdeaId] = useState<string | null>(null);
@@ -44,23 +45,9 @@ export default function EducationalContentPage() {
   const { mutate: saveIdea, isPending: isSaving } = useSavePostIdea();
   const { mutate: updateIdea } = useUpdatePostIdea();
 
-  useEffect(() => {
-    if (!isBusinessProfileComplete) {
-      router.push('/business-profile');
-    }
-  }, [isBusinessProfileComplete, router]);
-
   const savedIdeas = savedPostIdeasResponse || [];
 
-  if (!businessProfile) {
-    return null;
-  }
-
   const handleGenerateIdeas = (ideaCount?: number) => {
-    if (!businessProfile) {
-      return;
-    }
-
     generateIdeas(
       { businessProfile, ideaType, ideaCount },
       {

@@ -1,8 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { useOnboarding } from '@/features/business-profile/contexts/OnboardingContext';
+import { useBusinessProfileData } from '@/features/business-profile/hooks/useBusinessProfileData';
 import { Sparkles, Calendar } from 'lucide-react';
 import { LoadingSpinner } from '@/components/common/LoadingSpinner';
 import {
@@ -15,8 +14,8 @@ import { mockApi, type Festival } from '@/lib/api/mock';
 import type { PostIdea } from '@/features/posts/types/post';
 
 export default function FestivalPostPage() {
-  const router = useRouter();
-  const { businessProfile, isBusinessProfileComplete } = useOnboarding();
+  const { data } = useBusinessProfileData();
+  const businessProfile = data!.businessProfile!;
   const [festivals, setFestivals] = useState<Festival[]>([]);
   const [selectedFestival, setSelectedFestival] = useState<Festival | null>(
     null
@@ -26,11 +25,6 @@ export default function FestivalPostPage() {
   const [isGeneratingIdeas, setIsGeneratingIdeas] = useState(false);
 
   useEffect(() => {
-    if (!isBusinessProfileComplete) {
-      router.push('/business-profile');
-      return;
-    }
-
     const loadFestivals = async () => {
       const response = await mockApi.getFestivals();
       if (response.success && response.data) {
@@ -40,7 +34,7 @@ export default function FestivalPostPage() {
     };
 
     loadFestivals();
-  }, [isBusinessProfileComplete, router]);
+  }, []);
 
   const handleFestivalSelect = async (festival: Festival) => {
     if (!businessProfile) return;
@@ -59,10 +53,6 @@ export default function FestivalPostPage() {
     }
     setIsGeneratingIdeas(false);
   };
-
-  if (!businessProfile) {
-    return null;
-  }
 
   return (
     <div className="min-h-screen">

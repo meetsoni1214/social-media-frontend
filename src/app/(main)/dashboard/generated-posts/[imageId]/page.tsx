@@ -1,8 +1,8 @@
 'use client';
 
-import { use, useEffect, useMemo } from 'react';
+import { use, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
-import { useOnboarding } from '@/features/business-profile/contexts/OnboardingContext';
+import { useBusinessProfileId } from '@/features/business-profile/hooks/useBusinessProfileData';
 import { useGeneratedPostsByBusinessProfile } from '@/features/posts/hooks/useGeneratedPosts';
 import { useImageDownload } from '@/features/posts/hooks/useImageDownload';
 import { PostImageDisplay } from '@/features/posts/components/PostImageDisplay';
@@ -21,7 +21,7 @@ export default function GeneratedImageDetailPage({
 }) {
   const { imageId } = use(params);
   const router = useRouter();
-  const { businessProfileId, isBusinessProfileComplete } = useOnboarding();
+  const { data: businessProfileId = null } = useBusinessProfileId();
   const parsedImageId = Number(imageId);
 
   const imageDownload = useImageDownload({
@@ -40,12 +40,6 @@ export default function GeneratedImageDetailPage({
     () => generatedPosts.find(post => post.imageId === parsedImageId),
     [generatedPosts, parsedImageId]
   );
-
-  useEffect(() => {
-    if (!isBusinessProfileComplete) {
-      router.push('/business-profile');
-    }
-  }, [isBusinessProfileComplete, router]);
 
   const handleDownload = async () => {
     if (!selectedPost?.imageUrl) {

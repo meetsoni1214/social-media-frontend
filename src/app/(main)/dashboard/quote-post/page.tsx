@@ -1,8 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { useOnboarding } from '@/features/business-profile/contexts/OnboardingContext';
 import { Quote as QuoteIcon, Sparkles } from 'lucide-react';
 import { LoadingSpinner } from '@/components/common/LoadingSpinner';
 import { GradientCard } from '@/components/common/GradientCard';
@@ -10,17 +8,10 @@ import { GradientButton } from '@/components/common/GradientButton';
 import { mockApi, type Quote } from '@/lib/api/mock';
 
 export default function QuotePostPage() {
-  const router = useRouter();
-  const { businessProfile, isBusinessProfileComplete } = useOnboarding();
   const [quotes, setQuotes] = useState<Quote[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (!isBusinessProfileComplete) {
-      router.push('/business-profile');
-      return;
-    }
-
     const loadQuotes = async () => {
       const response = await mockApi.getQuotes();
       if (response.success && response.data) {
@@ -30,11 +21,7 @@ export default function QuotePostPage() {
     };
 
     loadQuotes();
-  }, [isBusinessProfileComplete, router]);
-
-  if (!businessProfile) {
-    return null;
-  }
+  }, []);
 
   return (
     <div className="min-h-screen">

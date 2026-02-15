@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
-import { OnboardingProvider } from '@/features/business-profile/contexts/OnboardingContext';
 import { QueryProvider } from '@/providers/QueryProvider';
 import { SuperTokensProvider } from '@/components/common/SuperTokensProvider';
 import { ToastProvider } from '@/components/common/Toast';
@@ -33,9 +32,7 @@ export default function RootLayout({
       >
         <SuperTokensProvider>
           <QueryProvider>
-            <ToastProvider>
-              <OnboardingProvider>{children}</OnboardingProvider>
-            </ToastProvider>
+            <ToastProvider>{children}</ToastProvider>
           </QueryProvider>
         </SuperTokensProvider>
       </body>

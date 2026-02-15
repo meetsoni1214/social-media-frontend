@@ -11,7 +11,7 @@ import {
   businessProfileSchema,
   type BusinessProfileFormData,
 } from '@/lib/utils/validation';
-import { useOnboarding } from '@/features/business-profile/contexts/OnboardingContext';
+import { useBusinessProfileData } from '@/features/business-profile/hooks/useBusinessProfileData';
 import { useSaveBusinessProfile } from '@/features/business-profile/hooks/useBusinessProfile';
 import {
   GradientCard,
@@ -45,11 +45,9 @@ const BUSINESS_CATEGORIES = [
 
 export default function BusinessProfilePage() {
   const router = useRouter();
-  const {
-    businessProfile,
-    isBusinessProfileComplete,
-    isLoading: isProfileLoading,
-  } = useOnboarding();
+  const { data, isLoading: isProfileLoading } = useBusinessProfileData();
+  const businessProfile = data?.businessProfile ?? null;
+  const isBusinessProfileComplete = data?.isBusinessProfileComplete ?? false;
   const [error, setError] = useState('');
   const [isDetectingColors, setIsDetectingColors] = useState(false);
   const [logoPreview, setLogoPreview] = useState<string | null>(
