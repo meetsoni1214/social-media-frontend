@@ -1,6 +1,7 @@
 import type {
   PostIdeasResponse,
   GeneratedPostResponse,
+  GeneratedPostDetailsResponse,
   GeneratedPostsByBusinessProfileResponse,
   SavedPostIdea,
   SavePostIdeaRequest,
@@ -40,6 +41,12 @@ async function listGeneratedPostsByBusinessProfile(
   );
 }
 
+async function getGeneratedPostById(
+  imageId: number
+): Promise<GeneratedPostDetailsResponse> {
+  return httpClient.get<GeneratedPostDetailsResponse>(`/posts/${imageId}`);
+}
+
 const IDEA_TYPE_QUERY_MAP: Record<PostIdeaType, string> = {
   PROMOTIONAL: 'PROMOTIONAL',
   EDUCATIONAL: 'EDUCATIONAL',
@@ -73,6 +80,7 @@ export const postService = {
   generatePostIdeas,
   generatePost,
   listGeneratedPostsByBusinessProfile,
+  getGeneratedPostById,
   listSavedPostIdeas,
   getPostIdeaById,
   savePostIdea,

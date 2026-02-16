@@ -1,11 +1,11 @@
 'use client';
 
-import { use, useMemo } from 'react';
+import { use } from 'react';
 import { useRouter } from 'next/navigation';
-import { useBusinessProfileId } from '@/features/business-profile/hooks/useBusinessProfileData';
-import { useGeneratedPostsByBusinessProfile } from '@/features/posts/hooks/useGeneratedPosts';
+import { useGetGeneratedPostById } from '@/features/posts/hooks/useGeneratedPosts';
 import { useImageDownload } from '@/features/posts/hooks/useImageDownload';
 import { PostImageDisplay } from '@/features/posts/components/PostImageDisplay';
+import { PostCaption } from '@/features/posts/components/PostCaption';
 import { SocialProfileShareSection } from '@/features/posts/components/SocialProfileShareSection';
 import { ErrorCard } from '@/components/common/ErrorCard';
 import { ErrorText } from '@/components/common/ErrorText';
@@ -14,14 +14,13 @@ import { GradientCard } from '@/components/common/GradientCard';
 
 const DEFAULT_FILENAME = 'generated_post.png';
 
-export default function GeneratedImageDetailPage({
+export default function PostDetailPage({
   params,
 }: {
   params: Promise<{ imageId: string }>;
 }) {
   const { imageId } = use(params);
   const router = useRouter();
-  const { data: businessProfileId = null } = useBusinessProfileId();
   const parsedImageId = Number(imageId);
 
   const imageDownload = useImageDownload({
@@ -29,17 +28,12 @@ export default function GeneratedImageDetailPage({
   });
 
   const {
-    data: generatedPosts = [],
-    isLoading: isGeneratedPostsLoading,
-    error: generatedPostsError,
-    refetch: refetchGeneratedPosts,
-    isFetching: isRefetchingGeneratedPosts,
-  } = useGeneratedPostsByBusinessProfile(businessProfileId);
-
-  const selectedPost = useMemo(
-    () => generatedPosts.find(post => post.imageId === parsedImageId),
-    [generatedPosts, parsedImageId]
-  );
+    data: selectedPost,
+    isLoading: isPostLoading,
+    error: postError,
+    refetch: refetchPost,
+    isFetching: isRefetchingPost,
+  } = useGetGeneratedPostById(parsedImageId);
 
   const handleDownload = async () => {
     if (!selectedPost?.imageUrl) {
@@ -47,21 +41,20 @@ export default function GeneratedImageDetailPage({
     }
 
     const filename = `generated_post_${selectedPost.imageId}.png`;
-
     await imageDownload.downloadImageFromUrl(selectedPost.imageUrl, filename);
   };
 
-  if (!businessProfileId || isGeneratedPostsLoading) {
-    return <LoadingScreen message="Loading generated image..." />;
+  if (isPostLoading) {
+    return <LoadingScreen message="Loading generated post..." />;
   }
 
-  if (generatedPostsError) {
+  if (postError) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-orange-50 via-pink-50 to-purple-50 flex items-center justify-center p-8">
         <ErrorText
-          message="Failed to load generated image. Please try again."
+          message="Failed to load generated post. Please try again."
           onRetry={() => {
-            void refetchGeneratedPosts();
+            void refetchPost();
           }}
         />
       </div>
@@ -71,8 +64,8 @@ export default function GeneratedImageDetailPage({
   if (!selectedPost) {
     return (
       <ErrorCard
-        title="Image not found"
-        message="Generated image not found."
+        title="Post not found"
+        message="Generated post not found."
         actionLabel="Back to Dashboard"
         onAction={() => router.push('/dashboard')}
       />
@@ -87,40 +80,50 @@ export default function GeneratedImageDetailPage({
             Generated Post
           </h1>
           <p className="text-sm text-gray-600">
-            Preview, download, and share your generated image.
+            Preview, download, and share your generated content.
           </p>
         </div>
 
         <div className="grid lg:grid-cols-2 gap-6 items-start max-w-5xl mx-auto">
           <PostImageDisplay
             imageSrc={selectedPost.imageUrl}
-            isLoading={isRefetchingGeneratedPosts}
+            isLoading={isRefetchingPost}
             error={null}
             onRetry={() => {
-              void refetchGeneratedPosts();
+              void refetchPost();
             }}
             alt={`Generated post ${selectedPost.imageId}`}
             height="h-[512px]"
           />
 
           <div className="space-y-4">
-            <GradientCard>
-              <h3 className="text-base font-semibold text-gray-800 mb-2">
-                Caption
-              </h3>
-              <div className="bg-white rounded-lg p-4 shadow-sm border border-gray-200">
-                <p className="text-sm text-gray-600">
-                  Idea details are unavailable for this generated image.
-                </p>
-              </div>
-            </GradientCard>
+            {selectedPost.postIdea ? (
+              <PostCaption
+                title={selectedPost.postIdea.title}
+                content={selectedPost.postIdea.content}
+              />
+            ) : (
+              <GradientCard>
+                <h3 className="text-base font-semibold text-gray-800 mb-2">
+                  Caption
+                </h3>
+                <div className="bg-white rounded-lg p-4 shadow-sm border border-gray-200">
+                  <p className="text-sm text-gray-600">
+                    Idea details are unavailable for this generated post.
+                  </p>
+                </div>
+              </GradientCard>
+            )}
 
             <SocialProfileShareSection
               onDownload={handleDownload}
               isDownloading={imageDownload.isDownloading}
               downloadSuccess={imageDownload.downloadSuccess}
               downloadDisabled={!selectedPost.imageUrl}
-              postTitle={`Generated Post ${selectedPost.imageId}`}
+              postTitle={
+                selectedPost.postIdea?.title ||
+                `Generated Post ${selectedPost.imageId}`
+              }
             />
           </div>
         </div>

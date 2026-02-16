@@ -37,6 +37,7 @@ export interface PostIdeasResponse {
 export interface GeneratedPost {
   imageId: number;
   businessProfileId: number;
+  postIdeaId: number | null;
   status: string;
   imageUrl: string;
   expiresIn: number;
@@ -50,4 +51,20 @@ export interface GeneratedPostResponse {
 export interface GeneratedPostsByBusinessProfileResponse {
   success: boolean;
   data: GeneratedPost[];
+}
+
+export interface GeneratedPostIdeaDetails {
+  id: number;
+  title: string;
+  content: string;
+  ideaType: PostIdeaType;
+}
+
+export interface GeneratedPostDetails extends GeneratedPost {
+  postIdea: GeneratedPostIdeaDetails | null;
+}
+
+export interface GeneratedPostDetailsResponse {
+  success: boolean;
+  data: GeneratedPostDetails;
 }

@@ -76,7 +76,7 @@ export function GeneratedPostsSection({
               {visibleGeneratedPosts.map(post => (
                 <Link
                   key={post.imageId}
-                  href={`/dashboard/generated-posts/${post.imageId}`}
+                  href={`/dashboard/posts/${post.imageId}`}
                   className="relative block overflow-hidden rounded-lg border border-gray-200 bg-gray-100 aspect-square focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--gradient-pink)] focus-visible:ring-offset-2"
                 >
                   <Image
