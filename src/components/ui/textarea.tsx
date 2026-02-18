@@ -20,4 +20,3 @@ const Textarea = React.forwardRef<
 Textarea.displayName = 'Textarea';
 
 export { Textarea };
-type TextareaProps = React.TextareaHTMLAttributes<HTMLTextAreaElement>;
