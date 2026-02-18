@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useSearchParams } from 'next/navigation';
@@ -16,7 +16,7 @@ import {
   OTPFormData,
 } from '@/lib/utils/validation';
 
-export default function LoginPage() {
+function LoginForm() {
   const searchParams = useSearchParams();
   const redirectTo = searchParams.get('redirect') || '/dashboard';
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -111,49 +111,85 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-50 via-white to-blue-50 p-4">
-      <Card className="w-full max-w-md p-8 shadow-xl">
-        <div className="mb-6 text-center">
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
-            Welcome
-          </h1>
-          <p className="text-gray-600 mt-2">
-            {flowState === 'phone-entry' &&
-              'Enter your phone number to continue'}
-            {flowState === 'otp-verification' && 'Verify your OTP'}
-          </p>
+    <Card className="w-full max-w-md p-8 shadow-xl">
+      <div className="mb-6 text-center">
+        <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+          Welcome
+        </h1>
+        <p className="text-gray-600 mt-2">
+          {flowState === 'phone-entry' && 'Enter your phone number to continue'}
+          {flowState === 'otp-verification' && 'Verify your OTP'}
+        </p>
+      </div>
+
+      {error && (
+        <div
+          className={`mb-4 p-3 rounded-lg text-sm ${
+            error.includes('successfully')
+              ? 'bg-green-50 text-green-700 border border-green-200'
+              : 'bg-red-50 text-red-700 border border-red-200'
+          }`}
+        >
+          {error}
         </div>
+      )}
 
-        {error && (
-          <div
-            className={`mb-4 p-3 rounded-lg text-sm ${
-              error.includes('successfully')
-                ? 'bg-green-50 text-green-700 border border-green-200'
-                : 'bg-red-50 text-red-700 border border-red-200'
-            }`}
-          >
-            {error}
+      {/* Phone Entry State */}
+      {flowState === 'phone-entry' && (
+        <form
+          onSubmit={phoneForm.handleSubmit(handlePhoneSubmit)}
+          className="space-y-4"
+        >
+          <div>
+            <Label htmlFor="phone">Phone Number</Label>
+            <Input
+              id="phone"
+              type="tel"
+              placeholder="+919876543210"
+              {...phoneForm.register('phone')}
+              className="mt-1"
+            />
+            {phoneForm.formState.errors.phone && (
+              <p className="text-red-500 text-sm mt-1">
+                {phoneForm.formState.errors.phone.message}
+              </p>
+            )}
           </div>
-        )}
 
-        {/* Phone Entry State */}
-        {flowState === 'phone-entry' && (
+          <GradientButton
+            type="submit"
+            className="w-full"
+            isLoading={isLoading}
+            loadingText="Processing..."
+          >
+            Continue
+          </GradientButton>
+        </form>
+      )}
+
+      {flowState === 'otp-verification' && (
+        <div className="space-y-4">
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 text-sm text-blue-700">
+            OTP sent to {phoneNumber}
+          </div>
+
           <form
-            onSubmit={phoneForm.handleSubmit(handlePhoneSubmit)}
+            onSubmit={otpForm.handleSubmit(handleOtpSubmit)}
             className="space-y-4"
           >
             <div>
-              <Label htmlFor="phone">Phone Number</Label>
+              <Label htmlFor="otp">Enter OTP</Label>
               <Input
-                id="phone"
-                type="tel"
-                placeholder="+919876543210"
-                {...phoneForm.register('phone')}
-                className="mt-1"
+                id="otp"
+                type="text"
+                placeholder="000000"
+                maxLength={6}
+                {...otpForm.register('otp')}
+                className="mt-1 text-center text-2xl tracking-widest"
               />
-              {phoneForm.formState.errors.phone && (
+              {otpForm.formState.errors.otp && (
                 <p className="text-red-500 text-sm mt-1">
-                  {phoneForm.formState.errors.phone.message}
+                  {otpForm.formState.errors.otp.message}
                 </p>
               )}
             </div>
@@ -162,61 +198,32 @@ export default function LoginPage() {
               type="submit"
               className="w-full"
               isLoading={isLoading}
-              loadingText="Processing..."
+              loadingText="Verifying..."
             >
-              Continue
+              Verify OTP
             </GradientButton>
-          </form>
-        )}
 
-        {flowState === 'otp-verification' && (
-          <div className="space-y-4">
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 text-sm text-blue-700">
-              OTP sent to {phoneNumber}
-            </div>
-
-            <form
-              onSubmit={otpForm.handleSubmit(handleOtpSubmit)}
-              className="space-y-4"
+            <button
+              type="button"
+              onClick={handleResendOtp}
+              disabled={isLoading}
+              className="w-full text-sm text-purple-600 hover:text-purple-700"
             >
-              <div>
-                <Label htmlFor="otp">Enter OTP</Label>
-                <Input
-                  id="otp"
-                  type="text"
-                  placeholder="000000"
-                  maxLength={6}
-                  {...otpForm.register('otp')}
-                  className="mt-1 text-center text-2xl tracking-widest"
-                />
-                {otpForm.formState.errors.otp && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {otpForm.formState.errors.otp.message}
-                  </p>
-                )}
-              </div>
+              Resend OTP
+            </button>
+          </form>
+        </div>
+      )}
+    </Card>
+  );
+}
 
-              <GradientButton
-                type="submit"
-                className="w-full"
-                isLoading={isLoading}
-                loadingText="Verifying..."
-              >
-                Verify OTP
-              </GradientButton>
-
-              <button
-                type="button"
-                onClick={handleResendOtp}
-                disabled={isLoading}
-                className="w-full text-sm text-purple-600 hover:text-purple-700"
-              >
-                Resend OTP
-              </button>
-            </form>
-          </div>
-        )}
-      </Card>
+export default function LoginPage() {
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-50 via-white to-blue-50 p-4">
+      <Suspense>
+        <LoginForm />
+      </Suspense>
     </div>
   );
 }
