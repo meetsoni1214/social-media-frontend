@@ -1,5 +1,6 @@
 import { postService } from '@/lib/api';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useEffect } from 'react';
 import type { UUID } from '@/types/uuid';
 
 interface PostParams {
@@ -8,7 +9,9 @@ interface PostParams {
 }
 
 export function usePosts(params: PostParams) {
-  return useQuery({
+  const queryClient = useQueryClient();
+
+  const query = useQuery({
     queryKey: ['post', params.businessProfileId, params.postIdeaId],
     queryFn: () =>
       postService.generatePost(
@@ -17,4 +20,21 @@ export function usePosts(params: PostParams) {
       ),
     enabled: !!params.businessProfileId && !!params.postIdeaId,
   });
+
+  useEffect(() => {
+    if (!query.isSuccess || !params.businessProfileId) {
+      return;
+    }
+
+    void queryClient.invalidateQueries({
+      queryKey: ['posts', 'generated', params.businessProfileId],
+    });
+  }, [
+    query.isSuccess,
+    query.dataUpdatedAt,
+    params.businessProfileId,
+    queryClient,
+  ]);
+
+  return query;
 }
