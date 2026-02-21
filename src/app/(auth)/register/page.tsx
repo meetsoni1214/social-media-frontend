@@ -22,9 +22,14 @@ const ROLE_OPTIONS = [
 
 export default function RegisterPage() {
   const router = useRouter();
-  const [phoneNumber, setPhoneNumber] = useState('');
+  const [phoneNumber] = useState(() => {
+    if (typeof window === 'undefined') {
+      return '';
+    }
+
+    return sessionStorage.getItem('verifiedPhone') ?? '';
+  });
   const [error, setError] = useState('');
-  const [isRedirecting, setIsRedirecting] = useState(false);
 
   const { mutate: register, isPending } = useRegister();
 
@@ -34,21 +39,16 @@ export default function RegisterPage() {
       firstName: '',
       lastName: '',
       email: '',
-      phone: '',
+      phone: phoneNumber,
       role: '',
     },
   });
 
   useEffect(() => {
-    const verifiedPhone = sessionStorage.getItem('verifiedPhone');
-    if (!verifiedPhone) {
-      setIsRedirecting(true);
+    if (!phoneNumber) {
       router.push('/login');
-      return;
     }
-    setPhoneNumber(verifiedPhone);
-    signupForm.setValue('phone', verifiedPhone);
-  }, [router, signupForm]);
+  }, [phoneNumber, router]);
 
   const handleSignupSubmit = async (data: SignupFormData) => {
     setError('');
@@ -68,7 +68,7 @@ export default function RegisterPage() {
     });
   };
 
-  if (isRedirecting) {
+  if (!phoneNumber) {
     return null;
   }
 

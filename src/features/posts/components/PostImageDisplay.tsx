@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { ErrorText } from '@/components/common/ErrorText';
 import { LoadingSpinner } from '@/components/common/LoadingSpinner';
 import { GradientCard } from '@/components/common/GradientCard';
@@ -21,11 +21,8 @@ export function PostImageDisplay({
   alt = 'Generated post',
   height = 'h-[600px]', // Default to 600px height for 1024px images
 }: PostImageDisplayProps) {
-  const [hasImageError, setHasImageError] = useState(false);
-
-  useEffect(() => {
-    setHasImageError(false);
-  }, [imageSrc]);
+  const [failedSrc, setFailedSrc] = useState<string | null>(null);
+  const hasImageError = Boolean(imageSrc && failedSrc === imageSrc);
 
   const renderContent = () => {
     if (error) {
@@ -41,7 +38,7 @@ export function PostImageDisplay({
         <ErrorText
           message="Failed to load generated image"
           onRetry={() => {
-            setHasImageError(false);
+            setFailedSrc(null);
             onRetry();
           }}
         />
@@ -57,7 +54,7 @@ export function PostImageDisplay({
           className="object-cover"
           priority
           onError={() => {
-            setHasImageError(true);
+            setFailedSrc(imageSrc ?? null);
           }}
         />
       );
