@@ -65,7 +65,7 @@ export function IdeaCard(props: IdeaCardProps) {
     }
 
     if (variant === 'saved') {
-      props.onUpdate(String(idea.id), { title, content });
+      props.onUpdate(idea.id, { title, content });
     }
     cancelEditing();
   };
@@ -136,7 +136,7 @@ export function IdeaCard(props: IdeaCardProps) {
               <GradientButton
                 size="sm"
                 className="flex-1"
-                onClick={() => props.onUse(String(idea.id))}
+                onClick={() => props.onUse(idea.id)}
               >
                 <Sparkles className="h-4 w-4" />
                 {props.useButtonLabel}

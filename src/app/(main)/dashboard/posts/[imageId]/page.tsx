@@ -1,6 +1,6 @@
 'use client';
 
-import { use } from 'react';
+import { use, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useGetGeneratedPostById } from '@/features/posts/hooks/useGeneratedPosts';
 import { useImageDownload } from '@/features/posts/hooks/useImageDownload';
@@ -11,6 +11,7 @@ import { ErrorCard } from '@/components/common/ErrorCard';
 import { ErrorText } from '@/components/common/ErrorText';
 import { LoadingScreen } from '@/components/common/LoadingScreen';
 import { GradientCard } from '@/components/common/GradientCard';
+import { uuidSchema } from '@/lib/utils/validation';
 
 const DEFAULT_FILENAME = 'generated_post.png';
 
@@ -21,7 +22,7 @@ export default function PostDetailPage({
 }) {
   const { imageId } = use(params);
   const router = useRouter();
-  const parsedImageId = Number(imageId);
+  const hasValidImageId = uuidSchema.safeParse(imageId).success;
 
   const imageDownload = useImageDownload({
     filename: DEFAULT_FILENAME,
@@ -33,7 +34,17 @@ export default function PostDetailPage({
     error: postError,
     refetch: refetchPost,
     isFetching: isRefetchingPost,
-  } = useGetGeneratedPostById(parsedImageId);
+  } = useGetGeneratedPostById(hasValidImageId ? imageId : null);
+
+  useEffect(() => {
+    if (!hasValidImageId) {
+      router.push('/dashboard');
+    }
+  }, [hasValidImageId, router]);
+
+  if (!hasValidImageId) {
+    return null;
+  }
 
   const handleDownload = async () => {
     if (!selectedPost?.imageUrl) {

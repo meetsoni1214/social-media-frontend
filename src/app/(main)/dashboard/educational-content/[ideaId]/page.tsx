@@ -16,6 +16,7 @@ import { UI_CONSTANTS, FILE_CONSTANTS } from './constants';
 import { ErrorText } from '@/components/common/ErrorText';
 import { LoadingScreen } from '@/components/common/LoadingScreen';
 import { ApiError } from '@/lib/api/core/errors';
+import { uuidSchema } from '@/lib/utils/validation';
 
 export default function GeneratedPostPage({
   params,
@@ -25,12 +26,7 @@ export default function GeneratedPostPage({
   const { ideaId } = use(params);
   const router = useRouter();
   const { data: businessProfileId = null } = useBusinessProfileId();
-
-  const parsedIdeaId = Number(ideaId);
-  const hasValidIdeaId =
-    Number.isFinite(parsedIdeaId) &&
-    Number.isInteger(parsedIdeaId) &&
-    parsedIdeaId > 0;
+  const hasValidIdeaId = uuidSchema.safeParse(ideaId).success;
 
   const imageDownload = useImageDownload({
     filename: FILE_CONSTANTS.DEFAULT_FILENAME,
@@ -42,7 +38,7 @@ export default function GeneratedPostPage({
     isLoading: isIdeaLoading,
     error: ideaError,
     refetch: refetchIdea,
-  } = useGetPostIdeaById(hasValidIdeaId ? parsedIdeaId : null);
+  } = useGetPostIdeaById(hasValidIdeaId ? ideaId : null);
 
   useEffect(() => {
     if (!hasValidIdeaId) {

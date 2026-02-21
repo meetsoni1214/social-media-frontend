@@ -13,9 +13,10 @@ import {
 } from '@/components/common/GradientCard';
 import { ErrorText } from '@/components/common/ErrorText';
 import { LoadingSpinner } from '@/components/common/LoadingSpinner';
+import type { UUID } from '@/types/uuid';
 
 interface GeneratedPostsSectionProps {
-  businessProfileId: number | null;
+  businessProfileId: UUID | null;
   businessName: string;
 }
 
@@ -23,7 +24,7 @@ export function GeneratedPostsSection({
   businessProfileId,
   businessName,
 }: GeneratedPostsSectionProps) {
-  const [failedImageIds, setFailedImageIds] = useState<number[]>([]);
+  const [failedImageIds, setFailedImageIds] = useState<UUID[]>([]);
 
   const {
     data: generatedPosts = [],

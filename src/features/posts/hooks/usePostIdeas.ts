@@ -8,6 +8,7 @@ import type {
   PostIdeasResponse,
   PostIdeaType,
 } from '@/features/posts/types/post';
+import type { UUID } from '@/types/uuid';
 import { normalizeIdeaCount } from '@/features/posts/utils/ideaCount';
 
 interface PostIdeasParams {
@@ -28,13 +29,11 @@ export function useGetSavedPostIdeas(ideaType: PostIdeaType) {
   });
 }
 
-export function useGetPostIdeaById(ideaId: number | null) {
-  const hasValidIdeaId = Number.isFinite(ideaId) && (ideaId as number) > 0;
-
+export function useGetPostIdeaById(ideaId: UUID | null) {
   return useQuery<SavedPostIdea>({
     queryKey: ['post-idea', ideaId],
-    queryFn: () => postService.getPostIdeaById(ideaId as number),
-    enabled: hasValidIdeaId,
+    queryFn: () => postService.getPostIdeaById(ideaId as UUID),
+    enabled: !!ideaId,
   });
 }
 
@@ -71,7 +70,7 @@ export function useUpdatePostIdea() {
   return useMutation<
     SavedPostIdea,
     Error,
-    { ideaId: number; ideaType: PostIdeaType; data: UpdatePostIdeaRequest },
+    { ideaId: UUID; ideaType: PostIdeaType; data: UpdatePostIdeaRequest },
     { previousIdeas: SavedPostIdea[] }
   >({
     mutationFn: payload =>

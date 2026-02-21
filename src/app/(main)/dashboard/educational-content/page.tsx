@@ -83,15 +83,10 @@ export default function EducationalContentPage() {
   };
 
   const handleUpdateIdea = (ideaId: string, updates: UpdatePostIdeaRequest) => {
-    const parsedId = Number(ideaId);
-    if (!Number.isFinite(parsedId)) {
-      return;
-    }
-
     setUpdatingIdeaId(ideaId);
     updateIdea(
       {
-        ideaId: parsedId,
+        ideaId,
         ideaType,
         data: updates,
       },

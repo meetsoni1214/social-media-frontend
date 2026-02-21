@@ -1,5 +1,7 @@
 import { z } from 'zod';
 
+export const uuidSchema = z.uuid();
+
 export const businessProfileSchema = z.object({
   businessName: z
     .string()

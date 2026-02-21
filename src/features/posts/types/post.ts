@@ -1,3 +1,5 @@
+import type { UUID } from '@/types/uuid';
+
 export type PostIdeaType = 'PROMOTIONAL' | 'EDUCATIONAL';
 
 export interface PostIdea {
@@ -7,9 +9,9 @@ export interface PostIdea {
 }
 
 export interface SavedPostIdea {
-  id: number;
-  userId: number;
-  businessProfileId: number;
+  id: UUID;
+  userId: UUID;
+  businessProfileId: UUID;
   title: string;
   content: string;
   ideaType: PostIdeaType;
@@ -35,9 +37,9 @@ export interface PostIdeasResponse {
 }
 
 export interface GeneratedPost {
-  imageId: number;
-  businessProfileId: number;
-  postIdeaId: number | null;
+  imageId: UUID;
+  businessProfileId: UUID;
+  postIdeaId: UUID | null;
   status: string;
   imageUrl: string;
   expiresIn: number;
@@ -54,7 +56,7 @@ export interface GeneratedPostsByBusinessProfileResponse {
 }
 
 export interface GeneratedPostIdeaDetails {
-  id: number;
+  id: UUID;
   title: string;
   content: string;
   ideaType: PostIdeaType;

@@ -1,6 +1,8 @@
+import type { UUID } from '@/types/uuid';
+
 export interface BusinessProfileResponse {
-  id: number;
-  userId: number;
+  id: UUID;
+  userId: UUID;
   businessName: string;
   category: string;
   description: string;

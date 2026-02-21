@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { businessProfileService } from '@/lib/api';
 import type { BusinessProfileResponse } from '@/features/business-profile/types/businessProfile';
 import type { BusinessProfileFormData } from '@/lib/utils/validation';
+import type { UUID } from '@/types/uuid';
 
 const businessProfileQueryOptions = {
   queryKey: ['businessProfile'] as const,
@@ -39,7 +40,7 @@ export function useBusinessProfileData() {
 export function useBusinessProfileId() {
   return useQuery({
     ...businessProfileQueryOptions,
-    select: (data: BusinessProfileResponse[]): number | null =>
+    select: (data: BusinessProfileResponse[]): UUID | null =>
       data.length > 0 ? data[0].id : null,
   });
 }

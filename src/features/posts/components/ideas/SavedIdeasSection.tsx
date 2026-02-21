@@ -70,7 +70,7 @@ export function SavedIdeasSection({
               key={idea.id}
               variant="saved"
               idea={idea}
-              isInProgress={updatingIdeaId === String(idea.id)}
+              isInProgress={updatingIdeaId === idea.id}
               useButtonLabel={useButtonLabel}
               onUse={onUseIdea}
               onUpdate={onUpdateIdea}

@@ -8,6 +8,7 @@ import type {
   UpdatePostIdeaRequest,
   PostIdeaType,
 } from '@/features/posts/types/post';
+import type { UUID } from '@/types/uuid';
 import type { BusinessProfileFormData } from '@/lib/utils/validation';
 import { httpClient } from '../core/http-client';
 
@@ -24,8 +25,8 @@ async function generatePostIdeas(
 }
 
 async function generatePost(
-  postIdeaId: number,
-  businessProfileId: number
+  postIdeaId: UUID,
+  businessProfileId: UUID
 ): Promise<GeneratedPostResponse> {
   return httpClient.post<GeneratedPostResponse>('/posts/generate', {
     postIdeaId,
@@ -34,7 +35,7 @@ async function generatePost(
 }
 
 async function listGeneratedPostsByBusinessProfile(
-  businessProfileId: number
+  businessProfileId: UUID
 ): Promise<GeneratedPostsByBusinessProfileResponse> {
   return httpClient.get<GeneratedPostsByBusinessProfileResponse>(
     `/posts/business-profile/${businessProfileId}`
@@ -42,7 +43,7 @@ async function listGeneratedPostsByBusinessProfile(
 }
 
 async function getGeneratedPostById(
-  imageId: number
+  imageId: UUID
 ): Promise<GeneratedPostDetailsResponse> {
   return httpClient.get<GeneratedPostDetailsResponse>(`/posts/${imageId}`);
 }
@@ -59,7 +60,7 @@ async function listSavedPostIdeas(
   return httpClient.get<SavedPostIdea[]>(`/post-ideas${query}`);
 }
 
-async function getPostIdeaById(ideaId: number): Promise<SavedPostIdea> {
+async function getPostIdeaById(ideaId: UUID): Promise<SavedPostIdea> {
   return httpClient.get<SavedPostIdea>(`/post-ideas/${ideaId}`);
 }
 
@@ -70,7 +71,7 @@ async function savePostIdea(
 }
 
 async function updatePostIdea(
-  ideaId: number,
+  ideaId: UUID,
   postIdea: UpdatePostIdeaRequest
 ): Promise<SavedPostIdea> {
   return httpClient.patch<SavedPostIdea>(`/post-ideas/${ideaId}`, postIdea);

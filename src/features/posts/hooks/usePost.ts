@@ -1,25 +1,20 @@
 import { postService } from '@/lib/api';
 import { useQuery } from '@tanstack/react-query';
+import type { UUID } from '@/types/uuid';
 
 interface PostParams {
-  postIdeaId: number | null;
-  businessProfileId: number | null;
+  postIdeaId: UUID | null;
+  businessProfileId: UUID | null;
 }
 
 export function usePosts(params: PostParams) {
-  const hasValidParams =
-    Number.isFinite(params.businessProfileId) &&
-    Number.isFinite(params.postIdeaId) &&
-    (params.businessProfileId as number) > 0 &&
-    (params.postIdeaId as number) > 0;
-
   return useQuery({
     queryKey: ['post', params.businessProfileId, params.postIdeaId],
     queryFn: () =>
       postService.generatePost(
-        params.postIdeaId as number,
-        params.businessProfileId as number
+        params.postIdeaId as UUID,
+        params.businessProfileId as UUID
       ),
-    enabled: hasValidParams,
+    enabled: !!params.businessProfileId && !!params.postIdeaId,
   });
 }
