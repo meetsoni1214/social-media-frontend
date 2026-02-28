@@ -1,0 +1,18 @@
+- [x] Connect with social media accounts
+- [x] Figure out how we can use nano banana pro model to generate image
+- [x] Implement CI pizpeline
+- [] Post to social media accounts
+- [] Review React best practices report in `react-best-practices-review.md`
+- [] include business_id in the route
+- [] need to optimize how we are geting the ideas according to type
+- [] replace ErrorText with Toast notification
+- [] Implement Image viewer
+- [] Mobile responsive design
+- [] Rename branding to Gothryve
+- [] Integrate rate limiting
+- [] Implement tests in backend
+- [] Implement query key factory
+- [] Implement horizontal project structure in backend
+- [] remove deprecated middleware in frontend
+- [] Fix the logging in backend (not clear logs)
+- [] Deal with Supertokens user and backend user mismatch
