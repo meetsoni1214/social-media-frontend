@@ -29,20 +29,17 @@ import {
 import { GradientButton } from '@/components/common/GradientButton';
 import { QuickActionCard } from '@/features/dashboard/components/QuickActionCard';
 import { GeneratedPostsSection } from '@/features/dashboard/components/GeneratedPostsSection';
-import { ErrorText } from '@/components/common/ErrorText';
+import { useToast } from '@/components/common/Toast';
 
 export default function DashboardPage() {
   const router = useRouter();
+  const { showToast } = useToast();
   const { data } = useBusinessProfileData();
   const { data: businessProfileId = null } = useBusinessProfileId();
   const businessProfile = data!.businessProfile!;
   const { data: socialProfileData } = useSocialProfileExists();
-  const {
-    mutate: createSocialProfile,
-    isPending: isCreatingProfile,
-    isError: isCreateError,
-    error: createError,
-  } = useCreateSocialProfile();
+  const { mutate: createSocialProfile, isPending: isCreatingProfile } =
+    useCreateSocialProfile();
 
   return (
     <div className="min-h-screen">
@@ -195,6 +192,12 @@ export default function DashboardPage() {
           onSuccess: () => {
             router.push('/social-profiles');
           },
+          onError: () => {
+            showToast(
+              'Failed to create social profile. Please try again.',
+              'error'
+            );
+          },
         });
       }
     };
@@ -217,13 +220,6 @@ export default function DashboardPage() {
                   ? 'View and manage your Instagram, Facebook, and Google My Business accounts at one place.'
                   : 'Link your Instagram, Facebook, and Google My Business accounts to start sharing your content across all platforms with one click.'}
               </p>
-              {isCreateError && (
-                <ErrorText
-                  error={createError}
-                  message="Failed to create social profile. Please try again."
-                  className="mt-2"
-                />
-              )}
             </div>
 
             <div className="flex-shrink-0">

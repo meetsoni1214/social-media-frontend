@@ -1,12 +1,13 @@
 import Image from 'next/image';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Expand } from 'lucide-react';
 import Lightbox from 'yet-another-react-lightbox';
 import Zoom from 'yet-another-react-lightbox/plugins/zoom';
 import 'yet-another-react-lightbox/styles.css';
-import { ErrorText } from '@/components/common/ErrorText';
 import { LoadingSpinner } from '@/components/common/LoadingSpinner';
 import { GradientCard } from '@/components/common/GradientCard';
+import { GradientButton } from '@/components/common/GradientButton';
+import { useToast } from '@/components/common/Toast';
 import { Button } from '@/components/ui/button';
 
 interface PostImageDisplayProps {
@@ -18,6 +19,10 @@ interface PostImageDisplayProps {
   height?: string; // Custom height class like 'h-96', 'h-[600px]', etc.
 }
 
+interface RetryFallbackProps {
+  onClick: () => void;
+}
+
 export function PostImageDisplay({
   imageSrc,
   isLoading,
@@ -26,13 +31,26 @@ export function PostImageDisplay({
   alt = 'Generated post',
   height = 'h-[600px]', // Default to 600px height for 1024px images
 }: PostImageDisplayProps) {
+  const { showToast } = useToast();
   const [failedSrc, setFailedSrc] = useState<string | null>(null);
   const [isViewerOpen, setIsViewerOpen] = useState(false);
   const hasImageError = Boolean(imageSrc && failedSrc === imageSrc);
 
+  useEffect(() => {
+    if (error) {
+      showToast('Failed to generate image', 'error');
+    }
+  }, [error, showToast]);
+
+  useEffect(() => {
+    if (hasImageError) {
+      showToast('Failed to load generated image', 'error');
+    }
+  }, [hasImageError, showToast]);
+
   const renderContent = () => {
     if (error) {
-      return <ErrorText message="Failed to generate image" onRetry={onRetry} />;
+      return <RetryFallback onClick={onRetry} />;
     }
 
     if (isLoading) {
@@ -41,9 +59,8 @@ export function PostImageDisplay({
 
     if (hasImageError) {
       return (
-        <ErrorText
-          message="Failed to load generated image"
-          onRetry={() => {
+        <RetryFallback
+          onClick={() => {
             setFailedSrc(null);
             onRetry();
           }}
@@ -120,5 +137,15 @@ export function PostImageDisplay({
         />
       )}
     </>
+  );
+}
+
+function RetryFallback({ onClick }: RetryFallbackProps) {
+  return (
+    <div className="flex h-full items-center justify-center">
+      <GradientButton size="sm" onClick={onClick}>
+        Retry
+      </GradientButton>
+    </div>
   );
 }

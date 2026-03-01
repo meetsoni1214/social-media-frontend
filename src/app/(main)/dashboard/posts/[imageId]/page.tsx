@@ -8,9 +8,9 @@ import { PostImageDisplay } from '@/features/posts/components/PostImageDisplay';
 import { PostCaption } from '@/features/posts/components/PostCaption';
 import { SocialProfileShareSection } from '@/features/posts/components/SocialProfileShareSection';
 import { ErrorCard } from '@/components/common/ErrorCard';
-import { ErrorText } from '@/components/common/ErrorText';
 import { LoadingScreen } from '@/components/common/LoadingScreen';
 import { GradientCard } from '@/components/common/GradientCard';
+import { useToast } from '@/components/common/Toast';
 import { uuidSchema } from '@/lib/utils/validation';
 
 const DEFAULT_FILENAME = 'generated_post.png';
@@ -22,6 +22,7 @@ export default function PostDetailPage({
 }) {
   const { imageId } = use(params);
   const router = useRouter();
+  const { showToast } = useToast();
   const hasValidImageId = uuidSchema.safeParse(imageId).success;
 
   const imageDownload = useImageDownload({
@@ -42,6 +43,12 @@ export default function PostDetailPage({
     }
   }, [hasValidImageId, router]);
 
+  useEffect(() => {
+    if (postError) {
+      showToast('Failed to load generated post. Please try again.', 'error');
+    }
+  }, [postError, showToast]);
+
   if (!hasValidImageId) {
     return null;
   }
@@ -61,14 +68,14 @@ export default function PostDetailPage({
 
   if (postError) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-orange-50 via-pink-50 to-purple-50 flex items-center justify-center p-8">
-        <ErrorText
-          message="Failed to load generated post. Please try again."
-          onRetry={() => {
-            void refetchPost();
-          }}
-        />
-      </div>
+      <ErrorCard
+        title="Unable to load post"
+        message="Failed to load generated post. Please try again."
+        actionLabel="Retry"
+        onAction={() => {
+          void refetchPost();
+        }}
+      />
     );
   }
 

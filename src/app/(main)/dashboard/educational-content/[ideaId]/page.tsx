@@ -13,8 +13,9 @@ import { PostImageDisplay } from '@/features/posts/components/PostImageDisplay';
 import { PostCaption } from '@/features/posts/components/PostCaption';
 import { SocialProfileShareSection } from '@/features/posts/components/SocialProfileShareSection';
 import { UI_CONSTANTS, FILE_CONSTANTS } from './constants';
-import { ErrorText } from '@/components/common/ErrorText';
+import { ErrorCard } from '@/components/common/ErrorCard';
 import { LoadingScreen } from '@/components/common/LoadingScreen';
+import { useToast } from '@/components/common/Toast';
 import { ApiError } from '@/lib/api/core/errors';
 import { uuidSchema } from '@/lib/utils/validation';
 
@@ -25,6 +26,7 @@ export default function GeneratedPostPage({
 }) {
   const { ideaId } = use(params);
   const router = useRouter();
+  const { showToast } = useToast();
   const { data: businessProfileId = null } = useBusinessProfileId();
   const hasValidIdeaId = uuidSchema.safeParse(ideaId).success;
 
@@ -82,18 +84,32 @@ export default function GeneratedPostPage({
     }
   }, [ideaError, router]);
 
+  useEffect(() => {
+    if (ideaError) {
+      showToast('Failed to load idea details. Please try again.', 'error');
+    }
+  }, [ideaError, showToast]);
+
+  useEffect(() => {
+    if (postError) {
+      showToast('Failed to generate post. Please try again.', 'error');
+    }
+  }, [postError, showToast]);
+
   if (!businessProfileId || isIdeaLoading || isPostLoading) {
     return <LoadingScreen message="Loading post details..." />;
   }
 
   if (ideaError) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-orange-50 via-pink-50 to-purple-50 flex items-center justify-center p-8">
-        <ErrorText
-          message="Failed to load idea details. Please try again."
-          onRetry={refetchIdea}
-        />
-      </div>
+      <ErrorCard
+        title="Unable to load idea"
+        message="Failed to load idea details. Please try again."
+        actionLabel="Retry"
+        onAction={() => {
+          void refetchIdea();
+        }}
+      />
     );
   }
 
@@ -103,12 +119,14 @@ export default function GeneratedPostPage({
 
   if (postError) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-orange-50 via-pink-50 to-purple-50 flex items-center justify-center p-8">
-        <ErrorText
-          message="Failed to generate post. Please try again."
-          onRetry={refetch}
-        />
-      </div>
+      <ErrorCard
+        title="Unable to generate post"
+        message="Failed to generate post. Please try again."
+        actionLabel="Retry"
+        onAction={() => {
+          void refetch();
+        }}
+      />
     );
   }
 
