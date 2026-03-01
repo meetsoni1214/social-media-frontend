@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useBusinessProfileData } from '@/features/business-profile/hooks/useBusinessProfileData';
+import { useState, useEffect, use } from 'react';
+import { useBusinessProfileDataById } from '@/features/business-profile/hooks/useBusinessProfileData';
 import { Sparkles, Calendar } from 'lucide-react';
 import { LoadingSpinner } from '@/components/common/LoadingSpinner';
 import {
@@ -12,10 +12,21 @@ import {
 import { GradientButton } from '@/components/common/GradientButton';
 import { mockApi, type Festival } from '@/lib/api/mock';
 import type { PostIdea } from '@/features/posts/types/post';
+import { ErrorCard } from '@/components/common/ErrorCard';
+import { uuidSchema } from '@/lib/utils/validation';
+import type { UUID } from '@/types/uuid';
 
-export default function FestivalPostPage() {
-  const { data } = useBusinessProfileData();
-  const businessProfile = data!.businessProfile!;
+export default function FestivalPostPage({
+  params,
+}: {
+  params: Promise<{ businessId: string }>;
+}) {
+  const { businessId } = use(params);
+  const hasValidBusinessId = uuidSchema.safeParse(businessId).success;
+  const routeBusinessId = hasValidBusinessId ? (businessId as UUID) : null;
+  const { data, isLoading: isBusinessLoading } =
+    useBusinessProfileDataById(routeBusinessId);
+  const businessProfile = data?.businessProfile;
   const [festivals, setFestivals] = useState<Festival[]>([]);
   const [selectedFestival, setSelectedFestival] = useState<Festival | null>(
     null
@@ -35,6 +46,19 @@ export default function FestivalPostPage() {
 
     loadFestivals();
   }, []);
+
+  if (!hasValidBusinessId) {
+    return (
+      <ErrorCard
+        title="Invalid business id"
+        message="Business context is invalid. Please select a business again."
+      />
+    );
+  }
+
+  if (isBusinessLoading || !businessProfile) {
+    return <LoadingSpinner size="md" />;
+  }
 
   const handleFestivalSelect = async (festival: Festival) => {
     if (!businessProfile) return;

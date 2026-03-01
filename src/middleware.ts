@@ -1,24 +1,18 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
-const protectedRoutes = [
-  '/register',
-  '/dashboard',
-  '/business-profile',
-  '/social-profiles',
-];
-
-const authRoutes = ['/login'];
+const publicRoutes = ['/', '/login', '/register'];
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   const hasSessionCookie = request.cookies.has('sFrontToken');
 
-  const isProtectedRoute = protectedRoutes.some(route =>
-    pathname.startsWith(route)
+  const isPublicRoute = publicRoutes.some(route =>
+    route === '/' ? pathname === '/' : pathname.startsWith(route)
   );
-  const isAuthRoute = authRoutes.some(route => pathname.startsWith(route));
+  const isAuthRoute = pathname.startsWith('/login');
+  const isProtectedRoute = !isPublicRoute;
 
   if (isProtectedRoute && !hasSessionCookie) {
     const url = new URL('/login', request.url);
@@ -27,7 +21,7 @@ export function middleware(request: NextRequest) {
   }
 
   if (isAuthRoute && hasSessionCookie) {
-    return NextResponse.redirect(new URL('/dashboard', request.url));
+    return NextResponse.redirect(new URL('/businesses', request.url));
   }
 
   return NextResponse.next();

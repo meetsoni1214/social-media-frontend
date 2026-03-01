@@ -2,7 +2,6 @@
 
 import { useEffect, use } from 'react';
 import { useRouter } from 'next/navigation';
-import { useBusinessProfileId } from '@/features/business-profile/hooks/useBusinessProfileData';
 import { ArrowLeft } from 'lucide-react';
 import { GradientButton } from '@/components/common/GradientButton';
 import { useGetPostIdeaById } from '@/features/posts/hooks/usePostIdeas';
@@ -18,16 +17,18 @@ import { LoadingScreen } from '@/components/common/LoadingScreen';
 import { useToast } from '@/components/common/Toast';
 import { ApiError } from '@/lib/api/core/errors';
 import { uuidSchema } from '@/lib/utils/validation';
+import type { UUID } from '@/types/uuid';
 
 export default function GeneratedPostPage({
   params,
 }: {
-  params: Promise<{ ideaId: string }>;
+  params: Promise<{ businessId: string; ideaId: string }>;
 }) {
-  const { ideaId } = use(params);
+  const { businessId, ideaId } = use(params);
   const router = useRouter();
   const { showToast } = useToast();
-  const { data: businessProfileId = null } = useBusinessProfileId();
+  const hasValidBusinessId = uuidSchema.safeParse(businessId).success;
+  const businessProfileId = hasValidBusinessId ? (businessId as UUID) : null;
   const hasValidIdeaId = uuidSchema.safeParse(ideaId).success;
 
   const imageDownload = useImageDownload({
@@ -40,13 +41,13 @@ export default function GeneratedPostPage({
     isLoading: isIdeaLoading,
     error: ideaError,
     refetch: refetchIdea,
-  } = useGetPostIdeaById(hasValidIdeaId ? ideaId : null);
+  } = useGetPostIdeaById(businessProfileId, hasValidIdeaId ? ideaId : null);
 
   useEffect(() => {
-    if (!hasValidIdeaId) {
-      router.push('/dashboard/educational-content');
+    if (!hasValidBusinessId || !hasValidIdeaId) {
+      router.push('/businesses');
     }
-  }, [hasValidIdeaId, router]);
+  }, [hasValidBusinessId, hasValidIdeaId, router]);
 
   const {
     data: postResponse,
@@ -80,9 +81,9 @@ export default function GeneratedPostPage({
       ideaError instanceof ApiError &&
       (ideaError.status === 404 || ideaError.status === 403)
     ) {
-      router.push('/dashboard/educational-content');
+      router.push(`/${businessId}/educational-content`);
     }
-  }, [ideaError, router]);
+  }, [businessId, ideaError, router]);
 
   useEffect(() => {
     if (ideaError) {
@@ -138,7 +139,7 @@ export default function GeneratedPostPage({
         <div className="mb-4">
           <GradientButton
             variant="ghost"
-            onClick={() => router.push('/dashboard/educational-content')}
+            onClick={() => router.push(`/${businessId}/educational-content`)}
           >
             <ArrowLeft className="w-4 h-4" />
             Back to Ideas
@@ -172,6 +173,7 @@ export default function GeneratedPostPage({
               />
 
               <SocialProfileShareSection
+                businessProfileId={businessProfileId}
                 onDownload={handleDownload}
                 isDownloading={imageDownload.isDownloading}
                 downloadSuccess={imageDownload.downloadSuccess}
