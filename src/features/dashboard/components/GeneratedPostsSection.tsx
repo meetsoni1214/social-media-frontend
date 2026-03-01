@@ -17,11 +17,13 @@ import { useToast } from '@/components/common/Toast';
 import type { UUID } from '@/types/uuid';
 
 interface GeneratedPostsSectionProps {
+  businessId: UUID;
   businessProfileId: UUID | null;
   businessName: string;
 }
 
 export function GeneratedPostsSection({
+  businessId,
   businessProfileId,
   businessName,
 }: GeneratedPostsSectionProps) {
@@ -87,7 +89,7 @@ export function GeneratedPostsSection({
               {visibleGeneratedPosts.map(post => (
                 <Link
                   key={post.imageId}
-                  href={`/dashboard/posts/${post.imageId}`}
+                  href={`/${businessId}/posts/${post.imageId}`}
                   className="relative block overflow-hidden rounded-lg border border-gray-200 bg-gray-100 aspect-square focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--gradient-pink)] focus-visible:ring-offset-2"
                 >
                   <Image

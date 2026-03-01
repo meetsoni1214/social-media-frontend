@@ -18,7 +18,7 @@ import {
 
 function LoginForm() {
   const searchParams = useSearchParams();
-  const redirectTo = searchParams.get('redirect') || '/dashboard';
+  const redirectTo = searchParams.get('redirect') || '/businesses';
   const [phoneNumber, setPhoneNumber] = useState('');
   const [flowState, setFlowState] = useState<
     'phone-entry' | 'otp-verification'

@@ -57,7 +57,7 @@ export default function RegisterPage() {
       onSuccess: response => {
         if (response.user) {
           sessionStorage.removeItem('verifiedPhone');
-          router.push('/business-profile');
+          router.push('/businesses/new');
         } else {
           setError('Registration failed. Please try again.');
         }
