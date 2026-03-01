@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, use, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -11,7 +11,7 @@ import {
   businessProfileSchema,
   type BusinessProfileFormData,
 } from '@/lib/utils/validation';
-import { useBusinessProfileData } from '@/features/business-profile/hooks/useBusinessProfileData';
+import { useBusinessProfileDataById } from '@/features/business-profile/hooks/useBusinessProfileData';
 import { useSaveBusinessProfile } from '@/features/business-profile/hooks/useBusinessProfile';
 import {
   GradientCard,
@@ -24,6 +24,8 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
+import { uuidSchema } from '@/lib/utils/validation';
+import type { UUID } from '@/types/uuid';
 
 const BUSINESS_CATEGORIES = [
   'Restaurant & Food',
@@ -43,11 +45,18 @@ const BUSINESS_CATEGORIES = [
   'Other',
 ];
 
-export default function BusinessProfilePage() {
+export default function BusinessProfilePage({
+  params,
+}: {
+  params: Promise<{ businessId: string }>;
+}) {
+  const { businessId } = use(params);
   const router = useRouter();
-  const { data, isLoading: isProfileLoading } = useBusinessProfileData();
+  const hasValidBusinessId = uuidSchema.safeParse(businessId).success;
+  const routeBusinessId = hasValidBusinessId ? (businessId as UUID) : null;
+  const { data, isLoading: isProfileLoading } =
+    useBusinessProfileDataById(routeBusinessId);
   const businessProfile = data?.businessProfile ?? null;
-  const isBusinessProfileComplete = data?.isBusinessProfileComplete ?? false;
   const [error, setError] = useState('');
   const [isDetectingColors, setIsDetectingColors] = useState(false);
   const [logoPreview, setLogoPreview] = useState<string | null>(
@@ -57,17 +66,12 @@ export default function BusinessProfilePage() {
 
   const { mutate: saveBusinessProfile, isPending } = useSaveBusinessProfile();
 
-  useEffect(() => {
-    if (!isProfileLoading && isBusinessProfileComplete) {
-      router.push('/dashboard');
-    }
-  }, [isBusinessProfileComplete, isProfileLoading, router]);
-
   const {
     register,
     handleSubmit,
     formState: { errors },
     setValue,
+    reset,
     watch,
   } = useForm<BusinessProfileFormData>({
     resolver: zodResolver(businessProfileSchema),
@@ -83,6 +87,12 @@ export default function BusinessProfilePage() {
       accentColor: '#c471ed',
     },
   });
+
+  useEffect(() => {
+    if (businessProfile) {
+      reset(businessProfile);
+    }
+  }, [businessProfile, reset]);
 
   const rgbToHex = (r: number, g: number, b: number): string => {
     return (
@@ -144,17 +154,29 @@ export default function BusinessProfilePage() {
   const onSubmit = async (data: BusinessProfileFormData) => {
     setError('');
 
-    saveBusinessProfile(data, {
-      onSuccess: () => {
-        router.push('/dashboard');
-      },
-      onError: (error: Error) => {
-        setError(
-          error.message || 'Failed to save business profile. Please try again.'
-        );
-      },
-    });
+    saveBusinessProfile(
+      { businessProfile: data, businessProfileId: routeBusinessId },
+      {
+        onSuccess: () => {
+          router.push(`/${businessId}`);
+        },
+        onError: (error: Error) => {
+          setError(
+            error.message ||
+              'Failed to save business profile. Please try again.'
+          );
+        },
+      }
+    );
   };
+
+  if (!hasValidBusinessId || !routeBusinessId) {
+    return (
+      <div className="container mx-auto px-4 py-10 max-w-4xl text-sm text-red-600">
+        Invalid business id. Please go back to the business selector.
+      </div>
+    );
+  }
 
   if (isProfileLoading) {
     return <LoadingScreen />;

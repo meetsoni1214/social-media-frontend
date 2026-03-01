@@ -16,6 +16,14 @@ async function getProfiles(): Promise<BusinessProfileResponse[]> {
   }
 }
 
+async function getProfileById(
+  businessProfileId: string
+): Promise<BusinessProfileResponse> {
+  return httpClient.get<BusinessProfileResponse>(
+    `/business-profiles/${businessProfileId}`
+  );
+}
+
 async function createProfile(
   businessProfile: BusinessProfileFormData
 ): Promise<BusinessProfileResponse> {
@@ -25,7 +33,19 @@ async function createProfile(
   );
 }
 
+async function updateProfile(
+  businessProfileId: string,
+  businessProfile: BusinessProfileFormData
+): Promise<BusinessProfileResponse> {
+  return httpClient.patch<BusinessProfileResponse>(
+    `/business-profiles/${businessProfileId}`,
+    businessProfile
+  );
+}
+
 export const businessProfileService = {
   getProfiles,
+  getProfileById,
   createProfile,
+  updateProfile,
 };
