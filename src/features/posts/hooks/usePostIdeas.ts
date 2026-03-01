@@ -12,28 +12,38 @@ import type { UUID } from '@/types/uuid';
 import { normalizeIdeaCount } from '@/features/posts/utils/ideaCount';
 
 interface PostIdeasParams {
+  businessProfileId: UUID;
   businessProfile: BusinessProfileFormData;
   ideaType: PostIdeaType;
   ideaCount?: number;
 }
 
 const POST_IDEAS_KEYS = {
-  saved: (ideaType: PostIdeaType) => ['post-ideas', 'saved', ideaType] as const,
+  saved: (businessProfileId: UUID, ideaType: PostIdeaType) =>
+    ['post-ideas', 'saved', businessProfileId, ideaType] as const,
 };
 
-export function useGetSavedPostIdeas(ideaType: PostIdeaType) {
+export function useGetSavedPostIdeas(
+  businessProfileId: UUID | null,
+  ideaType: PostIdeaType
+) {
   return useQuery<SavedPostIdea[]>({
-    queryKey: POST_IDEAS_KEYS.saved(ideaType),
-    queryFn: () => postService.listSavedPostIdeas(ideaType),
-    enabled: true,
+    queryKey: ['post-ideas', 'saved', businessProfileId, ideaType],
+    queryFn: () =>
+      postService.listSavedPostIdeas(businessProfileId as UUID, ideaType),
+    enabled: !!businessProfileId,
   });
 }
 
-export function useGetPostIdeaById(ideaId: UUID | null) {
+export function useGetPostIdeaById(
+  businessProfileId: UUID | null,
+  ideaId: UUID | null
+) {
   return useQuery<SavedPostIdea>({
-    queryKey: ['post-idea', ideaId],
-    queryFn: () => postService.getPostIdeaById(ideaId as UUID),
-    enabled: !!ideaId,
+    queryKey: ['post-idea', businessProfileId, ideaId],
+    queryFn: () =>
+      postService.getPostIdeaById(ideaId as UUID, businessProfileId as UUID),
+    enabled: !!ideaId && !!businessProfileId,
   });
 }
 
@@ -41,6 +51,7 @@ export function useGeneratePostIdeas() {
   return useMutation<PostIdeasResponse, Error, PostIdeasParams>({
     mutationFn: params =>
       postService.generatePostIdeas(
+        params.businessProfileId,
         params.businessProfile,
         params.ideaType,
         normalizeIdeaCount(params.ideaCount)
@@ -55,7 +66,7 @@ export function useSavePostIdea() {
     mutationFn: payload => postService.savePostIdea(payload),
     onSuccess: data => {
       queryClient.setQueryData(
-        POST_IDEAS_KEYS.saved(data.ideaType),
+        POST_IDEAS_KEYS.saved(data.businessProfileId, data.ideaType),
         (existing: SavedPostIdea[] = []) => {
           return [data, ...existing];
         }
@@ -70,23 +81,31 @@ export function useUpdatePostIdea() {
   return useMutation<
     SavedPostIdea,
     Error,
-    { ideaId: UUID; ideaType: PostIdeaType; data: UpdatePostIdeaRequest },
+    {
+      businessProfileId: UUID;
+      ideaId: UUID;
+      ideaType: PostIdeaType;
+      data: UpdatePostIdeaRequest;
+    },
     { previousIdeas: SavedPostIdea[] }
   >({
     mutationFn: payload =>
       postService.updatePostIdea(payload.ideaId, payload.data),
     onMutate: async payload => {
       await queryClient.cancelQueries({
-        queryKey: POST_IDEAS_KEYS.saved(payload.ideaType),
+        queryKey: POST_IDEAS_KEYS.saved(
+          payload.businessProfileId,
+          payload.ideaType
+        ),
       });
 
       const previousIdeas =
         queryClient.getQueryData<SavedPostIdea[]>(
-          POST_IDEAS_KEYS.saved(payload.ideaType)
+          POST_IDEAS_KEYS.saved(payload.businessProfileId, payload.ideaType)
         ) || [];
 
       queryClient.setQueryData(
-        POST_IDEAS_KEYS.saved(payload.ideaType),
+        POST_IDEAS_KEYS.saved(payload.businessProfileId, payload.ideaType),
         (existing: SavedPostIdea[] = []) =>
           existing.map(item =>
             item.id === payload.ideaId ? { ...item, ...payload.data } : item
@@ -101,13 +120,13 @@ export function useUpdatePostIdea() {
       }
 
       queryClient.setQueryData(
-        POST_IDEAS_KEYS.saved(payload.ideaType),
+        POST_IDEAS_KEYS.saved(payload.businessProfileId, payload.ideaType),
         context.previousIdeas
       );
     },
     onSuccess: data => {
       queryClient.setQueryData(
-        POST_IDEAS_KEYS.saved(data.ideaType),
+        POST_IDEAS_KEYS.saved(data.businessProfileId, data.ideaType),
         (existing: SavedPostIdea[] = []) =>
           existing.map(item => (item.id === data.id ? data : item))
       );

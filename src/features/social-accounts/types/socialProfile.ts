@@ -1,3 +1,5 @@
+import type { UUID } from '@/types/uuid';
+
 export enum SocialPlatform {
   INSTAGRAM = 'instagram',
   FACEBOOK = 'facebook',
@@ -18,10 +20,12 @@ export interface SocialProfileExistsResponse {
 }
 
 export interface SocialProfileConnectRequest {
+  businessProfileId: UUID;
   platform: SocialPlatform;
 }
 
 export interface SocialProfileDisconnectRequest {
+  businessProfileId: UUID;
   platform: SocialPlatform;
 }
 

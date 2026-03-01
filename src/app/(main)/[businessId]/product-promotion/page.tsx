@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, use } from 'react';
 import { useRouter } from 'next/navigation';
-import { useBusinessProfileData } from '@/features/business-profile/hooks/useBusinessProfileData';
+import { useBusinessProfileDataById } from '@/features/business-profile/hooks/useBusinessProfileData';
 import { TrendingUp } from 'lucide-react';
 import {
   IdeaStudioHero,
@@ -21,11 +21,24 @@ import type {
   PostIdeaType,
   UpdatePostIdeaRequest,
 } from '@/features/posts/types/post';
+import { uuidSchema } from '@/lib/utils/validation';
+import type { UUID } from '@/types/uuid';
+import { businessEducationalIdeaRoute } from '@/lib/routes/business';
+import { LoadingScreen } from '@/components/common/LoadingScreen';
+import { ErrorCard } from '@/components/common/ErrorCard';
 
-export default function ProductPromotionPage() {
+export default function ProductPromotionPage({
+  params,
+}: {
+  params: Promise<{ businessId: string }>;
+}) {
+  const { businessId } = use(params);
   const router = useRouter();
-  const { data } = useBusinessProfileData();
-  const businessProfile = data!.businessProfile!;
+  const hasValidBusinessId = uuidSchema.safeParse(businessId).success;
+  const businessProfileId = hasValidBusinessId ? (businessId as UUID) : null;
+  const { data, isLoading: isBusinessLoading } =
+    useBusinessProfileDataById(businessProfileId);
+  const businessProfile = data?.businessProfile;
   const [newIdeas, setNewIdeas] = useState<PostIdea[]>([]);
   const [savingIdeaId, setSavingIdeaId] = useState<string | null>(null);
   const [updatingIdeaId, setUpdatingIdeaId] = useState<string | null>(null);
@@ -36,7 +49,7 @@ export default function ProductPromotionPage() {
     isLoading: isLoadingSavedPostIdeas,
     error,
     refetch,
-  } = useGetSavedPostIdeas(ideaType);
+  } = useGetSavedPostIdeas(businessProfileId, ideaType);
   const {
     mutate: generateIdeas,
     isPending: isGenerating,
@@ -45,11 +58,31 @@ export default function ProductPromotionPage() {
   const { mutate: saveIdea, isPending: isSaving } = useSavePostIdea();
   const { mutate: updateIdea } = useUpdatePostIdea();
 
+  if (!hasValidBusinessId || !businessProfileId) {
+    return (
+      <ErrorCard
+        title="Invalid business id"
+        message="Business context is invalid. Please select a business again."
+        actionLabel="Go to Businesses"
+        onAction={() => router.push('/businesses')}
+      />
+    );
+  }
+
+  if (isBusinessLoading || !businessProfile) {
+    return <LoadingScreen message="Loading your business..." />;
+  }
+
   const savedIdeas = savedPostIdeasResponse || [];
 
   const handleGenerateIdeas = (ideaCount?: number) => {
     generateIdeas(
-      { businessProfile, ideaType, ideaCount },
+      {
+        businessProfileId: businessProfileId,
+        businessProfile,
+        ideaType,
+        ideaCount,
+      },
       {
         onSuccess: data => {
           setNewIdeas(data.data);
@@ -62,6 +95,7 @@ export default function ProductPromotionPage() {
     setSavingIdeaId(idea.id);
     saveIdea(
       {
+        businessProfileId: businessProfileId,
         title: idea.title,
         content: idea.content,
         ideaType,
@@ -86,6 +120,7 @@ export default function ProductPromotionPage() {
     setUpdatingIdeaId(ideaId);
     updateIdea(
       {
+        businessProfileId: businessProfileId,
         ideaId,
         ideaType,
         data: updates,
@@ -153,7 +188,9 @@ export default function ProductPromotionPage() {
               onRetry={refetch}
               onUpdateIdea={handleUpdateIdea}
               onUseIdea={ideaId =>
-                router.push(`/dashboard/product-promotion/${ideaId}`)
+                router.push(
+                  businessEducationalIdeaRoute(businessProfileId, ideaId)
+                )
               }
             />
           </div>

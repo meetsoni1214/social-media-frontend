@@ -4,50 +4,44 @@ import type { BusinessProfileResponse } from '@/features/business-profile/types/
 import type { BusinessProfileFormData } from '@/lib/utils/validation';
 import type { UUID } from '@/types/uuid';
 
-const businessProfileQueryOptions = {
-  queryKey: ['businessProfile'] as const,
+const businessProfilesQueryOptions = {
+  queryKey: ['businessProfiles'] as const,
   queryFn: () => businessProfileService.getProfiles(),
 };
 
 function toFormData(
-  profiles: BusinessProfileResponse[]
+  profile: BusinessProfileResponse | null
 ): BusinessProfileFormData | null {
-  if (profiles.length === 0) return null;
-  const p = profiles[0];
+  if (!profile) return null;
+
   return {
-    businessName: p.businessName,
-    category: p.category,
-    description: p.description,
-    targetAudience: p.targetAudience,
-    websiteUrl: p.websiteUrl,
-    logo: p.logo,
-    primaryColor: p.primaryColor,
-    secondaryColor: p.secondaryColor,
-    accentColor: p.accentColor,
+    businessName: profile.businessName,
+    category: profile.category,
+    description: profile.description,
+    targetAudience: profile.targetAudience,
+    websiteUrl: profile.websiteUrl,
+    logo: profile.logo,
+    primaryColor: profile.primaryColor,
+    secondaryColor: profile.secondaryColor,
+    accentColor: profile.accentColor,
   };
 }
 
-export function useBusinessProfileData() {
+export function useBusinessProfiles() {
   return useQuery({
-    ...businessProfileQueryOptions,
-    select: (data: BusinessProfileResponse[]) => ({
+    ...businessProfilesQueryOptions,
+  });
+}
+
+export function useBusinessProfileDataById(businessProfileId: UUID | null) {
+  return useQuery({
+    queryKey: ['businessProfile', businessProfileId] as const,
+    queryFn: () =>
+      businessProfileService.getProfileById(businessProfileId as UUID),
+    enabled: !!businessProfileId,
+    select: (data: BusinessProfileResponse) => ({
       businessProfile: toFormData(data),
-      isBusinessProfileComplete: data.length > 0,
+      isBusinessProfileComplete: !!data.id,
     }),
-  });
-}
-
-export function useBusinessProfileId() {
-  return useQuery({
-    ...businessProfileQueryOptions,
-    select: (data: BusinessProfileResponse[]): UUID | null =>
-      data.length > 0 ? data[0].id : null,
-  });
-}
-
-export function useIsBusinessProfileComplete() {
-  return useQuery({
-    ...businessProfileQueryOptions,
-    select: (data: BusinessProfileResponse[]): boolean => data.length > 0,
   });
 }

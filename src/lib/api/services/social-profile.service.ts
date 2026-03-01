@@ -8,26 +8,37 @@ import type {
   SocialProfileDisconnectRequest,
 } from '@/features/social-accounts/types/socialProfile';
 import { httpClient } from '../core/http-client';
+import type { UUID } from '@/types/uuid';
 
-async function create(): Promise<SocialProfileCreateResponse> {
-  return httpClient.post<SocialProfileCreateResponse>('/social-profiles');
+async function create(
+  businessProfileId: UUID
+): Promise<SocialProfileCreateResponse> {
+  return httpClient.post<SocialProfileCreateResponse>('/social-profiles', {
+    businessProfileId,
+  });
 }
 
-async function checkExists(): Promise<SocialProfileExistsResponse> {
-  return httpClient.get<SocialProfileExistsResponse>('/social-profiles/exists');
+async function checkExists(
+  businessProfileId: UUID
+): Promise<SocialProfileExistsResponse> {
+  return httpClient.get<SocialProfileExistsResponse>(
+    `/social-profiles/exists?business_profile_id=${businessProfileId}`
+  );
 }
 
 async function connect(
   request: SocialProfileConnectRequest
 ): Promise<SocialProfileConnectResponse> {
   return httpClient.get<SocialProfileConnectResponse>(
-    `/social-profiles/connect/${request.platform}`
+    `/social-profiles/connect/${request.platform}?business_profile_id=${request.businessProfileId}`
   );
 }
 
-async function getAccounts(): Promise<SocialAccountsStatusResponse> {
+async function getAccounts(
+  businessProfileId: UUID
+): Promise<SocialAccountsStatusResponse> {
   const accounts = await httpClient.get<SocialAccount[]>(
-    '/social-profiles/accounts'
+    `/social-profiles/accounts?business_profile_id=${businessProfileId}`
   );
 
   const statusResponse: SocialAccountsStatusResponse = {
@@ -55,7 +66,7 @@ async function disconnect(
   request: SocialProfileDisconnectRequest
 ): Promise<void> {
   return httpClient.delete<void>(
-    `/social-profiles/disconnect/${request.platform}`
+    `/social-profiles/disconnect/${request.platform}?business_profile_id=${request.businessProfileId}`
   );
 }
 

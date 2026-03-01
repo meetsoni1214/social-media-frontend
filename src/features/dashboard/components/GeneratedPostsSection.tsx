@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ImageIcon, RefreshCw } from 'lucide-react';
@@ -11,19 +11,23 @@ import {
   GradientCardTitle,
   GradientCardDescription,
 } from '@/components/common/GradientCard';
-import { ErrorText } from '@/components/common/ErrorText';
+import { GradientButton } from '@/components/common/GradientButton';
 import { LoadingSpinner } from '@/components/common/LoadingSpinner';
+import { useToast } from '@/components/common/Toast';
 import type { UUID } from '@/types/uuid';
 
 interface GeneratedPostsSectionProps {
+  businessId: UUID;
   businessProfileId: UUID | null;
   businessName: string;
 }
 
 export function GeneratedPostsSection({
+  businessId,
   businessProfileId,
   businessName,
 }: GeneratedPostsSectionProps) {
+  const { showToast } = useToast();
   const [failedImageIds, setFailedImageIds] = useState<UUID[]>([]);
 
   const {
@@ -33,6 +37,12 @@ export function GeneratedPostsSection({
     refetch: refetchGeneratedPosts,
     isFetching: isRefetchingGeneratedPosts,
   } = useGeneratedPostsByBusinessProfile(businessProfileId);
+
+  useEffect(() => {
+    if (isGeneratedPostsError) {
+      showToast('Failed to load generated images.', 'error');
+    }
+  }, [isGeneratedPostsError, showToast]);
 
   const visibleGeneratedPosts = generatedPosts
     .filter(post => !failedImageIds.includes(post.imageId))
@@ -55,13 +65,15 @@ export function GeneratedPostsSection({
             className="mt-2"
           />
         ) : isGeneratedPostsError ? (
-          <div className="mt-2">
-            <ErrorText
-              message="Failed to load generated images."
-              onRetry={() => {
-                refetchGeneratedPosts();
+          <div className="mt-2 flex items-center justify-center">
+            <GradientButton
+              size="sm"
+              onClick={() => {
+                void refetchGeneratedPosts();
               }}
-            />
+            >
+              Retry
+            </GradientButton>
           </div>
         ) : visibleGeneratedPosts.length === 0 ? (
           <div className="flex items-center gap-3 mt-2 rounded-lg border border-gray-200 bg-gray-50 px-4 py-3">
@@ -77,7 +89,7 @@ export function GeneratedPostsSection({
               {visibleGeneratedPosts.map(post => (
                 <Link
                   key={post.imageId}
-                  href={`/dashboard/posts/${post.imageId}`}
+                  href={`/${businessId}/posts/${post.imageId}`}
                   className="relative block overflow-hidden rounded-lg border border-gray-200 bg-gray-100 aspect-square focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--gradient-pink)] focus-visible:ring-offset-2"
                 >
                   <Image

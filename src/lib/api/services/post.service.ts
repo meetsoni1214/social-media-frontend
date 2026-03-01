@@ -13,11 +13,13 @@ import type { BusinessProfileFormData } from '@/lib/utils/validation';
 import { httpClient } from '../core/http-client';
 
 async function generatePostIdeas(
+  businessProfileId: UUID,
   businessProfile: BusinessProfileFormData,
   ideaType: PostIdeaType,
   ideaCount?: number
 ): Promise<PostIdeasResponse> {
   return httpClient.post<PostIdeasResponse>('/post-ideas/generate', {
+    businessProfileId,
     businessProfile,
     ideaType,
     ideaCount,
@@ -43,9 +45,12 @@ async function listGeneratedPostsByBusinessProfile(
 }
 
 async function getGeneratedPostById(
-  imageId: UUID
+  imageId: UUID,
+  businessProfileId: UUID
 ): Promise<GeneratedPostDetailsResponse> {
-  return httpClient.get<GeneratedPostDetailsResponse>(`/posts/${imageId}`);
+  return httpClient.get<GeneratedPostDetailsResponse>(
+    `/posts/${imageId}?business_profile_id=${businessProfileId}`
+  );
 }
 
 const IDEA_TYPE_QUERY_MAP: Record<PostIdeaType, string> = {
@@ -54,14 +59,27 @@ const IDEA_TYPE_QUERY_MAP: Record<PostIdeaType, string> = {
 };
 
 async function listSavedPostIdeas(
+  businessProfileId: UUID,
   ideaType?: PostIdeaType
 ): Promise<SavedPostIdea[]> {
-  const query = ideaType ? `?idea_type=${IDEA_TYPE_QUERY_MAP[ideaType]}` : '';
-  return httpClient.get<SavedPostIdea[]>(`/post-ideas${query}`);
+  const queryParams = new URLSearchParams({
+    business_profile_id: businessProfileId,
+  });
+  if (ideaType) {
+    queryParams.set('idea_type', IDEA_TYPE_QUERY_MAP[ideaType]);
+  }
+  return httpClient.get<SavedPostIdea[]>(
+    `/post-ideas?${queryParams.toString()}`
+  );
 }
 
-async function getPostIdeaById(ideaId: UUID): Promise<SavedPostIdea> {
-  return httpClient.get<SavedPostIdea>(`/post-ideas/${ideaId}`);
+async function getPostIdeaById(
+  ideaId: UUID,
+  businessProfileId: UUID
+): Promise<SavedPostIdea> {
+  return httpClient.get<SavedPostIdea>(
+    `/post-ideas/${ideaId}?business_profile_id=${businessProfileId}`
+  );
 }
 
 async function savePostIdea(

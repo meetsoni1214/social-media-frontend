@@ -20,6 +20,7 @@ export interface SavedPostIdea {
 }
 
 export interface SavePostIdeaRequest {
+  businessProfileId: UUID;
   title: string;
   content: string;
   ideaType: PostIdeaType;

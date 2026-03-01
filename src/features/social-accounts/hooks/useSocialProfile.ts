@@ -8,40 +8,49 @@ import {
   SocialProfileDisconnectRequest,
 } from '@/features/social-accounts/types/socialProfile';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import type { UUID } from '@/types/uuid';
 
-export function useCreateSocialProfile() {
+export function useCreateSocialProfile(businessProfileId: UUID | null) {
   const queryClient = useQueryClient();
 
   return useMutation<SocialProfileCreateResponse, Error>({
-    mutationFn: () => socialProfileService.create(),
+    mutationFn: () => socialProfileService.create(businessProfileId as UUID),
     onSuccess: data => {
-      queryClient.setQueryData(['socialProfile'], data);
-      queryClient.invalidateQueries({ queryKey: ['socialProfileExists'] });
+      queryClient.setQueryData(['socialProfile', businessProfileId], data);
+      queryClient.invalidateQueries({
+        queryKey: ['socialProfileExists', businessProfileId],
+      });
     },
   });
 }
 
-export function useSocialProfileExists() {
+export function useSocialProfileExists(businessProfileId: UUID | null) {
   return useQuery<SocialProfileExistsResponse, Error>({
-    queryKey: ['socialProfileExists'],
-    queryFn: () => socialProfileService.checkExists(),
+    queryKey: ['socialProfileExists', businessProfileId],
+    queryFn: () => socialProfileService.checkExists(businessProfileId as UUID),
+    enabled: !!businessProfileId,
   });
 }
 
 export function useConnectSocialProfile(request: SocialProfileConnectRequest) {
   return useQuery<SocialProfileConnectResponse, Error>({
-    queryKey: ['socialProfileConnect', request.platform],
+    queryKey: [
+      'socialProfileConnect',
+      request.businessProfileId,
+      request.platform,
+    ],
     queryFn: () => socialProfileService.connect(request),
-    enabled: !!request.platform,
+    enabled: !!request.platform && !!request.businessProfileId,
     staleTime: 0,
     gcTime: 0,
   });
 }
 
-export function useSocialAccountsStatus() {
+export function useSocialAccountsStatus(businessProfileId: UUID | null) {
   return useQuery<SocialAccountsStatusResponse, Error>({
-    queryKey: ['socialAccountsStatus'],
-    queryFn: () => socialProfileService.getAccounts(),
+    queryKey: ['socialAccountsStatus', businessProfileId],
+    queryFn: () => socialProfileService.getAccounts(businessProfileId as UUID),
+    enabled: !!businessProfileId,
     staleTime: 0,
     gcTime: 0,
     refetchOnWindowFocus: true,
@@ -54,8 +63,10 @@ export function useDisconnectSocialProfile() {
 
   return useMutation<void, Error, SocialProfileDisconnectRequest>({
     mutationFn: request => socialProfileService.disconnect(request),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['socialAccountsStatus'] });
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: ['socialAccountsStatus', variables.businessProfileId],
+      });
     },
   });
 }

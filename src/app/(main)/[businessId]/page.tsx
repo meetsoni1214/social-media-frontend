@@ -1,10 +1,8 @@
 'use client';
 
+import { use } from 'react';
 import { useRouter } from 'next/navigation';
-import {
-  useBusinessProfileData,
-  useBusinessProfileId,
-} from '@/features/business-profile/hooks/useBusinessProfileData';
+import { useBusinessProfileDataById } from '@/features/business-profile/hooks/useBusinessProfileData';
 import {
   useSocialProfileExists,
   useCreateSocialProfile,
@@ -29,20 +27,50 @@ import {
 import { GradientButton } from '@/components/common/GradientButton';
 import { QuickActionCard } from '@/features/dashboard/components/QuickActionCard';
 import { GeneratedPostsSection } from '@/features/dashboard/components/GeneratedPostsSection';
-import { ErrorText } from '@/components/common/ErrorText';
+import { useToast } from '@/components/common/Toast';
+import { LoadingScreen } from '@/components/common/LoadingScreen';
+import { ErrorCard } from '@/components/common/ErrorCard';
+import { uuidSchema } from '@/lib/utils/validation';
+import type { UUID } from '@/types/uuid';
+import {
+  businessEducationalContentRoute,
+  businessFestivalRoute,
+  businessProductPromotionRoute,
+  businessQuotePostRoute,
+  businessSocialProfilesRoute,
+} from '@/lib/routes/business';
 
-export default function DashboardPage() {
+export default function DashboardPage({
+  params,
+}: {
+  params: Promise<{ businessId: string }>;
+}) {
+  const { businessId } = use(params);
   const router = useRouter();
-  const { data } = useBusinessProfileData();
-  const { data: businessProfileId = null } = useBusinessProfileId();
-  const businessProfile = data!.businessProfile!;
-  const { data: socialProfileData } = useSocialProfileExists();
-  const {
-    mutate: createSocialProfile,
-    isPending: isCreatingProfile,
-    isError: isCreateError,
-    error: createError,
-  } = useCreateSocialProfile();
+  const { showToast } = useToast();
+  const hasValidBusinessId = uuidSchema.safeParse(businessId).success;
+  const routeBusinessId = hasValidBusinessId ? (businessId as UUID) : null;
+  const { data, isLoading } = useBusinessProfileDataById(routeBusinessId);
+  const { data: socialProfileData } = useSocialProfileExists(routeBusinessId);
+  const { mutate: createSocialProfile, isPending: isCreatingProfile } =
+    useCreateSocialProfile(routeBusinessId);
+
+  if (!hasValidBusinessId) {
+    return (
+      <ErrorCard
+        title="Invalid business id"
+        message="Business context is invalid. Please select a business again."
+        actionLabel="Go to Businesses"
+        onAction={() => router.push('/businesses')}
+      />
+    );
+  }
+
+  if (isLoading || !data?.businessProfile || !routeBusinessId) {
+    return <LoadingScreen message="Loading your business..." />;
+  }
+
+  const businessProfile = data.businessProfile;
 
   return (
     <div className="min-h-screen">
@@ -149,35 +177,44 @@ export default function DashboardPage() {
                 icon={Calendar}
                 title="Festival Post"
                 description="Create posts for upcoming holidays"
-                onClick={() => router.push('/dashboard/festival-post')}
+                onClick={() =>
+                  router.push(businessFestivalRoute(routeBusinessId))
+                }
               />
 
               <QuickActionCard
                 icon={Megaphone}
                 title="Product Promotion"
                 description="Promote your products or services"
-                onClick={() => router.push('/dashboard/product-promotion')}
+                onClick={() =>
+                  router.push(businessProductPromotionRoute(routeBusinessId))
+                }
               />
 
               <QuickActionCard
                 icon={BookOpen}
                 title="Educational Content"
                 description="Share tips and knowledge with your audience"
-                onClick={() => router.push('/dashboard/educational-content')}
+                onClick={() =>
+                  router.push(businessEducationalContentRoute(routeBusinessId))
+                }
               />
 
               <QuickActionCard
                 icon={Quote}
                 title="Quote Post"
                 description="Share motivational quotes"
-                onClick={() => router.push('/dashboard/quote-post')}
+                onClick={() =>
+                  router.push(businessQuotePostRoute(routeBusinessId))
+                }
               />
             </div>
           </GradientCard>
         </div>
 
         <GeneratedPostsSection
-          businessProfileId={businessProfileId}
+          businessProfileId={routeBusinessId}
+          businessId={routeBusinessId}
           businessName={businessProfile.businessName}
         />
       </div>
@@ -188,12 +225,19 @@ export default function DashboardPage() {
     const hasSocialProfileCreated = socialProfileData?.exists;
 
     const handleButtonClick = () => {
+      if (!routeBusinessId) return;
       if (hasSocialProfileCreated) {
-        router.push('/social-profiles');
+        router.push(businessSocialProfilesRoute(routeBusinessId));
       } else {
         createSocialProfile(undefined, {
           onSuccess: () => {
-            router.push('/social-profiles');
+            router.push(businessSocialProfilesRoute(routeBusinessId));
+          },
+          onError: () => {
+            showToast(
+              'Failed to create social profile. Please try again.',
+              'error'
+            );
           },
         });
       }
@@ -217,13 +261,6 @@ export default function DashboardPage() {
                   ? 'View and manage your Instagram, Facebook, and Google My Business accounts at one place.'
                   : 'Link your Instagram, Facebook, and Google My Business accounts to start sharing your content across all platforms with one click.'}
               </p>
-              {isCreateError && (
-                <ErrorText
-                  error={createError}
-                  message="Failed to create social profile. Please try again."
-                  className="mt-2"
-                />
-              )}
             </div>
 
             <div className="flex-shrink-0">

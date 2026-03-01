@@ -2,7 +2,6 @@
 
 import { useEffect, use } from 'react';
 import { useRouter } from 'next/navigation';
-import { useBusinessProfileId } from '@/features/business-profile/hooks/useBusinessProfileData';
 import { ArrowLeft } from 'lucide-react';
 import { GradientButton } from '@/components/common/GradientButton';
 import { useGetPostIdeaById } from '@/features/posts/hooks/usePostIdeas';
@@ -13,19 +12,23 @@ import { PostImageDisplay } from '@/features/posts/components/PostImageDisplay';
 import { PostCaption } from '@/features/posts/components/PostCaption';
 import { SocialProfileShareSection } from '@/features/posts/components/SocialProfileShareSection';
 import { UI_CONSTANTS, FILE_CONSTANTS } from './constants';
-import { ErrorText } from '@/components/common/ErrorText';
+import { ErrorCard } from '@/components/common/ErrorCard';
 import { LoadingScreen } from '@/components/common/LoadingScreen';
+import { useToast } from '@/components/common/Toast';
 import { ApiError } from '@/lib/api/core/errors';
 import { uuidSchema } from '@/lib/utils/validation';
+import type { UUID } from '@/types/uuid';
 
 export default function GeneratedPostPage({
   params,
 }: {
-  params: Promise<{ ideaId: string }>;
+  params: Promise<{ businessId: string; ideaId: string }>;
 }) {
-  const { ideaId } = use(params);
+  const { businessId, ideaId } = use(params);
   const router = useRouter();
-  const { data: businessProfileId = null } = useBusinessProfileId();
+  const { showToast } = useToast();
+  const hasValidBusinessId = uuidSchema.safeParse(businessId).success;
+  const businessProfileId = hasValidBusinessId ? (businessId as UUID) : null;
   const hasValidIdeaId = uuidSchema.safeParse(ideaId).success;
 
   const imageDownload = useImageDownload({
@@ -38,13 +41,13 @@ export default function GeneratedPostPage({
     isLoading: isIdeaLoading,
     error: ideaError,
     refetch: refetchIdea,
-  } = useGetPostIdeaById(hasValidIdeaId ? ideaId : null);
+  } = useGetPostIdeaById(businessProfileId, hasValidIdeaId ? ideaId : null);
 
   useEffect(() => {
-    if (!hasValidIdeaId) {
-      router.push('/dashboard/educational-content');
+    if (!hasValidBusinessId || !hasValidIdeaId) {
+      router.push('/businesses');
     }
-  }, [hasValidIdeaId, router]);
+  }, [hasValidBusinessId, hasValidIdeaId, router]);
 
   const {
     data: postResponse,
@@ -78,9 +81,21 @@ export default function GeneratedPostPage({
       ideaError instanceof ApiError &&
       (ideaError.status === 404 || ideaError.status === 403)
     ) {
-      router.push('/dashboard/educational-content');
+      router.push(`/${businessId}/educational-content`);
     }
-  }, [ideaError, router]);
+  }, [businessId, ideaError, router]);
+
+  useEffect(() => {
+    if (ideaError) {
+      showToast('Failed to load idea details. Please try again.', 'error');
+    }
+  }, [ideaError, showToast]);
+
+  useEffect(() => {
+    if (postError) {
+      showToast('Failed to generate post. Please try again.', 'error');
+    }
+  }, [postError, showToast]);
 
   if (!businessProfileId || isIdeaLoading || isPostLoading) {
     return <LoadingScreen message="Loading post details..." />;
@@ -88,12 +103,14 @@ export default function GeneratedPostPage({
 
   if (ideaError) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-orange-50 via-pink-50 to-purple-50 flex items-center justify-center p-8">
-        <ErrorText
-          message="Failed to load idea details. Please try again."
-          onRetry={refetchIdea}
-        />
-      </div>
+      <ErrorCard
+        title="Unable to load idea"
+        message="Failed to load idea details. Please try again."
+        actionLabel="Retry"
+        onAction={() => {
+          void refetchIdea();
+        }}
+      />
     );
   }
 
@@ -103,12 +120,14 @@ export default function GeneratedPostPage({
 
   if (postError) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-orange-50 via-pink-50 to-purple-50 flex items-center justify-center p-8">
-        <ErrorText
-          message="Failed to generate post. Please try again."
-          onRetry={refetch}
-        />
-      </div>
+      <ErrorCard
+        title="Unable to generate post"
+        message="Failed to generate post. Please try again."
+        actionLabel="Retry"
+        onAction={() => {
+          void refetch();
+        }}
+      />
     );
   }
 
@@ -120,7 +139,7 @@ export default function GeneratedPostPage({
         <div className="mb-4">
           <GradientButton
             variant="ghost"
-            onClick={() => router.push('/dashboard/educational-content')}
+            onClick={() => router.push(`/${businessId}/educational-content`)}
           >
             <ArrowLeft className="w-4 h-4" />
             Back to Ideas
@@ -154,6 +173,7 @@ export default function GeneratedPostPage({
               />
 
               <SocialProfileShareSection
+                businessProfileId={businessProfileId}
                 onDownload={handleDownload}
                 isDownloading={imageDownload.isDownloading}
                 downloadSuccess={imageDownload.downloadSuccess}

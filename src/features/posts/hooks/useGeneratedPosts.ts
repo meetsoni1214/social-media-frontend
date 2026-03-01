@@ -22,13 +22,19 @@ export function useGeneratedPostsByBusinessProfile(
   });
 }
 
-export function useGetGeneratedPostById(imageId: UUID | null) {
+export function useGetGeneratedPostById(
+  imageId: UUID | null,
+  businessProfileId: UUID | null
+) {
   return useQuery<GeneratedPostDetails>({
-    queryKey: ['posts', 'generated', 'detail', imageId],
+    queryKey: ['posts', 'generated', 'detail', businessProfileId, imageId],
     queryFn: async () => {
-      const response = await postService.getGeneratedPostById(imageId as UUID);
+      const response = await postService.getGeneratedPostById(
+        imageId as UUID,
+        businessProfileId as UUID
+      );
       return response.data;
     },
-    enabled: !!imageId,
+    enabled: !!imageId && !!businessProfileId,
   });
 }

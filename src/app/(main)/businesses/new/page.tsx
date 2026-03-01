@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -11,14 +11,12 @@ import {
   businessProfileSchema,
   type BusinessProfileFormData,
 } from '@/lib/utils/validation';
-import { useBusinessProfileData } from '@/features/business-profile/hooks/useBusinessProfileData';
 import { useSaveBusinessProfile } from '@/features/business-profile/hooks/useBusinessProfile';
 import {
   GradientCard,
   GradientCardTitle,
 } from '@/components/common/GradientCard';
 import { GradientButton } from '@/components/common/GradientButton';
-import { LoadingScreen } from '@/components/common/LoadingScreen';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
@@ -45,23 +43,12 @@ const BUSINESS_CATEGORIES = [
 
 export default function BusinessProfilePage() {
   const router = useRouter();
-  const { data, isLoading: isProfileLoading } = useBusinessProfileData();
-  const businessProfile = data?.businessProfile ?? null;
-  const isBusinessProfileComplete = data?.isBusinessProfileComplete ?? false;
   const [error, setError] = useState('');
   const [isDetectingColors, setIsDetectingColors] = useState(false);
-  const [logoPreview, setLogoPreview] = useState<string | null>(
-    businessProfile?.logo || null
-  );
+  const [logoPreview, setLogoPreview] = useState<string | null>(null);
   const logoImageRef = useRef<HTMLImageElement>(null);
 
   const { mutate: saveBusinessProfile, isPending } = useSaveBusinessProfile();
-
-  useEffect(() => {
-    if (!isProfileLoading && isBusinessProfileComplete) {
-      router.push('/dashboard');
-    }
-  }, [isBusinessProfileComplete, isProfileLoading, router]);
 
   const {
     register,
@@ -71,7 +58,7 @@ export default function BusinessProfilePage() {
     watch,
   } = useForm<BusinessProfileFormData>({
     resolver: zodResolver(businessProfileSchema),
-    defaultValues: businessProfile || {
+    defaultValues: {
       businessName: '',
       category: '',
       description: '',
@@ -144,21 +131,21 @@ export default function BusinessProfilePage() {
   const onSubmit = async (data: BusinessProfileFormData) => {
     setError('');
 
-    saveBusinessProfile(data, {
-      onSuccess: () => {
-        router.push('/dashboard');
-      },
-      onError: (error: Error) => {
-        setError(
-          error.message || 'Failed to save business profile. Please try again.'
-        );
-      },
-    });
+    saveBusinessProfile(
+      { businessProfile: data },
+      {
+        onSuccess: response => {
+          router.push(`/${response.id}`);
+        },
+        onError: (error: Error) => {
+          setError(
+            error.message ||
+              'Failed to save business profile. Please try again.'
+          );
+        },
+      }
+    );
   };
-
-  if (isProfileLoading) {
-    return <LoadingScreen />;
-  }
 
   return (
     <div className="min-h-screen">

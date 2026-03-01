@@ -6,8 +6,10 @@ import { useSocialAccountsStatus } from '@/features/social-accounts/hooks/useSoc
 import { SocialPlatform } from '@/features/social-accounts/types/socialProfile';
 import { ConfirmationDialog } from '@/components/common/ConfirmationDialog';
 import { useToast } from '@/components/common/Toast';
+import type { UUID } from '@/types/uuid';
 
 interface SocialProfileShareSectionProps {
+  businessProfileId: UUID;
   onDownload: () => void;
   isDownloading: boolean;
   downloadSuccess: boolean;
@@ -17,6 +19,7 @@ interface SocialProfileShareSectionProps {
 }
 
 export function SocialProfileShareSection({
+  businessProfileId,
   onDownload,
   isDownloading,
   downloadSuccess,
@@ -24,7 +27,7 @@ export function SocialProfileShareSection({
   postTitle,
   className = '',
 }: SocialProfileShareSectionProps) {
-  const { data: accountsStatus } = useSocialAccountsStatus();
+  const { data: accountsStatus } = useSocialAccountsStatus(businessProfileId);
   const { showToast } = useToast();
   const [sharingPlatform, setSharingPlatform] = useState<SocialPlatform | null>(
     null
@@ -37,7 +40,7 @@ export function SocialProfileShareSection({
   };
 
   const handleConnect = () => {
-    window.open('/social-profiles', '_blank');
+    window.open(`/${businessProfileId}/social-profiles`, '_blank');
   };
 
   const getPlatformDisplayName = (platform: SocialPlatform): string => {
