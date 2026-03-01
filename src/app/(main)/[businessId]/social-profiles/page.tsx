@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, use } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   useSocialAccountsStatus,
@@ -21,16 +21,29 @@ import { Link2 } from 'lucide-react';
 import { SocialPlatform } from '@/features/social-accounts/types/socialProfile';
 import { useToast } from '@/components/common/Toast';
 import { ConfirmationDialog } from '@/components/common/ConfirmationDialog';
+import { uuidSchema } from '@/lib/utils/validation';
+import type { UUID } from '@/types/uuid';
 
-export default function SocialProfilesPage() {
+export default function SocialProfilesPage({
+  params,
+}: {
+  params: Promise<{ businessId: string }>;
+}) {
+  const { businessId } = use(params);
   const router = useRouter();
   const { showToast } = useToast();
+  const hasValidBusinessId = uuidSchema.safeParse(businessId).success;
+  const businessProfileId = hasValidBusinessId ? (businessId as UUID) : null;
   const {
     data: socialProfileData,
     isLoading: isProfileLoading,
     isFetching: isProfileFetching,
-  } = useSocialProfileExists();
-  const { data: accountsStatus, isLoading, error } = useSocialAccountsStatus();
+  } = useSocialProfileExists(businessProfileId);
+  const {
+    data: accountsStatus,
+    isLoading,
+    error,
+  } = useSocialAccountsStatus(businessProfileId);
   const [connectingPlatform, setConnectingPlatform] =
     useState<SocialPlatform | null>(null);
   const [disconnectingPlatform, setDisconnectingPlatform] =
@@ -39,6 +52,7 @@ export default function SocialProfilesPage() {
     useState<SocialPlatform | null>(null);
 
   const { data: connectData, error: connectError } = useConnectSocialProfile({
+    businessProfileId: businessProfileId as UUID,
     platform: connectingPlatform!,
   });
 
@@ -46,10 +60,22 @@ export default function SocialProfilesPage() {
     useDisconnectSocialProfile();
 
   useEffect(() => {
-    if (!isProfileLoading && !isProfileFetching && !socialProfileData?.exists) {
-      router.push('/dashboard');
+    if (!hasValidBusinessId) {
+      router.push('/businesses');
+      return;
     }
-  }, [socialProfileData?.exists, isProfileLoading, isProfileFetching, router]);
+    if (!isProfileLoading && !isProfileFetching && !socialProfileData?.exists) {
+      router.push(`/${businessId}`);
+    }
+  }, [
+    businessId,
+    businessProfileId,
+    hasValidBusinessId,
+    isProfileFetching,
+    isProfileLoading,
+    router,
+    socialProfileData?.exists,
+  ]);
 
   useEffect(() => {
     if (connectData?.authorizationUrl) {
@@ -98,7 +124,10 @@ export default function SocialProfilesPage() {
 
     setDisconnectingPlatform(confirmDisconnectPlatform);
     disconnectMutate(
-      { platform: confirmDisconnectPlatform },
+      {
+        businessProfileId: businessProfileId as UUID,
+        platform: confirmDisconnectPlatform,
+      },
       {
         onSuccess: () => {
           const platformName = getPlatformDisplayName(
@@ -132,7 +161,7 @@ export default function SocialProfilesPage() {
           error.message || 'An error occurred while loading your accounts'
         }
         actionLabel="Back to Dashboard"
-        onAction={() => router.push('/dashboard')}
+        onAction={() => router.push(`/${businessId}`)}
       />
     );
   }
