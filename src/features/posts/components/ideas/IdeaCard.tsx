@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import { Check, Pencil, Save, Sparkles, X } from 'lucide-react';
 import {
   GradientCard,
@@ -37,6 +37,21 @@ interface NewIdeaCardProps extends BaseIdeaCardProps {
 
 type IdeaCardProps = SavedIdeaCardProps | NewIdeaCardProps;
 
+interface IdeaCardAction {
+  key: string;
+  label: string;
+  icon: ReactNode;
+  onClick: () => void;
+  variant?: 'primary' | 'secondary' | 'ghost';
+  isLoading?: boolean;
+  loadingText?: string;
+  disabled?: boolean;
+}
+
+const ACTIONS_CONTAINER_CLASS = 'flex flex-col gap-3 sm:flex-row sm:flex-wrap';
+const ACTION_BUTTON_CLASS =
+  'w-full whitespace-normal sm:min-w-[11rem] sm:flex-1';
+
 export function IdeaCard(props: IdeaCardProps) {
   const { variant, idea, isInProgress } = props;
 
@@ -69,6 +84,85 @@ export function IdeaCard(props: IdeaCardProps) {
     }
     cancelEditing();
   };
+
+  const renderActions = (actions: IdeaCardAction[]) => {
+    return (
+      <div className={ACTIONS_CONTAINER_CLASS}>
+        {actions.map(action => (
+          <GradientButton
+            key={action.key}
+            size="sm"
+            variant={action.variant}
+            className={ACTION_BUTTON_CLASS}
+            isLoading={action.isLoading}
+            loadingText={action.loadingText}
+            onClick={action.onClick}
+            disabled={action.disabled}
+          >
+            {action.icon}
+            {action.label}
+          </GradientButton>
+        ))}
+      </div>
+    );
+  };
+
+  let actions: IdeaCardAction[];
+
+  if (isEditing) {
+    actions = [
+      {
+        key: 'update',
+        label: 'Update Idea',
+        icon: <Save className="h-4 w-4" />,
+        onClick: saveEdit,
+        isLoading: isInProgress,
+        loadingText: 'Updating...',
+        disabled: !draftTitle.trim() || !draftContent.trim(),
+      },
+      {
+        key: 'cancel',
+        label: 'Cancel',
+        icon: <X className="h-4 w-4" />,
+        onClick: cancelEditing,
+        variant: 'secondary',
+      },
+    ];
+  } else if (variant === 'saved') {
+    actions = [
+      {
+        key: 'use',
+        label: props.useButtonLabel,
+        icon: <Sparkles className="h-4 w-4" />,
+        onClick: () => props.onUse(idea.id),
+      },
+      {
+        key: 'edit',
+        label: 'Edit',
+        icon: <Pencil className="h-4 w-4" />,
+        onClick: startEditing,
+        variant: 'secondary',
+      },
+    ];
+  } else {
+    actions = [
+      {
+        key: 'save',
+        label: 'Save Idea',
+        icon: <Check className="h-4 w-4" />,
+        onClick: () => props.onSave(idea),
+        isLoading: isInProgress,
+        loadingText: 'Saving...',
+      },
+      {
+        key: 'discard',
+        label: 'Discard',
+        icon: <X className="h-4 w-4" />,
+        onClick: () => props.onDiscard(idea.id),
+        variant: 'secondary',
+      },
+    ];
+  }
 
   return (
     <GradientCard variant="highlighted">
@@ -107,74 +201,7 @@ export function IdeaCard(props: IdeaCardProps) {
           )}
         </div>
 
-        <div className="mt-4">
-          {isEditing ? (
-            <div className="flex flex-col gap-3 sm:flex-row">
-              <GradientButton
-                size="sm"
-                className="flex-1"
-                isLoading={isInProgress}
-                loadingText="Updating..."
-                onClick={saveEdit}
-                disabled={!draftTitle.trim() || !draftContent.trim()}
-              >
-                <Save className="h-4 w-4" />
-                Update Idea
-              </GradientButton>
-              <GradientButton
-                size="sm"
-                variant="secondary"
-                className="flex-1"
-                onClick={cancelEditing}
-              >
-                <X className="h-4 w-4" />
-                Cancel
-              </GradientButton>
-            </div>
-          ) : variant === 'saved' ? (
-            <div className="flex flex-col gap-3 sm:flex-row">
-              <GradientButton
-                size="sm"
-                className="flex-1"
-                onClick={() => props.onUse(idea.id)}
-              >
-                <Sparkles className="h-4 w-4" />
-                {props.useButtonLabel}
-              </GradientButton>
-              <GradientButton
-                size="sm"
-                variant="secondary"
-                className="flex-1"
-                onClick={startEditing}
-              >
-                <Pencil className="h-4 w-4" />
-                Edit
-              </GradientButton>
-            </div>
-          ) : (
-            <div className="flex flex-col gap-3 sm:flex-row">
-              <GradientButton
-                size="sm"
-                className="flex-1"
-                isLoading={isInProgress}
-                loadingText="Saving..."
-                onClick={() => props.onSave(idea)}
-              >
-                <Check className="h-4 w-4" />
-                Save Idea
-              </GradientButton>
-              <GradientButton
-                size="sm"
-                variant="secondary"
-                className="flex-1"
-                onClick={() => props.onDiscard(idea.id)}
-              >
-                <X className="h-4 w-4" />
-                Discard
-              </GradientButton>
-            </div>
-          )}
-        </div>
+        <div className="mt-4">{renderActions(actions)}</div>
       </div>
     </GradientCard>
   );
