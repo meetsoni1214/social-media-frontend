@@ -5,12 +5,13 @@ import type {
   GeneratedPostDetails,
 } from '@/features/posts/types/post';
 import type { UUID } from '@/types/uuid';
+import { postKeys } from '@/features/posts/hooks/postKeys';
 
 export function useGeneratedPostsByBusinessProfile(
   businessProfileId: UUID | null
 ) {
   return useQuery<GeneratedPost[]>({
-    queryKey: ['posts', 'generated', businessProfileId],
+    queryKey: postKeys.generated.list(businessProfileId),
     queryFn: async () => {
       const response = await postService.listGeneratedPostsByBusinessProfile(
         businessProfileId as UUID
@@ -27,7 +28,7 @@ export function useGetGeneratedPostById(
   businessProfileId: UUID | null
 ) {
   return useQuery<GeneratedPostDetails>({
-    queryKey: ['posts', 'generated', 'detail', businessProfileId, imageId],
+    queryKey: postKeys.generated.detail(businessProfileId, imageId),
     queryFn: async () => {
       const response = await postService.getGeneratedPostById(
         imageId as UUID,
