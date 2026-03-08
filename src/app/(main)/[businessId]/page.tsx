@@ -50,7 +50,8 @@ export default function DashboardPage({
   const { showToast } = useToast();
   const hasValidBusinessId = uuidSchema.safeParse(businessId).success;
   const routeBusinessId = hasValidBusinessId ? (businessId as UUID) : null;
-  const { data, isLoading } = useBusinessProfileDataById(routeBusinessId);
+  const { data, isLoading, isError } =
+    useBusinessProfileDataById(routeBusinessId);
   const { data: socialProfileData } = useSocialProfileExists(routeBusinessId);
   const { mutate: createSocialProfile, isPending: isCreatingProfile } =
     useCreateSocialProfile(routeBusinessId);
@@ -66,8 +67,19 @@ export default function DashboardPage({
     );
   }
 
-  if (isLoading || !data?.businessProfile || !routeBusinessId) {
+  if (isLoading || !routeBusinessId) {
     return <LoadingScreen message="Loading your business..." />;
+  }
+
+  if (isError || !data?.businessProfile) {
+    return (
+      <ErrorCard
+        title="Business not found"
+        message="This business may have been deleted or you don't have access to it."
+        actionLabel="Go to Businesses"
+        onAction={() => router.push('/businesses')}
+      />
+    );
   }
 
   const businessProfile = data.businessProfile;

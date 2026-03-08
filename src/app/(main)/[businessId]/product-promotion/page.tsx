@@ -26,6 +26,9 @@ import type { UUID } from '@/types/uuid';
 import { businessEducationalIdeaRoute } from '@/lib/routes/business';
 import { LoadingScreen } from '@/components/common/LoadingScreen';
 import { ErrorCard } from '@/components/common/ErrorCard';
+import { InsufficientCreditsError } from '@/lib/api';
+import { useToast } from '@/components/common/Toast';
+import { buildInsufficientCreditsMessage } from '@/features/posts/utils/credits';
 
 export default function ProductPromotionPage({
   params,
@@ -34,6 +37,7 @@ export default function ProductPromotionPage({
 }) {
   const { businessId } = use(params);
   const router = useRouter();
+  const { showToast } = useToast();
   const hasValidBusinessId = uuidSchema.safeParse(businessId).success;
   const businessProfileId = hasValidBusinessId ? (businessId as UUID) : null;
   const { data, isLoading: isBusinessLoading } =
@@ -42,6 +46,7 @@ export default function ProductPromotionPage({
   const [newIdeas, setNewIdeas] = useState<PostIdea[]>([]);
   const [savingIdeaId, setSavingIdeaId] = useState<string | null>(null);
   const [updatingIdeaId, setUpdatingIdeaId] = useState<string | null>(null);
+  const [creditWarning, setCreditWarning] = useState<string | null>(null);
   const ideaType: PostIdeaType = 'PROMOTIONAL';
 
   const {
@@ -85,7 +90,17 @@ export default function ProductPromotionPage({
       },
       {
         onSuccess: data => {
+          setCreditWarning(null);
           setNewIdeas(data.data);
+        },
+        onError: error => {
+          if (!(error instanceof InsufficientCreditsError)) {
+            return;
+          }
+
+          const message = buildInsufficientCreditsMessage(error.detail);
+          setCreditWarning(message);
+          showToast(message, 'error');
         },
       }
     );
@@ -162,6 +177,7 @@ export default function ProductPromotionPage({
               description="Create fresh promotional concepts tailored to your business and keep only what feels right."
               onGenerate={handleGenerateIdeas}
               isGenerating={isGenerating}
+              creditWarning={creditWarning}
             />
 
             <div className="space-y-6">

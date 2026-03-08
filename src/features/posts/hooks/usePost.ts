@@ -2,6 +2,7 @@ import { postService } from '@/lib/api';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import type { UUID } from '@/types/uuid';
+import { postKeys } from '@/features/posts/hooks/postKeys';
 
 interface PostParams {
   postIdeaId: UUID | null;
@@ -12,7 +13,10 @@ export function usePosts(params: PostParams) {
   const queryClient = useQueryClient();
 
   const query = useQuery({
-    queryKey: ['post', params.businessProfileId, params.postIdeaId],
+    queryKey: postKeys.generation.byIdea(
+      params.businessProfileId,
+      params.postIdeaId
+    ),
     queryFn: () =>
       postService.generatePost(
         params.postIdeaId as UUID,
@@ -27,7 +31,7 @@ export function usePosts(params: PostParams) {
     }
 
     void queryClient.invalidateQueries({
-      queryKey: ['posts', 'generated', params.businessProfileId],
+      queryKey: postKeys.generated.list(params.businessProfileId),
     });
   }, [
     query.isSuccess,

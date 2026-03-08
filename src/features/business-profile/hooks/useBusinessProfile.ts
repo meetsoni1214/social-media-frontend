@@ -3,10 +3,11 @@ import { businessProfileService } from '@/lib/api';
 import type { BusinessProfileFormData } from '@/lib/utils/validation';
 import type { BusinessProfileResponse } from '@/features/business-profile/types/businessProfile';
 import type { UUID } from '@/types/uuid';
+import { businessProfileKeys } from '@/features/business-profile/hooks/businessProfileKeys';
 
 export function useBusinessProfile() {
   return useQuery<BusinessProfileResponse[]>({
-    queryKey: ['businessProfiles'],
+    queryKey: businessProfileKeys.all,
     queryFn: () => businessProfileService.getProfiles(),
   });
 }
@@ -31,7 +32,7 @@ export function useSaveBusinessProfile() {
         : businessProfileService.createProfile(businessProfile),
     onSuccess: data => {
       queryClient.setQueryData(
-        ['businessProfiles'],
+        businessProfileKeys.all,
         (current: BusinessProfileResponse[] | undefined) => {
           if (!current) return [data];
 
@@ -45,7 +46,7 @@ export function useSaveBusinessProfile() {
           return next;
         }
       );
-      queryClient.setQueryData(['businessProfile', data.id], data);
+      queryClient.setQueryData(businessProfileKeys.detail(data.id), data);
     },
   });
 }

@@ -18,6 +18,9 @@ import { useToast } from '@/components/common/Toast';
 import { ApiError } from '@/lib/api/core/errors';
 import { uuidSchema } from '@/lib/utils/validation';
 import type { UUID } from '@/types/uuid';
+import { businessEducationalContentRoute } from '@/lib/routes/business';
+import { InsufficientCreditsError } from '@/lib/api';
+import { buildInsufficientCreditsMessage } from '@/features/posts/utils/credits';
 
 export default function GeneratedPostPage({
   params,
@@ -59,6 +62,10 @@ export default function GeneratedPostPage({
     businessProfileId,
   });
 
+  const ideasRoute = businessProfileId
+    ? businessEducationalContentRoute(businessProfileId)
+    : '/businesses';
+
   const handleDownload = async () => {
     if (!postResponse?.data?.imageUrl) {
       return;
@@ -92,6 +99,11 @@ export default function GeneratedPostPage({
   }, [ideaError, showToast]);
 
   useEffect(() => {
+    if (postError instanceof InsufficientCreditsError) {
+      showToast(buildInsufficientCreditsMessage(postError.detail), 'error');
+      return;
+    }
+
     if (postError) {
       showToast('Failed to generate post. Please try again.', 'error');
     }
@@ -118,6 +130,19 @@ export default function GeneratedPostPage({
     return null;
   }
 
+  if (postError instanceof InsufficientCreditsError) {
+    return (
+      <ErrorCard
+        title="Insufficient credits"
+        message={buildInsufficientCreditsMessage(postError.detail)}
+        actionLabel="Back to Ideas"
+        onAction={() => {
+          router.push(ideasRoute);
+        }}
+      />
+    );
+  }
+
   if (postError) {
     return (
       <ErrorCard
@@ -139,7 +164,7 @@ export default function GeneratedPostPage({
         <div className="mb-4">
           <GradientButton
             variant="ghost"
-            onClick={() => router.push(`/${businessId}/educational-content`)}
+            onClick={() => router.push(ideasRoute)}
           >
             <ArrowLeft className="w-4 h-4" />
             Back to Ideas

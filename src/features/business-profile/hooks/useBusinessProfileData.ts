@@ -3,9 +3,10 @@ import { businessProfileService } from '@/lib/api';
 import type { BusinessProfileResponse } from '@/features/business-profile/types/businessProfile';
 import type { BusinessProfileFormData } from '@/lib/utils/validation';
 import type { UUID } from '@/types/uuid';
+import { businessProfileKeys } from '@/features/business-profile/hooks/businessProfileKeys';
 
 const businessProfilesQueryOptions = {
-  queryKey: ['businessProfiles'] as const,
+  queryKey: businessProfileKeys.all,
   queryFn: () => businessProfileService.getProfiles(),
 };
 
@@ -35,7 +36,7 @@ export function useBusinessProfiles() {
 
 export function useBusinessProfileDataById(businessProfileId: UUID | null) {
   return useQuery({
-    queryKey: ['businessProfile', businessProfileId] as const,
+    queryKey: businessProfileKeys.detail(businessProfileId),
     queryFn: () =>
       businessProfileService.getProfileById(businessProfileId as UUID),
     enabled: !!businessProfileId,

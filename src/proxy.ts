@@ -3,7 +3,7 @@ import type { NextRequest } from 'next/server';
 
 const publicRoutes = ['/', '/login', '/register'];
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   const hasSessionCookie = request.cookies.has('sFrontToken');

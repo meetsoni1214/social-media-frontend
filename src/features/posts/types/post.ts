@@ -32,9 +32,17 @@ export interface UpdatePostIdeaRequest {
   ideaType?: PostIdeaType;
 }
 
+export interface CreditInfo {
+  availableCredits: number;
+  reservedCredits: number;
+  costCharged: number;
+  currency: 'credits';
+}
+
 export interface PostIdeasResponse {
   success: boolean;
   data: PostIdea[];
+  credit: CreditInfo;
 }
 
 export interface GeneratedPost {
@@ -49,6 +57,7 @@ export interface GeneratedPost {
 export interface GeneratedPostResponse {
   success: boolean;
   data: GeneratedPost;
+  credit: CreditInfo;
 }
 
 export interface GeneratedPostsByBusinessProfileResponse {
