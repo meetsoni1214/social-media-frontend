@@ -10,6 +10,25 @@ export class ApiError extends Error {
   }
 }
 
+export interface InsufficientCreditsDetail {
+  message: string;
+  requiredCredits: number;
+  availableCredits: number;
+  action: 'POST_IDEAS_GENERATION' | 'POST_GENERATION';
+}
+
+export class InsufficientCreditsError extends ApiError {
+  constructor(
+    message: string,
+    public detail: InsufficientCreditsDetail,
+    status = 402
+  ) {
+    super(message, status, 'INSUFFICIENT_CREDITS');
+    this.name = 'InsufficientCreditsError';
+    Object.setPrototypeOf(this, InsufficientCreditsError.prototype);
+  }
+}
+
 class AuthenticationError extends ApiError {
   constructor(message: string, status?: number) {
     super(message, status, 'AUTHENTICATION_ERROR');
@@ -42,11 +61,37 @@ export class NotFoundError extends ApiError {
   }
 }
 
+function isInsufficientCreditsDetail(
+  detail: unknown
+): detail is InsufficientCreditsDetail {
+  if (!detail || typeof detail !== 'object') {
+    return false;
+  }
+
+  const candidate = detail as Record<string, unknown>;
+
+  return (
+    typeof candidate.message === 'string' &&
+    typeof candidate.requiredCredits === 'number' &&
+    typeof candidate.availableCredits === 'number' &&
+    typeof candidate.action === 'string'
+  );
+}
+
 export function createApiError(
   response: Response,
-  errorMessage: string
+  errorMessage: string,
+  errorData?: unknown
 ): ApiError {
   const status = response.status;
+  const detail =
+    errorData && typeof errorData === 'object'
+      ? (errorData as Record<string, unknown>).detail
+      : undefined;
+
+  if (status === 402 && isInsufficientCreditsDetail(detail)) {
+    return new InsufficientCreditsError(detail.message || errorMessage, detail);
+  }
 
   if (status === 401 || status === 403) {
     return new AuthenticationError(errorMessage, status);

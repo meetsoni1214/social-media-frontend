@@ -108,15 +108,30 @@ class HttpClient {
   ): Promise<T> {
     if (!response.ok) {
       let errorMessage = 'An error occurred while processing your request';
+      let errorData: unknown;
 
       try {
-        const errorData = await response.json();
-        errorMessage = errorData.error || errorMessage;
+        const rawErrorData = await response.json();
+        errorData = skipTransform ? rawErrorData : keysToCamel(rawErrorData);
+
+        if (errorData && typeof errorData === 'object') {
+          const candidate = errorData as Record<string, unknown>;
+          const detail =
+            candidate.detail && typeof candidate.detail === 'object'
+              ? (candidate.detail as Record<string, unknown>)
+              : null;
+
+          errorMessage =
+            (typeof candidate.error === 'string' && candidate.error) ||
+            (typeof candidate.message === 'string' && candidate.message) ||
+            (detail && typeof detail.message === 'string' && detail.message) ||
+            errorMessage;
+        }
       } catch {
         errorMessage = `Server error (${response.status}): ${response.statusText}`;
       }
 
-      throw createApiError(response, errorMessage);
+      throw createApiError(response, errorMessage, errorData);
     }
 
     const data = await response.json();
