@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Sparkles } from 'lucide-react';
+import { AlertCircle, Sparkles } from 'lucide-react';
 import { GradientButton } from '@/components/common/GradientButton';
 import { Select } from '@/components/ui/select';
 import {
@@ -20,6 +20,7 @@ interface QuickControlsProps {
   buttonLabel?: string;
   onGenerate: (ideaCount?: number) => void;
   isGenerating: boolean;
+  creditWarning?: string | null;
 }
 
 export function QuickControls({
@@ -28,6 +29,7 @@ export function QuickControls({
   buttonLabel = 'Generate New Ideas',
   onGenerate,
   isGenerating,
+  creditWarning,
 }: QuickControlsProps) {
   const [ideaCount, setIdeaCount] = useState(DEFAULT_IDEA_COUNT);
 
@@ -76,6 +78,12 @@ export function QuickControls({
           <Sparkles className="h-4 w-4" />
           {buttonLabel}
         </GradientButton>
+        {creditWarning ? (
+          <div className="flex items-start gap-2 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-900">
+            <AlertCircle className="mt-0.5 h-4 w-4 flex-shrink-0" />
+            <p>{creditWarning}</p>
+          </div>
+        ) : null}
       </div>
     </div>
   );

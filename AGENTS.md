@@ -22,6 +22,7 @@
 - TypeScript is the default; prefer `.ts`/`.tsx` and keep types in `src/types` when shared.
 - Components and providers use `PascalCase`; hooks use the `useX` pattern (e.g., `useSocialProfile`).
 - Follow Prettier formatting and ESLint rules; keep JSX files under `src`.
+- When a change makes related code paths, helpers, props, or imports obsolete, remove that dead code in the same pass instead of leaving cleanup for a follow-up.
 - UI changes must be responsive by default: validate mobile-first behavior (small screens), touch target sizing, wrapping/stacking layouts, and no horizontal overflow before considering a UI task complete.
 - Prefer existing shadcn UI primitives by default (`Button`, `Card`, `Input`, `Select`, etc.) instead of custom HTML wrappers. You can do a web search to find the best component for the job and if it is not present install it from the shadcn/ui package.
 
